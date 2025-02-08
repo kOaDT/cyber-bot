@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+*.log
+.env
+.DS_Store
+.eslintcache
+log-seed.txt
+logs/

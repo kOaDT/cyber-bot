@@ -1,0 +1,54 @@
+{
+  "name": "cyber-bot",
+  "version": "1.0.0",
+  "description": "A Telegram bot for Cyber",
+  "main": "index.js",
+  "scripts": {
+    "cron": "./cron.sh",
+    "lint": "./node_modules/.bin/eslint .",
+    "lint-fix": "./node_modules/.bin/eslint --fix .",
+    "prettier": "./node_modules/.bin/prettier --write .",
+    "prettier:check": "./node_modules/.bin/prettier --check .",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "leogrambert@proton.me",
+  "license": "ISC",
+  "dependencies": {
+    "@mistralai/mistralai": "^1.5.0",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "axios": "1.7.9",
+    "bip39": "^3.1.0",
+    "chartjs-node-canvas": "^4.1.6",
+    "commander": "^13.1.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "googleapis": "144.0.0",
+    "jsdom": "^26.0.0",
+    "mysql2": "^3.12.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "nodemailer": "^6.10.0",
+    "openai": "^4.83.0",
+    "puppeteer": "^24.2.0",
+    "request": "^2.88.2",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.19.0",
+    "eslint": "9.19.0",
+    "eslint-config-next": "15.1.6",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-security-node": "^1.1.4",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.4.2"
+  },
+  "lint-staged": {
+    "*.{tsx,js}": "eslint --cache --fix",
+    "*.{tsx,js,css,md}": "prettier --write"
+  }
+}

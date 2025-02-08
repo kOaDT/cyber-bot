@@ -1,0 +1,10 @@
+# Don't check auto-generated stuff into git
+
+node_modules
+.cache
+.DS_Store
+npm-debug.log
+.vscode/launch.json
+.gitlab-ci.yml
+.env
+.env.strapi
