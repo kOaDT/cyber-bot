@@ -7,7 +7,7 @@ const logger = require('./crons/config/logger');
 const { AUTHORIZED_LANGUAGES } = require('./crons/utils/langs');
 
 program
-  .version('1.0.0', '-v, --version')
+  .version('1.1.0', '-v, --version')
   .description('A script help you to launch CRON Job')
   .usage('[OPTIONS]...')
   .requiredOption('-c, --cron <script.js>', 'Use a cron script name from crons directory')
