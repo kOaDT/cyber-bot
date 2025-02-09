@@ -86,10 +86,10 @@ npm run cron -- -c CRON_NAME
 You can also specify a language (for example, French):
 
 ```sh
-npm run cron -- -c CRON_NAME -l fr
+npm run cron -- -c CRON_NAME -l french
 ```
 
-The language is used to generate the content with Mistral AI. If you specify 'fr', the bot will generate the content in French.
+The language is used to generate the content with Mistral AI. If you specify 'french', the bot will generate the content in French.
 
 To avoid prompt injection, the language is limited with the `AUTHORIZED_LANGUAGES` environment variable. You can add as many languages as you want, separated by commas. The default language for generated content is english.
 
