@@ -4,6 +4,7 @@ dotenv.config();
 const { Command } = require('commander');
 const program = new Command();
 const logger = require('./crons/config/logger');
+const { AUTHORIZED_LANGUAGES } = require('./crons/utils/langs');
 
 program
   .version('1.0.0', '-v, --version')
@@ -18,10 +19,13 @@ program.parse(process.argv);
 const options = program.opts();
 const cron = options.cron;
 const dryRunMode = options.dryMode ? options.dryMode : false;
-const extraParam = {
-  param: options.param,
-  lang: options.lang,
-};
+const param = options.param;
+const lang = options.lang || 'english';
+
+if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
+  logger.error('Invalid language');
+  process.exit(1);
+}
 
 (async () => {
   logger.info(`
@@ -32,7 +36,7 @@ const extraParam = {
 
   try {
     const cronJob = require(`./crons/${cron}.js`);
-    await cronJob.run(dryRunMode, extraParam);
+    await cronJob.run({ dryRunMode, param, lang });
     logger.info(`
 ✨ ===============================
    Job terminated: ${cron}

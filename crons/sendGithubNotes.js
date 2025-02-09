@@ -1,26 +1,25 @@
- 
 const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const crypto = require('crypto');
-const { mistralClient, DEFAULT_PARAMS } = require('./config/mistral');
 const { createRevisionCardPrompt } = require('./utils/prompts');
+const { generate } = require('./utils/generate');
 
 const GITHUB_TOKEN = process.env.GITHUB_SECRET;
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'kOaDT';
-const GITHUB_REPO = process.env.GITHUB_REPO || 'Cyber';
-const EXCLUDED_FILES = process.env.EXCLUDED_FILES?.split(',') || ['root-me-challenges.md'];
-const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
+const GITHUB_REPO = process.env.GITHUB_REPO;
+const EXCLUDED_GITHUB_FILES = process.env.EXCLUDED_GITHUB_FILES?.split(',') || [];
 
-const run = async (dryMode) => {
+const run = async ({ dryMode, lang }) => {
   try {
-    if (!GITHUB_TOKEN || !GITHUB_USERNAME || !GITHUB_REPO || !MISTRAL_API_KEY) {
-      logger.error('GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_REPO, or MISTRAL_API_KEY is not set');
+    if (!GITHUB_TOKEN || !GITHUB_USERNAME || !GITHUB_REPO) {
+      logger.error('GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_REPO is not set');
       return;
     }
 
     const { title, content } = await getGithubFile();
-    const revisionCard = await generateRevisionCard(title, content);
+    const prompt = createRevisionCardPrompt(title, content, lang);
+    const revisionCard = await generate(prompt);
 
     if (!dryMode) {
       return await sendMessage(revisionCard);
@@ -66,7 +65,7 @@ const getGithubFile = async () => {
     const { data } = await response.json();
     const files = data.repository.object.entries;
     const markdownFiles = files.filter(
-      (file) => file.name.endsWith('.md') && file.type === 'blob' && !EXCLUDED_FILES.includes(file.name)
+      (file) => file.name.endsWith('.md') && file.type === 'blob' && !EXCLUDED_GITHUB_FILES.includes(file.name)
     );
 
     logger.info(`${markdownFiles.length} markdown files found`);
@@ -77,21 +76,6 @@ const getGithubFile = async () => {
     return { title: randomFile.name, content: randomFile.object.text };
   } catch (err) {
     onError(err, 'getGithubFile');
-  }
-};
-
-const generateRevisionCard = async (title, content) => {
-  try {
-    const prompt = createRevisionCardPrompt(title, content);
-
-    const response = await mistralClient.chat.complete({
-      ...DEFAULT_PARAMS,
-      messages: [{ role: 'user', content: prompt }],
-    });
-
-    return response.choices[0].message.content;
-  } catch (err) {
-    onError(err, 'generateRevisionCard');
   }
 };
 

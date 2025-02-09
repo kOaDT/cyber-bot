@@ -1,33 +1,52 @@
-const createRevisionCardPrompt = (title, content) =>
-  `Tu es un expert en cybersécurité qui crée des fiches de révision efficaces.
+/**
+ * Create a revision card prompt
+ * @param {string} title - The title of the revision card
+ * @param {string} content - The content of the revision card
+ * @returns {string} The prompt
+ */
+const createRevisionCardPrompt = (title, content, lang) =>
+  `You are a cybersecurity expert who creates effective revision cards.
 
-Analyse ce contenu et crée une fiche de révision en français sur le sujet ${title}, même si le contenu est bref :
+Analyze this content and create a revision card in ${lang} about ${title}, even if the content is brief:
 
 ###
 ${content}
 ###
 
-Règles importantes :
-1. Extrait l'essentiel, même si le texte est court
-2. Enrichis avec tes connaissances d'expert SI LE SUJET EST CLAIREMENT IDENTIFIÉ
-3. Ne jamais inventer de fausses informations
+Important rules:
+1. Extract the essentials, even if the text is short
+2. Enrich with your expert knowledge IF THE SUBJECT IS CLEARLY IDENTIFIED
+3. Never invent false information
 
-Format de la fiche :
-🎯 SUJET : [Titre clair] en lien avec le sujet ${title}
+Card format:
+🎯 SUBJECT: [Clear title] related to ${title}
 
-📌 POINTS ESSENTIELS :
-• [2-3 points clés, incluant le contexte]
+📌 KEY POINTS:
+• [2-3 key points, including context]
 
-🔍 DÉTAILS TECHNIQUES :
-• [Spécifications techniques si présentes]
-• [Ports, protocoles, ou syntaxe si pertinent]
+🔍 TECHNICAL DETAILS:
+• [Technical specifications if present]
+• [Ports, protocols, or syntax if relevant]
 
-⚠️ SÉCURITÉ :
-• [Alertes ou considérations de sécurité si applicables]
+⚠️ SECURITY:
+• [Security alerts or considerations if applicable]
 
-💡 À RETENIR :
-[Une phrase synthétique]`;
+💡 REMEMBER:
+[One synthetic sentence]`;
+
+/**
+ * Translate a prompt to a specific language
+ * @param {string} prompt - The prompt to translate
+ * @param {string} lang - The language to translate to
+ * @returns {string} The translated prompt
+ */
+const translatePrompt = (prompt, lang) => {
+  return `Translate the following text to ${lang}:
+
+${prompt}`;
+};
 
 module.exports = {
   createRevisionCardPrompt,
+  translatePrompt,
 };
