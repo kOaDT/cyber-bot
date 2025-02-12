@@ -18,7 +18,7 @@ program
 program.parse(process.argv);
 const options = program.opts();
 const cron = options.cron;
-const dryRunMode = options.dryMode ? options.dryMode : false;
+const dryMode = options.dryMode ? options.dryMode : false;
 const param = options.param;
 const lang = options.lang || 'english';
 
@@ -29,30 +29,30 @@ if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
 
 (async () => {
   logger.info(`
-🤖 ===============================
+  🤖 ===============================
    Launching CRON: ${cron}
-   Mode: ${dryRunMode ? '🧪 DRY-RUN' : '🚀 PRODUCTION'}
-=============================== `);
+   Mode: ${dryMode ? '🧪 DRY-RUN' : '🚀 PRODUCTION'}
+  =============================== `);
 
   try {
     const cronJob = require(`./crons/${cron}.js`);
-    await cronJob.run({ dryRunMode, param, lang });
+    await cronJob.run({ dryMode, param, lang });
     logger.info(`
-✨ ===============================
+  ✨ ===============================
    Job terminated: ${cron}
    Status: 🎉 SUCCESS
-=============================== `);
+  =============================== `);
     process.exit(0);
   } catch (err) {
     if (process.env.NODE_ENV === 'development') {
       console.error(err);
     }
     logger.error(`
-❌ ===============================
+  ❌ ===============================
    Job failed: ${cron}
    Status: 💥 ERROR
    Details: ${err}
-=============================== `);
+  =============================== `);
     process.exit(1);
   }
 })();

@@ -18,6 +18,12 @@ npm run cron -- -c sendTHM
 npm run cron -- -c sendGithubNotes
 ```
 
+- Sends a summary of the latest cybersecurity news. Based on the RSS feed of the CyberSecurity RSS feed: [CyberSecurity RSS](https://github.com/kOaDT/cyber-bot/assets/CyberSecurityRSS.opml)
+
+```
+npm run cron -- -c sendNewsResume
+```
+
 - More features coming soon...
 
 ## Getting Started

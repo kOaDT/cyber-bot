@@ -46,7 +46,44 @@ const translatePrompt = (prompt, lang) => {
 ${prompt}`;
 };
 
+/**
+ * Create a news resume prompt
+ * @param {string} title - The title of the article
+ * @param {Array} tags - The tags of the article
+ * @param {string} url - The URL of the article
+ * @param {string} content - The content of the article
+ * @param {string} lang - The language to translate to
+ * @returns {string} The news resume prompt
+ */
+const createNewsResumePrompt = (title, tags, url, content, lang) => {
+  const tagsSection = tags && tags.length > 0 ? `\n ${tags.join(', ')}` : '';
+  
+  return `Title: ${title}
+    ${content}
+
+    ---
+
+    Instructions:
+    Create a news summary in ${lang} following this format:
+
+    📌 ${title.toUpperCase()}
+    ${tagsSection}
+
+    [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity 
+    and hacking insights. Focus on the most critical and interesting points.]
+
+    Read more: ${url}
+
+    Requirements:
+    - Keep the summary to one paragraph
+    - Focus on cybersecurity/hacking aspects
+    - Use clear, engaging language suitable for Telegram
+    - Highlight the most important takeaways
+    - Do not use markdown formatting`;
+};
+
 module.exports = {
   createRevisionCardPrompt,
   translatePrompt,
+  createNewsResumePrompt,
 };
