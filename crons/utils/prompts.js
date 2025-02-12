@@ -59,6 +59,8 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
   const tagsSection = tags && tags.length > 0 ? `\n ${tags.join(', ')}` : '';
 
   return `Title: ${title}
+
+    Content:
     ${content}
 
     ---
@@ -69,8 +71,10 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     📌 ${title.toUpperCase()}
     ${tagsSection}
 
-    [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity 
-    and hacking insights. Focus on the most critical and interesting points.]
+    [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity
+    and hacking insights. Focus on the most critical and interesting points. Explain technical 
+    terms and concepts in a clear, educational manner, using examples or analogies where possible. 
+    Highlight the practical implications of the information presented.]
 
     Read more: ${url}
 
@@ -79,7 +83,9 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     - Focus on cybersecurity/hacking aspects
     - Use clear, engaging language suitable for Telegram
     - Highlight the most important takeaways
-    - Do not use markdown formatting`;
+    - Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
+    - Do not use markdown formatting
+`;
 };
 
 module.exports = {
