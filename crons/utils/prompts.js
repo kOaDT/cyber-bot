@@ -57,7 +57,7 @@ ${prompt}`;
  */
 const createNewsResumePrompt = (title, tags, url, content, lang) => {
   const tagsSection = tags && tags.length > 0 ? `\n ${tags.join(', ')}` : '';
-  
+
   return `Title: ${title}
     ${content}
 

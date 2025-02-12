@@ -115,18 +115,12 @@ const run = async ({ dryMode, lang }) => {
     logger.info(`Preparing news resume for ${selectedArticles.length} articles...`);
 
     for (const article of selectedArticles) {
-      const prompt = createNewsResumePrompt(
-        article.title,
-        article.categories,
-        article.link,
-        article.content,
-        lang
-    );
-    const newsResume = await generate(prompt);
+      const prompt = createNewsResumePrompt(article.title, article.categories, article.link, article.content, lang);
+      const newsResume = await generate(prompt);
 
-    if (dryMode) {
-      logger.info(newsResume);
-      continue;
+      if (dryMode) {
+        logger.info(newsResume);
+        continue;
       }
       await sendMessage(newsResume);
       await delay(DELAY_BETWEEN_ARTICLES);
