@@ -73,7 +73,7 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
 
     [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity
     and hacking insights. Focus on the most critical and interesting points. Explain technical 
-    terms and concepts in a clear, educational manner, using examples or analogies where possible. 
+    terms and concepts in a clear, educational manner, using examples where possible. 
     Highlight the practical implications of the information presented.]
 
     Read more: ${url}
