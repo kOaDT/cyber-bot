@@ -7,6 +7,7 @@ const { createNewsResumePrompt } = require('./utils/prompts');
 const fs = require('fs');
 const xml2js = require('xml2js');
 const RSSParser = require('rss-parser');
+const { delay } = require('./utils/delay');
 
 const NB_DAYS_TO_FETCH = 3;
 const NB_ARTICLES_TO_SEND = 1;
