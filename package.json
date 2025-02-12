@@ -1,6 +1,6 @@
 {
   "name": "cyber-bot",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A Telegram bot for Cyber",
   "main": "index.js",
   "scripts": {
