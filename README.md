@@ -80,6 +80,14 @@ npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
    # Optional
    EXCLUDED_GITHUB_FILES=
    AUTHORIZED_LANGUAGES=
+
+   # Telegram Topics - If you want to send the message to a specific topic to organize your messages
+   # If not set, the message will be sent to the default chat
+   TELEGRAM_TOPIC_THM=
+   TELEGRAM_TOPIC_NEWS=
+   TELEGRAM_TOPIC_YOUTUBE=
+   TELEGRAM_TOPIC_DARKNET=
+   TELEGRAM_TOPIC_GITHUB=
    ```
 
 4. Configure Mistral AI settings (if needed) by editing the `DEFAULT_PARAMS` in:

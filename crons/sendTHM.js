@@ -18,7 +18,7 @@ const run = async ({ dryMode, lang }) => {
       return;
     }
 
-    await sendMessage(message);
+    await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
     logger.info('Message sent successfully');
   } catch (err) {
     onError(err, 'run');

@@ -150,7 +150,7 @@ async function run({ dryMode, lang, youtube }) {
       logger.info(`Summary: ${summary}`);
       return;
     }
-    await sendMessage(summary);
+    await sendMessage(summary, process.env.TELEGRAM_TOPIC_YOUTUBE);
 
     await saveLastProcessedEpisode(channelName, videoId);
   } catch (error) {

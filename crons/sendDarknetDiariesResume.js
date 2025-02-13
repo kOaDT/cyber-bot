@@ -79,7 +79,7 @@ const run = async ({ dryMode, lang }) => {
 
       if (!dryMode) {
         await saveLastProcessedEpisode(lastEpisode);
-        await sendMessage(summary);
+        await sendMessage(summary, process.env.TELEGRAM_TOPIC_DARKNET);
       } else {
         logger.info('Dry mode: No message sent');
         logger.info(summary);

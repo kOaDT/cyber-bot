@@ -123,7 +123,7 @@ const run = async ({ dryMode, lang }) => {
         logger.info(newsResume);
         continue;
       }
-      await sendMessage(newsResume);
+      await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS);
       await delay(DELAY_BETWEEN_ARTICLES);
     }
     return logger.info('News resume sent successfully.');

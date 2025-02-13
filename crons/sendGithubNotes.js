@@ -22,7 +22,7 @@ const run = async ({ dryMode, lang }) => {
     const revisionCard = await generate(prompt);
 
     if (!dryMode) {
-      return await sendMessage(revisionCard);
+      return await sendMessage(revisionCard, process.env.TELEGRAM_TOPIC_GITHUB);
     }
     return logger.info(revisionCard);
   } catch (err) {
