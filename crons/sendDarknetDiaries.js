@@ -16,9 +16,9 @@ const getLastDDEpisode = async () => {
   const $ = cheerio.load(html);
   const episodeElement = $('h2').first();
   const title = episodeElement.text();
-  const episodeNumber = title.match(/\d+/)[0];
 
-  return { 
+  const episodeNumber = title.match(/\d+/)[0];
+  return {
     title,
     episodeNumber: parseInt(episodeNumber),
   };
@@ -45,9 +45,9 @@ const getLastProcessedEpisode = async () => {
 const saveLastProcessedEpisode = async (episodeData) => {
   await fs.writeFile(
     'assets/lastProcessedDD.json',
-    JSON.stringify({ 
+    JSON.stringify({
       episodeNumber: episodeData.episodeNumber,
-      processedAt: new Date().toISOString()
+      processedAt: new Date().toISOString(),
     })
   );
 };
@@ -69,10 +69,10 @@ const run = async ({ dryMode, lang }) => {
   try {
     const lastEpisode = await getLastDDEpisode();
     const lastProcessed = await getLastProcessedEpisode();
-    
+
     if (lastEpisode.episodeNumber > lastProcessed.episodeNumber) {
       logger.info(`New episode found: ${lastEpisode.episodeNumber}`);
-      
+
       const transcription = await getTranscription(lastEpisode.episodeNumber);
       const prompt = createPodcastResumePrompt(lastEpisode.title, transcription, lang);
       const summary = await generate(prompt);

@@ -53,5 +53,8 @@
 <outline title="Graham Cluley" xmlUrl="https://www.grahamcluley.com/feed/" htmlUrl="https://www.grahamcluley.com/" text="Graham Cluley" type="rss" />
 <outline title="Schneier on Security" xmlUrl="https://www.schneier.com/blog/atom.xml" htmlUrl="https://www.schneier.com/" text="Schneier on Security" type="rss" />
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
+<outline title="threatpost" xmlUrl="https://threatpost.com/feed/" htmlUrl="https://threatpost.com/" text="threatpost" type="rss" />
+<outline title="securityintelligence" xmlUrl="https://securityintelligence.com/news/feed/" htmlUrl="https://securityintelligence.com/news/" text="securityintelligence" type="rss" />
+
 </body>
 </opml>
