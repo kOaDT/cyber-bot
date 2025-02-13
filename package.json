@@ -34,7 +34,9 @@
     "puppeteer": "^24.2.0",
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "youtube-dl-exec": "^3.0.15",
+    "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

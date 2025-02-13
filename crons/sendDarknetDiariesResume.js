@@ -16,8 +16,8 @@ const getLastDDEpisode = async () => {
   const $ = cheerio.load(html);
   const episodeElement = $('h2').first();
   const title = episodeElement.text();
-
   const episodeNumber = title.match(/\d+/)[0];
+
   return {
     title,
     episodeNumber: parseInt(episodeNumber),

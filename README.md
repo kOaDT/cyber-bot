@@ -27,7 +27,13 @@ npm run cron -- -c sendNewsResume
 - Sends a summary of the latest episode of the podcast [Darknet Diaries](https://darknetdiaries.com/)
 
 ```
-npm run cron -- -c sendDarknetDiaries
+npm run cron -- -c sendDarknetDiariesResume
+```
+
+- Sends a summary of the latest episode of a youtube channel
+
+```
+npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
 ```
 
 - More features coming soon...

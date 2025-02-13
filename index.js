@@ -13,6 +13,7 @@ program
   .requiredOption('-c, --cron <script.js>', 'Use a cron script name from crons directory')
   .option('-p, --param <param>', 'Option to pass extra param')
   .option('-l --lang <lang>', 'Option to pass language')
+  .option('-y --youtube <youtube>', 'Option to pass youtube channel')
   .option('--dry-mode', 'Option to run the script without SQL query execution');
 
 program.parse(process.argv);
@@ -21,6 +22,7 @@ const cron = options.cron;
 const dryMode = options.dryMode ? options.dryMode : false;
 const param = options.param;
 const lang = options.lang || 'english';
+const youtube = options.youtube;
 
 if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
   logger.error('Invalid language');
@@ -36,7 +38,7 @@ if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
 
   try {
     const cronJob = require(`./crons/${cron}.js`);
-    await cronJob.run({ dryMode, param, lang });
+    await cronJob.run({ dryMode, param, lang, youtube });
     logger.info(`
   ✨ ===============================
    Job terminated: ${cron}
