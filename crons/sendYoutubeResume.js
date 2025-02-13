@@ -1,6 +1,6 @@
 const { onError } = require('./config/errors');
 const logger = require('./config/logger');
-const { YoutubeTranscript } = require('youtube-transcript');
+const { Innertube } = require('youtubei.js');
 const youtubedl = require('youtube-dl-exec');
 const { createYoutubeResumePrompt } = require('./utils/prompts');
 const { sendMessage } = require('./utils/sendMessage');
@@ -15,9 +15,16 @@ const fs = require('fs').promises;
  */
 async function getVideoTranscript(videoId) {
   try {
-    const transcript = await YoutubeTranscript.fetchTranscript(videoId);
-    return transcript.map((t) => t.text).join(' ');
+    const yt = await Innertube.create({
+      lang: 'en',
+      location: 'US',
+      retrieve_player: false,
+    });
+    const info = await yt.getInfo(videoId);
+    const transcriptData = await info.getTranscript();
+    return transcriptData.transcript.content.body.initial_segments.map((segment) => segment.snippet.text).join(' ');
   } catch (error) {
+    logger.error(`Failed to fetch transcript: ${error.message}`);
     throw new Error(`Failed to fetch transcript for video ${videoId}: ${error.message}`);
   }
 }
