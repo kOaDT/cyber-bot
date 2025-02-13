@@ -55,6 +55,6 @@
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
 <outline title="threatpost" xmlUrl="https://threatpost.com/feed/" htmlUrl="https://threatpost.com/" text="threatpost" type="rss" />
 <outline title="securityintelligence" xmlUrl="https://securityintelligence.com/news/feed/" htmlUrl="https://securityintelligence.com/news/" text="securityintelligence" type="rss" />
-
+<outline title="Caleb's Tech Blog" xmlUrl="https://www.caleb-tech.blog/api/rss" htmlUrl="https://www.caleb-tech.blog/" text="Caleb's Tech Blog" type="rss" />
 </body>
 </opml>
