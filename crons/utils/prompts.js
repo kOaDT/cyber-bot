@@ -56,9 +56,9 @@ ${prompt}`;
  * @returns {string} The news resume prompt
  */
 const createNewsResumePrompt = (title, tags, url, content, lang) => {
-  const tagsSection = tags && tags.length > 0 ? `\n ${tags.join(', ')}` : '';
-
   return `Title: ${title}
+
+    Tags: ${tags.join(', ')}
 
     Content:
     ${content}
@@ -66,25 +66,24 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     ---
 
     Instructions:
-    Create a news summary in ${lang} following this format:
-
-    📌 ${title.toUpperCase()}
-    ${tagsSection}
-
-    [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity
-    and hacking insights. Focus on the most critical and interesting points. Explain technical 
-    terms and concepts in a clear, educational manner, using examples where possible. 
-    Highlight the practical implications of the information presented.]
-
-    Read more: ${url}
-
-    Requirements:
-    - Keep the summary to one paragraph
+    - Create a summary of the article provided
+    - The summary should be in ${lang}
+    - Keep the summary to one or two paragraphs maximum
     - Focus on cybersecurity/hacking aspects
     - Use clear, engaging language suitable for Telegram
     - Highlight the most important takeaways
     - Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
     - Do not use markdown formatting
+    - Follow this format:
+
+    📌 [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity
+    and hacking insights. Focus on the most critical and interesting points. Explain technical 
+    terms and concepts in a clear, educational manner, using examples where possible. 
+    Highlight the practical implications of the information presented.]
+
+    💡 REMEMBER:[One synthetic sentence]
+
+    Read more: ${url}
 `;
 };
 

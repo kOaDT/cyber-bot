@@ -84,7 +84,7 @@ const filterRecentArticles = (articles) => {
 };
 
 /**
- * Selects 3 random article from the provided list.
+ * Selects random articles from the provided list.
  *
  * @param {Object[]} articles - Array of articles.
  * @returns {Object[]} - The selected articles.
