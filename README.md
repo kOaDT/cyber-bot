@@ -24,6 +24,12 @@ npm run cron -- -c sendGithubNotes
 npm run cron -- -c sendNewsResume
 ```
 
+- Sends a summary of the latest episode of the podcast [Darknet Diaries](https://darknetdiaries.com/)
+
+```
+npm run cron -- -c sendDarknetDiaries
+```
+
 - More features coming soon...
 
 ## Getting Started

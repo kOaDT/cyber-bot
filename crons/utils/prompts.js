@@ -58,7 +58,7 @@ ${prompt}`;
 const createNewsResumePrompt = (title, tags, url, content, lang) => {
   return `Title: ${title}
 
-    Tags: ${tags.join(', ')}
+    Tags: ${(tags || []).join(', ')}
 
     Content:
     ${content}
@@ -87,8 +87,56 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
 `;
 };
 
+/**
+ * Create a podcast resume prompt
+ * @param {string} title - The title of the podcast
+ * @param {string} transcription - The transcription of the podcast
+ * @param {string} lang - The language to translate to
+ * @returns {string} The podcast resume prompt
+ */
+const createPodcastResumePrompt = (title, transcription, lang) => {
+  return `Title: ${title}
+
+    Transcription:
+    ${transcription}
+
+    ---
+
+    Instructions:
+    Create a detailed summary of the above podcast transcription. The summary should be 
+    comprehensive and capture all the key points, insights, and discussions presented 
+    in the podcast. Focus on the following aspects:
+
+    1. **Key Topics**: Identify and summarize the main topics discussed in the podcast.
+    2. **Important Insights**: Highlight any significant insights, revelations, or expert opinions 
+    shared during the conversation.
+    3. **Technical Details**: Explain any technical terms or concepts in a clear and understandable 
+    manner. Use analogies or examples where necessary to clarify complex ideas.
+    4. **Practical Implications**: Discuss the practical implications of the information presented. 
+    How can this information be applied in real-world scenarios?
+    5. **Engaging Style**: Write the summary in an engaging and informative style, suitable for someone 
+    eager to learn about cybersecurity and hacking.
+    6. **Do not use markdown formatting**
+    7. **Do not include sponsors or ads**
+
+    Requirements:
+    - The summary should be several paragraphs long, providing an in-depth overview of the podcast content.
+    - The summary should be in ${lang}
+    - Ensure the summary is coherent and flows logically from one point to the next.
+    - Avoid using overly technical jargon without explanation.
+    - Maintain a clear and concise writing style while covering all important details.
+    - Start with: 🎙️ NEW EPISODE OF DARKNET DIARIES: ${title}
+
+    ---
+
+    Summary:
+
+  `;
+};
+
 module.exports = {
   createRevisionCardPrompt,
   translatePrompt,
   createNewsResumePrompt,
+  createPodcastResumePrompt,
 };

@@ -21,6 +21,7 @@
     "axios": "1.7.9",
     "bip39": "^3.1.0",
     "chartjs-node-canvas": "^4.1.6",
+    "cheerio": "^1.0.0",
     "commander": "^13.1.0",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
