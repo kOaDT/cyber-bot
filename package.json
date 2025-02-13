@@ -31,7 +31,6 @@
     "mysql2": "^3.12.0",
     "node-telegram-bot-api": "^0.66.0",
     "nodemailer": "^6.10.0",
-    "openai": "^4.83.0",
     "puppeteer": "^24.2.0",
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
@@ -39,15 +38,15 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.19.0",
-    "eslint": "9.19.0",
-    "eslint-config-next": "15.1.6",
+    "@eslint/js": "^9.20.0",
+    "eslint": "9.20.1",
+    "eslint-config-next": "15.1.7",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-security-node": "^1.1.4",
-    "globals": "^15.14.0",
+    "globals": "^15.15.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
-    "prettier": "^3.4.2"
+    "prettier": "^3.5.0"
   },
   "lint-staged": {
     "*.{ts,js}": "eslint --cache --fix",
