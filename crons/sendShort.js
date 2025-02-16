@@ -3,6 +3,8 @@ const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const crypto = require('crypto');
+const fs = require('fs').promises;
+const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
 // CONFIG
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
@@ -53,27 +55,60 @@ const TECHNICAL_TERMS = [
   'RCE',
 ];
 
+/**
+ * Saves the processed short to a JSON file.
+ *
+ * @param {string} id - The ID of the processed short.
+ */
+const saveProcessedShorts = async (id) => {
+  const filePath = './assets/processedShorts.json';
+  try {
+    let processedShorts = [];
+    try {
+      const fileContent = await fs.readFile(filePath, 'utf8');
+      processedShorts = JSON.parse(fileContent);
+    } catch (error) {
+      // If the file doesn't exist or is empty, continue with an empty array
+      logger.warn('Could not read existing data, starting fresh:', error.message);
+    }
+
+    processedShorts.push({
+      id,
+      processedAt: new Date().toISOString(),
+    });
+
+    await fs.writeFile(filePath, JSON.stringify(processedShorts, null, 2));
+  } catch (error) {
+    onError(error, 'saveProcessedShorts');
+  }
+};
+
 const run = async ({ dryMode }) => {
   try {
+    await cleanProcessedData(DAYS_AGO, './assets/processedShorts.json');
+
     const now = new Date();
     const publishedAfter = new Date(now.getTime() - DAYS_AGO * 24 * 60 * 60 * 1000).toISOString();
 
-    const randomPage = crypto.randomInt(6);
     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&q=${encodeURIComponent(QUERY)}${RELEVANCE_PARAMS}&publishedAfter=${publishedAfter}&key=${YOUTUBE_API_KEY}`;
 
     let response = await fetch(url);
     let data = await response.json();
 
-    for (let i = 0; i < randomPage && data.nextPageToken; i++) {
-      url = `${url}&pageToken=${data.nextPageToken}`;
-      response = await fetch(url);
-      data = await response.json();
-    }
-
     if (!data || !data.items) {
       logger.info('Error fetching YouTube data');
       return;
     }
+
+    let processedShorts = [];
+    try {
+      const fileContent = await fs.readFile('./assets/processedShorts.json', 'utf8');
+      processedShorts = JSON.parse(fileContent);
+    } catch (error) {
+      logger.warn('Could not read processed shorts file:', error.message);
+    }
+
+    const processedIds = new Set(processedShorts.map((short) => short.id));
 
     const filteredShorts = data.items.filter((video) => {
       const title = video.snippet.title.toLowerCase();
@@ -86,6 +121,8 @@ const run = async ({ dryMode }) => {
 
       const hasBlacklistedTerm = BLACKLISTED_TERMS.some((term) => title.includes(term) || description.includes(term));
       if (hasBlacklistedTerm) return false;
+
+      if (processedIds.has(video.id)) return false;
 
       return TECHNICAL_TERMS.some((term) => title.includes(term) || description.includes(term));
     });
@@ -103,6 +140,7 @@ const run = async ({ dryMode }) => {
 
     if (dryMode) {
       logger.info(`Would send Telegram message: ${message}`);
+      await saveProcessedShorts(videoId);
       return;
     }
 

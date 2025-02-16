@@ -35,7 +35,7 @@ const createRevisionCardPrompt = (title, content, lang) =>
   🔍 TECHNICAL DETAILS:
   • [Technical specifications if present]
   • [Ports, protocols, or syntax if relevant]
-  • [If commands/code are present, prefix with "CODE/COMMAND EXAMPLE"]
+  • [Commands/code snippets if relevant]
 
   ⚠️ SECURITY:
   • [Security alerts or considerations if applicable]

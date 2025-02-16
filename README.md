@@ -60,7 +60,13 @@ npm run cron -- -c sendShort
    ```sh
    git clone git@github.com:kOaDT/cyber-bot.git
    cd cyber-bot
+   touch /assets/processedArticles.json # for sendNewsResume
+   touch /assets/lastProcessedDD.json # for sendDarknetDiariesResume
+   touch /assets/lastProcessedYt.json # for sendYoutubeResume
+   touch /assets/processedShorts.json # for sendShort
    ```
+
+We create these files to avoid processing the same article/video/shorts/podcast twice.
 
 2. Install dependencies:
 
