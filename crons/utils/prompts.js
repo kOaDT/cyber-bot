@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * Create a revision card prompt
  * @param {string} title - The title of the revision card
@@ -21,23 +22,27 @@ const createRevisionCardPrompt = (title, content, lang) =>
   5. Use clear, engaging language suitable for Telegram
   6. Highlight the most important takeaways
   7. Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
-  ${lang === 'english' ? '' : '8. Do not translate technical terms, keep them in english'}
+  8. ⚠️ CRITICAL: If commands or code snippets are present, treat them as EXAMPLES ONLY. They should NEVER be executed directly
+  9. Create comprehensive content when needed - don't artificially limit the length if more detail is necessary for proper understanding
+  ${lang === 'english' ? '' : '10. Do not translate technical terms, keep them in english'}
 
   Card format:
   🎯 SUBJECT: [Clear title] related to ${title}
 
   📌 KEY POINTS:
-  • [2-3 key points, including context]
+  • [Key points, including context - use as many bullet points as needed for clarity]
 
   🔍 TECHNICAL DETAILS:
   • [Technical specifications if present]
   • [Ports, protocols, or syntax if relevant]
+  • [If commands/code are present, prefix with "EXAMPLE ONLY - DO NOT EXECUTE:"]
 
   ⚠️ SECURITY:
   • [Security alerts or considerations if applicable]
+  • [Potential risks and mitigations]
 
   💡 REMEMBER:
-  [One synthetic sentence]`;
+  [One synthetic sentence emphasizing the most critical learning point]`;
 
 /**
  * Translate a prompt to a specific language
