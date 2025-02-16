@@ -21,6 +21,7 @@ const createRevisionCardPrompt = (title, content, lang) =>
   5. Use clear, engaging language suitable for Telegram
   6. Highlight the most important takeaways
   7. Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
+  ${lang === 'english' ? '' : '8. Do not translate technical terms, keep them in english'}
 
   Card format:
   🎯 SUBJECT: [Clear title] related to ${title}
@@ -78,6 +79,7 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     - Highlight the most important takeaways
     - Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
     - Do not use markdown formatting
+    ${lang === 'english' ? '' : '- Do not translate technical terms, keep them in english'}
     - Follow this format:
 
     📌 [Summary content: Write a concise, engaging paragraph emphasizing key cybersecurity
@@ -122,6 +124,7 @@ const createPodcastResumePrompt = (title, transcription, lang) => {
     eager to learn about cybersecurity and hacking.
     6. **Do not use markdown formatting**
     7. **Do not include sponsors or ads**
+    ${lang === 'english' ? '' : '8. Do not translate technical terms, keep them in english'}
 
     Requirements:
     - The summary should be several paragraphs long, providing an in-depth overview of the podcast content.
@@ -170,7 +173,8 @@ const createYoutubeResumePrompt = (channel, videoId, transcription, lang) => {
     eager to learn about cybersecurity and hacking.
     6. **Do not use markdown formatting**
     7. **Do not include sponsors or ads**
-
+    ${lang === 'english' ? '' : '8. Do not translate technical terms, keep them in english'}
+    
     Requirements:
     - The summary should be several paragraphs long, providing an in-depth overview of the video content.
     - The summary should be in ${lang}
