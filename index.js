@@ -14,7 +14,7 @@ program
   .option('-p, --param <param>', 'Option to pass extra param')
   .option('-l --lang <lang>', 'Option to pass language')
   .option('-y --youtube <youtube>', 'Option to pass youtube channel')
-  .option('--dry-mode', 'Option to run the script without SQL query execution');
+  .option('--dry-mode', 'Option to run the script without sending messages to telegram');
 
 program.parse(process.argv);
 const options = program.opts();

@@ -1,148 +1,141 @@
 # Cyber Bot
 
-Cyber Bot is an open-source Node.js project designed to help users improve their cybersecurity skills through scheduled Telegram messages. The bot runs on a VPS (OVH) and uses Mistral AI to generate content about cybersecurity.
+Cyber Bot is an open-source Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
 
-This project is completely open-source, and you are welcome to clone, modify, and use it to create your own bot. If you'd like to see the bot in action, join my Telegram channel: [@bot_cyber_fr](https://t.me/bot_cyber_fr).
+Want to see it in action? Join our Telegram channel: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
 
 ## Features
 
-- Sends daily reminders to users for TryHackMe
+- **Daily TryHackMe Reminders**
 
 ```
 npm run cron -- -c sendTHM
 ```
 
-- Sends summary notes taken from a github repository, enhanced by Mistral AI
+- **AI-Enhanced Study Notes** - Sends curated notes from a GitHub repository, enhanced by Mistral AI
 
 ```
 npm run cron -- -c sendGithubNotes
 ```
 
-- Sends a summary of the latest cybersecurity news. Based on the RSS feed: [CyberSecurity RSS](https://raw.githubusercontent.com/kOaDT/cyber-bot/refs/heads/develop/assets/CyberSecurityRSS.opml)
+- **Cybersecurity News Digest** - Aggregates and summarizes news from our [curated RSS feed](https://raw.githubusercontent.com/kOaDT/cyber-bot/refs/heads/develop/assets/CyberSecurityRSS.opml)
 
 ```
 npm run cron -- -c sendNewsResume
 ```
 
-- Sends a summary of the latest episode of the podcast [Darknet Diaries](https://darknetdiaries.com/)
+- **Darknet Diaries Summaries** - Provides summaries of the latest [Darknet Diaries](https://darknetdiaries.com/) podcast episodes
 
 ```
 npm run cron -- -c sendDarknetDiariesResume
 ```
 
-- Sends a summary of the latest episode of a youtube channel
+- **YouTube Channel Updates** - Summarizes the latest videos from specified channels
 
 ```
 npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
 ```
 
-- Sends a random short video from youtube. You can customize the days ago to search for and the query. And to avoid bullshit videos, you can add blacklisted terms. Everything is configurable from the first lines of the `sendShort.js` script.
+- **Curated YouTube Shorts** - Shares relevant short-form videos based on customizable parameters (search period, queries, and blacklisted terms). Configure settings in the `sendShort.js` script.
 
 ```
 npm run cron -- -c sendShort
 ```
 
-- More features coming soon...
-
-## Getting Started
+## Setup Guide
 
 ### Prerequisites
 
-- Node.js installed
-- A Telegram bot (create one via [BotFather](https://t.me/BotFather))
-- A Mistral AI API key ([Get one here](https://mistral.ai/))
-- A VPS (optional, but recommended)
+- Node.js
+- Telegram Bot Token (obtain via [BotFather](https://t.me/BotFather))
+- Mistral AI API Key ([Register here](https://mistral.ai/))
+- VPS (recommended)
 
 ### Installation
 
-1. Clone the repository:
+1. Clone and initialize the repository:
 
-   ```sh
-   git clone git@github.com:kOaDT/cyber-bot.git
-   cd cyber-bot
-   touch /assets/processedArticles.json # for sendNewsResume
-   touch /assets/lastProcessedDD.json # for sendDarknetDiariesResume
-   touch /assets/lastProcessedYt.json # for sendYoutubeResume
-   touch /assets/processedShorts.json # for sendShort
-   ```
+```sh
+git clone git@github.com:kOaDT/cyber-bot.git
+cd cyber-bot
 
-We create these files to avoid processing the same article/video/shorts/podcast twice.
+# Create tracking files
+mkdir -p assets
+touch assets/processedArticles.json    # News tracking
+touch assets/lastProcessedDD.json      # Darknet Diaries tracking
+touch assets/lastProcessedYt.json      # YouTube tracking
+touch assets/processedShorts.json      # Shorts tracking
+```
 
 2. Install dependencies:
 
-   ```sh
-   npm install
-   ```
-
-3. Create a `.env` file and add the following environment variables:
-
-   ```env
-   ## GitHub Configuration
-   GITHUB_SECRET=
-   GITHUB_USERNAME=
-   GITHUB_REPO=
-   # Optional
-   EXCLUDED_GITHUB_FILES=
-
-   ## Telegram Configuration
-   TELEGRAM_BOT_TOKEN=
-   CHAT_ID=
-   # Telegram Topics - If you want to send the message to a specific topic to organize your messages
-   # If not set, the message will be sent to the default chat
-   TELEGRAM_TOPIC_THM=
-   TELEGRAM_TOPIC_NEWS=
-   TELEGRAM_TOPIC_YOUTUBE=
-   TELEGRAM_TOPIC_DARKNET=
-   TELEGRAM_TOPIC_GITHUB=
-
-   ## Mistral AI Configuration
-   MISTRAL_API_KEY=
-   # Optional
-   AUTHORIZED_LANGUAGES=
-
-   # Youtube API
-   YOUTUBE_API_KEY=
-   ```
-
-4. Configure Mistral AI settings (if needed) by editing the `DEFAULT_PARAMS` in:
-
-   ```sh
-   /crons/config/mistral.js
-   ```
-
-5. Customize the bot's prompts (if needed) in:
-   ```sh
-   /crons/utils/prompts
-   ```
-
-## Running the Bot
-
-To execute a cron job, use:
-
 ```sh
-npm run cron -- -c CRON_NAME
+npm install
 ```
 
-You can also specify a language (for example, French):
+3. Configure environment variables in `.env`:
 
-```sh
-npm run cron -- -c CRON_NAME -l french
+```env
+# GitHub Settings
+GITHUB_SECRET=
+GITHUB_USERNAME=
+GITHUB_REPO=
+# Optional
+EXCLUDED_GITHUB_FILES=
+
+# Telegram Settings
+TELEGRAM_BOT_TOKEN=
+CHAT_ID=
+# Optional Topic IDs for message organization
+TELEGRAM_TOPIC_THM=
+TELEGRAM_TOPIC_NEWS=
+TELEGRAM_TOPIC_YOUTUBE=
+TELEGRAM_TOPIC_DARKNET=
+TELEGRAM_TOPIC_GITHUB=
+
+# Mistral AI Settings
+MISTRAL_API_KEY=
+# Optional, comma-separated
+AUTHORIZED_LANGUAGES=
+
+# YouTube Settings
+YOUTUBE_API_KEY=
 ```
 
-The language is used to generate the content with Mistral AI. If you specify 'french', the bot will generate the content in French.
+4. Optional: Customize Mistral AI parameters in `/crons/config/mistral.js`
 
-To avoid prompt injection, the language is limited with the `AUTHORIZED_LANGUAGES` environment variable. You can add as many languages as you want, separated by commas. The default language for generated content is english.
+5. Optional: Modify bot prompts in `/crons/utils/prompts`
+
+## Usage
+
+Run any feature using:
+
+```sh
+npm run cron -- -c <CRON_NAME>
+```
+
+Specify content language (if authorized):
+
+```sh
+npm run cron -- -c <CRON_NAME> -l <language>
+```
+
+Note: Content language is restricted by the `AUTHORIZED_LANGUAGES` environment variable to avoid prompt injection. Default is English.
 
 ## Deployment
 
-If you need help deploying your bot on a VPS, check out this guide: [Deploy Your Own Cron Jobs Server on a VPS](https://www.caleb-tech.blog/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
+For VPS deployment guidance, visit: [Deploy Your Own Cron Jobs Server on a VPS](https://www.caleb-tech.blog/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/)
 
 ## Contributing
 
-Contributions are welcome! Feel free to submit issues, pull requests, or feature suggestions.
+Contributions are welcome! Feel free to:
+
+- Report issues
+- Submit pull requests
+- Suggest new features
 
 ## License
 
-This project is completely open-source. You are free to reuse, modify, or distribute the code as long as you provide appropriate credit by citing the original source (this repository).
+UNLICENSED - This project is released into the public domain.
 
 ![QR Code](./assets/qr.jpg)

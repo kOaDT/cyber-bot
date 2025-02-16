@@ -12,10 +12,12 @@ const mistralClient = new Mistral({
 
 const DEFAULT_PARAMS = {
   model: 'mistral-large-2411',
-  temperature: 0.2,
-  max_tokens: 1500,
-  top_p: 0.95,
+  temperature: 0.1,
+  max_tokens: 2000,
+  top_p: 0.85,
   random_seed: 42,
+  presence_penalty: 0.1,
+  frequency_penalty: 0.1,
 };
 
 module.exports = {

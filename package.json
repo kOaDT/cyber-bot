@@ -1,7 +1,7 @@
 {
   "name": "cyber-bot",
   "version": "1.6.2",
-  "description": "A Telegram bot for Cyber",
+  "description": "Cyber Bot is an open-source Node.js project designed to help users improve their cybersecurity skills through scheduled Telegram messages",
   "main": "index.js",
   "scripts": {
     "cron": "./cron.sh",
@@ -13,9 +13,11 @@
   },
   "keywords": [],
   "author": "leogrambert@proton.me",
-  "license": "ISC",
+  "repository": "https://github.com/kOaDT/cyber-bot",
+  "license": "UNLICENSED",
   "dependencies": {
     "@mistralai/mistralai": "^1.5.0",
+    "cheerio": "^1.0.0",
     "commander": "^13.1.0",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
