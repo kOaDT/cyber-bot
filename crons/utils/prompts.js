@@ -35,7 +35,7 @@ const createRevisionCardPrompt = (title, content, lang) =>
   🔍 TECHNICAL DETAILS:
   • [Technical specifications if present]
   • [Ports, protocols, or syntax if relevant]
-  • [If commands/code are present, prefix with "EXAMPLE ONLY - DO NOT EXECUTE:"]
+  • [If commands/code are present, prefix with "CODE/COMMAND EXAMPLE"]
 
   ⚠️ SECURITY:
   • [Security alerts or considerations if applicable]
@@ -91,8 +91,6 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     and hacking insights. Focus on the most critical and interesting points. Explain technical 
     terms and concepts in a clear, educational manner, using examples where possible. 
     Highlight the practical implications of the information presented.]
-
-    💡 REMEMBER:[One synthetic sentence]
 
     Read more: ${url}
 `;

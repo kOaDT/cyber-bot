@@ -36,6 +36,12 @@ npm run cron -- -c sendDarknetDiariesResume
 npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
 ```
 
+- Sends a random short video from youtube. You can customize the days ago to search for and the query. And to avoid bullshit videos, you can add blacklisted terms. Everything is configurable from the first lines of the `sendShort.js` script.
+
+```
+npm run cron -- -c sendShort
+```
+
 - More features coming soon...
 
 ## Getting Started
@@ -65,22 +71,16 @@ npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
 3. Create a `.env` file and add the following environment variables:
 
    ```env
-   # GitHub Configuration
+   ## GitHub Configuration
    GITHUB_SECRET=
    GITHUB_USERNAME=
    GITHUB_REPO=
-
-   # Telegram Configuration
-   TELEGRAM_BOT_TOKEN=
-   CHAT_ID=
-
-   # Mistral AI Configuration
-   MISTRAL_API_KEY=
-
    # Optional
    EXCLUDED_GITHUB_FILES=
-   AUTHORIZED_LANGUAGES=
 
+   ## Telegram Configuration
+   TELEGRAM_BOT_TOKEN=
+   CHAT_ID=
    # Telegram Topics - If you want to send the message to a specific topic to organize your messages
    # If not set, the message will be sent to the default chat
    TELEGRAM_TOPIC_THM=
@@ -88,6 +88,14 @@ npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
    TELEGRAM_TOPIC_YOUTUBE=
    TELEGRAM_TOPIC_DARKNET=
    TELEGRAM_TOPIC_GITHUB=
+
+   ## Mistral AI Configuration
+   MISTRAL_API_KEY=
+   # Optional
+   AUTHORIZED_LANGUAGES=
+
+   # Youtube API
+   YOUTUBE_API_KEY=
    ```
 
 4. Configure Mistral AI settings (if needed) by editing the `DEFAULT_PARAMS` in:
