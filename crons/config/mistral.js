@@ -11,13 +11,13 @@ const mistralClient = new Mistral({
 });
 
 const DEFAULT_PARAMS = {
-  model: 'mistral-large-2411',
-  temperature: 0.1,
-  max_tokens: 2000,
-  top_p: 0.85,
-  random_seed: 42,
-  presence_penalty: 0.1,
-  frequency_penalty: 0.1,
+  model: process.env.MISTRAL_MODEL || 'mistral-large-2411',
+  temperature: process.env.MISTRAL_TEMPERATURE || 0.1,
+  max_tokens: process.env.MISTRAL_MAX_TOKENS || 2000,
+  top_p: process.env.MISTRAL_TOP_P || 0.85,
+  random_seed: process.env.MISTRAL_RANDOM_SEED || 42,
+  presence_penalty: process.env.MISTRAL_PRESENCE_PENALTY || 0.1,
+  frequency_penalty: process.env.MISTRAL_FREQUENCY_PENALTY || 0.1,
 };
 
 module.exports = {
