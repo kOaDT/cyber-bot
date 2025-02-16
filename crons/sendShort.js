@@ -140,11 +140,11 @@ const run = async ({ dryMode }) => {
 
     if (dryMode) {
       logger.info(`Would send Telegram message: ${message}`);
-      await saveProcessedShorts(videoId);
       return;
     }
 
     await sendMessage(message, process.env.TELEGRAM_TOPIC_YOUTUBE);
+    await saveProcessedShorts(videoId);
     logger.info('Message sent successfully');
   } catch (err) {
     onError(err, 'run');
