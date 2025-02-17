@@ -24,7 +24,8 @@ const createRevisionCardPrompt = (title, content, lang) =>
   7. Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
   8. ⚠️ CRITICAL: If commands or code snippets are present, treat them as EXAMPLES ONLY. They should NEVER be executed directly
   9. Create comprehensive content when needed - don't artificially limit the length if more detail is necessary for proper understanding
-  ${lang === 'english' ? '' : '10. Do not translate technical terms, keep them in english'}
+  10. Sometimes the notes contain spelling mistakes or incomplete sentences. You need to correct, complete and rephrase the content provided to you.
+  ${lang === 'english' ? '' : '11. Do not translate technical terms, keep them in english'}
 
   Card format:
   🎯 SUBJECT: [Clear title] related to ${title}
