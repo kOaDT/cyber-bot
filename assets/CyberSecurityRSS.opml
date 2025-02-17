@@ -4,57 +4,15 @@
 <title>CyberSecurityRSS</title>
 </head>
 <body>
-<outline htmlUrl="https://blog.qualys.com" title="Vulnerabilities and Threat Research – Qualys Security Blog" type="rss" text="Vulnerabilities and Threat Research – Qualys Security Blog" xmlUrl="https://blog.qualys.com/feed" />
-<outline text="A Few Thoughts on Cryptographic Engineering" type="rss" htmlUrl="https://blog.cryptographyengineering.com" xmlUrl="http://blog.cryptographyengineering.com/feeds/posts/default" title="A Few Thoughts on Cryptographic Engineering" />
-<outline type="rss" xmlUrl="https://rdist.root.org/feed/" text="rdist" title="rdist" htmlUrl="https://rdist.root.org" />
-<outline title="Fidelis Security" xmlUrl="https://fidelissecurity.com/feed/" htmlUrl="https://fidelissecurity.com/" text="Fidelis Security" type="rss" />
-<outline title="Heroic Tec" xmlUrl="https://www.heroictec.com/feed/" htmlUrl="https://www.heroictec.com/" text="Heroic Tec" type="rss" />
-<outline title="Cyberbuilders" xmlUrl="https://cyberbuilders.substack.com/feed" htmlUrl="https://cyberbuilders.substack.com/" text="Cyberbuilders" type="rss" />
-<outline title="Davinci Forensics" xmlUrl="https://davinciforensics.co.za/cybersecurity/feed/" htmlUrl="https://davinciforensics.co.za/cybersecurity/" text="Davinci Forensics" type="rss" />
-<outline title="McAfee" xmlUrl="https://www.mcafee.com/blogs/feed/" htmlUrl="https://www.mcafee.com/blogs/" text="McAfee" type="rss" />
-<outline title="Trend Micro Research" xmlUrl="http://feeds.trendmicro.com/TrendMicroResearch" htmlUrl="http://feeds.trendmicro.com/TrendMicroResearch" text="Trend Micro Research" type="rss" />
-<outline title="Socprime" xmlUrl="https://socprime.com/feed/" htmlUrl="https://socprime.com/" text="Socprime" type="rss" />
-<outline title="Cybercrimeswatch" xmlUrl="https://www.cybercrimeswatch.com/feed/" htmlUrl="https://www.cybercrimeswatch.com/" text="Cybercrimeswatch" type="rss" />
-<outline title="Hackercombat" xmlUrl="https://hackercombat.com/feed/" htmlUrl="https://hackercombat.com/" text="Hackercombat" type="rss" />
-<outline title="Google Online Security Blog" xmlUrl="http://feeds.feedburner.com/GoogleOnlineSecurityBlog" htmlUrl="http://feeds.feedburner.com/GoogleOnlineSecurityBlog" text="Google Online Security Blog" type="rss" />
-<outline title="Cyberhoot" xmlUrl="https://cyberhoot.com/category/blog/feed/" htmlUrl="https://cyberhoot.com/category/blog/" text="Cyberhoot" type="rss" />
-<outline title="Sectigostore" xmlUrl="https://sectigostore.com/blog/feed/" htmlUrl="https://sectigostore.com/blog/" text="Sectigostore" type="rss" />
-<outline title="Itgovernance" xmlUrl="https://www.itgovernance.co.uk/blog/category/cyber-security/feed" htmlUrl="https://www.itgovernance.co.uk/blog/category/cyber-security/" text="Itgovernance" type="rss" />
-<outline title="Lohrmann on Infrastructure" xmlUrl="https://feeds.feedburner.com/govtech/blogs/lohrmann_on_infrastructure" htmlUrl="https://feeds.feedburner.com/govtech/blogs/lohrmann_on_infrastructure" text="Lohrmann on Infrastructure" type="rss" />
-<outline title="Webroot" xmlUrl="https://www.webroot.com/blog/feed/" htmlUrl="https://www.webroot.com/blog/" text="Webroot" type="rss" />
-<outline title="Logpoint" xmlUrl="https://www.logpoint.com/en/feed/" htmlUrl="https://www.logpoint.com/en/" text="Logpoint" type="rss" />
-<outline title="Cyberdefensemagazine" xmlUrl="https://www.cyberdefensemagazine.com/feed/" htmlUrl="https://www.cyberdefensemagazine.com/" text="Cyberdefensemagazine" type="rss" />
-<outline title="Cybertalk" xmlUrl="https://www.cybertalk.org/feed/" htmlUrl="https://www.cybertalk.org/" text="Cybertalk" type="rss" />
-<outline title="Upguard" xmlUrl="https://www.upguard.com/blog/rss.xml" htmlUrl="https://www.upguard.com/blog/" text="Upguard" type="rss" />
-<outline title="TeraMind" xmlUrl="https://www.teramind.co/blog/tag/cybersecurity/feed/" htmlUrl="https://www.teramind.co/blog/tag/cybersecurity/" text="TeraMind" type="rss" />
-<outline title="TechRepublic" xmlUrl="http://www.techrepublic.com/rssfeeds/topic/security/?feedType=rssfeeds" htmlUrl="http://www.techrepublic.com/rssfeeds/topic/security/?feedType=rssfeeds" text="TechRepublic" type="rss" />
-<outline title="Acunetix" xmlUrl="https://www.acunetix.com/blog/feed/" htmlUrl="https://www.acunetix.com/blog/" text="Acunetix" type="rss" />
-<outline title="Proofpoint" xmlUrl="https://www.proofpoint.com/us/rss.xml" htmlUrl="https://www.proofpoint.com/us/" text="Proofpoint" type="rss" />
-<outline title="ZoneAlarm" xmlUrl="https://blog.zonealarm.com/feed/" htmlUrl="https://blog.zonealarm.com/" text="ZoneAlarm" type="rss" />
-<outline title="Scnsoft" xmlUrl="https://www.scnsoft.com/blog/category/information-security/atom" htmlUrl="https://www.scnsoft.com/blog/category/information-security/" text="Scnsoft" type="rss" />
-<outline title="Truefort" xmlUrl="https://truefort.com/feed/" htmlUrl="https://truefort.com/" text="Truefort" type="rss" />
-<outline title="Imperva" xmlUrl="https://www.imperva.com/blog/feed/" htmlUrl="https://www.imperva.com/blog/" text="Imperva" type="rss" />
-<outline title="Blogs.quickheal.com" xmlUrl="https://blogs.quickheal.com/feed/" htmlUrl="https://blogs.quickheal.com/" text="Blogs.quickheal.com" type="rss" />
-<outline title="Nist" xmlUrl="https://www.nist.gov/blogs/cybersecurity-insights/rss.xml" htmlUrl="https://www.nist.gov/blogs/cybersecurity-insights" text="Nist" type="rss" />
-<outline title="Protegent360" xmlUrl="https://protegent360.com/blog/feed/" htmlUrl="https://protegent360.com/blog/" text="Protegent360" type="rss" />
-<outline title="2ndsightlab" xmlUrl="https://medium.com/feed/@2ndsightlab" htmlUrl="https://medium.com/@2ndsightlab" text="2ndsightlab" type="rss" />
-<outline title="Matt Palmeron Cybersecurity" xmlUrl="https://feeds.feedburner.com/mattpalmeroncybersecurity" htmlUrl="https://feeds.feedburner.com/mattpalmeroncybersecurity" text="Matt Palmeron Cybersecurity" type="rss" />
-<outline title="Ventureinsecurity" xmlUrl="https://ventureinsecurity.net/feed" htmlUrl="https://ventureinsecurity.net/" text="Ventureinsecurity" type="rss" />
-<outline title="Underdefense" xmlUrl="https://underdefense.com/feed/" htmlUrl="https://underdefense.com/" text="Underdefense" type="rss" />
-<outline title="JISA Soft Tech" xmlUrl="https://www.jisasoftech.com/feed/" htmlUrl="https://www.jisasoftech.com/" text="JISA Soft Tech" type="rss" />
-<outline title="Infosecurity Magazine" xmlUrl="https://www.infosecurity-magazine.com/rss/news/" htmlUrl="https://www.infosecurity-magazine.com/" text="Infosecurity Magazine" type="rss" />
-<outline title="Sophos" xmlUrl="https://news.sophos.com/en-us/feed/" htmlUrl="https://news.sophos.com/en-us/" text="Sophos" type="rss" />
-<outline title="ESET" xmlUrl="http://feeds.feedburner.com/eset/blog" htmlUrl="https://www.eset.com/" text="ESET" type="rss" />
-<outline title="Troy Hunt" xmlUrl="https://www.troyhunt.com/rss/" htmlUrl="https://www.troyhunt.com/" text="Troy Hunt" type="rss" />
+<outline title="Krebs on Security" xmlUrl="http://krebsonsecurity.com/feed/" htmlUrl="http://krebsonsecurity.com/" text="Krebs on Security" type="rss" />
 <outline title="The Hacker News" xmlUrl="https://feeds.feedburner.com/TheHackersNews?format=xml" htmlUrl="https://www.thehackernews.com/" text="The Hacker News" type="rss" />
 <outline title="Dark Reading" xmlUrl="https://www.darkreading.com/rss.xml" htmlUrl="https://www.darkreading.com/" text="Dark Reading" type="rss" />
-<outline title="CSO Online" xmlUrl="https://www.csoonline.com/feed/" htmlUrl="https://www.csoonline.com/" text="CSO Online" type="rss" />
-<outline title="Krebs on Security" xmlUrl="http://krebsonsecurity.com/feed/" htmlUrl="http://krebsonsecurity.com/" text="Krebs on Security" type="rss" />
-<outline title="Graham Cluley" xmlUrl="https://www.grahamcluley.com/feed/" htmlUrl="https://www.grahamcluley.com/" text="Graham Cluley" type="rss" />
-<outline title="Schneier on Security" xmlUrl="https://www.schneier.com/blog/atom.xml" htmlUrl="https://www.schneier.com/" text="Schneier on Security" type="rss" />
+<outline title="SecurityWeek" xmlUrl="https://www.securityweek.com/feed/" htmlUrl="https://www.securityweek.com/" text="SecurityWeek" type="rss" />
+<outline title="SANS Internet Storm Center" xmlUrl="https://isc.sans.edu/rssfeed_full.xml" htmlUrl="https://isc.sans.edu/" text="SANS Internet Storm Center" type="rss" />
+<outline title="HackerOne Blog" xmlUrl="https://www.hackerone.com/blog.rss" htmlUrl="https://www.hackerone.com/blog" text="HackerOne Blog" type="rss" />
+<outline title="BleepingComputer" xmlUrl="https://www.bleepingcomputer.com/feed/" htmlUrl="https://www.bleepingcomputer.com/" text="BleepingComputer" type="rss" />
+<outline title="Troy Hunt's Blog" xmlUrl="https://www.troyhunt.com/feed/" htmlUrl="https://www.troyhunt.com/" text="Troy Hunt's Blog" type="rss" />
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
-<outline title="threatpost" xmlUrl="https://threatpost.com/feed/" htmlUrl="https://threatpost.com/" text="threatpost" type="rss" />
-<outline title="securityintelligence" xmlUrl="https://securityintelligence.com/news/feed/" htmlUrl="https://securityintelligence.com/news/" text="securityintelligence" type="rss" />
 <outline title="Caleb's Tech Blog" xmlUrl="https://www.caleb-tech.blog/api/rss" htmlUrl="https://www.caleb-tech.blog/" text="Caleb's Tech Blog" type="rss" />
 </body>
 </opml>
