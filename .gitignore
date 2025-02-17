@@ -12,3 +12,5 @@ log-seed.txt
 logs/
 assets/lastProcessedDD.json
 assets/lastProcessedYT.json
+assets/processedArticles.json
+assets/processedShorts.json
