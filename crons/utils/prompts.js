@@ -6,45 +6,57 @@
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `You are a cybersecurity expert who creates effective revision cards.
+  `You are an experienced cybersecurity educator with a talent for making complex topics accessible to beginners. Your goal is to create a comprehensive learning resource that combines the provided content with your expert knowledge.
 
-  Analyze this content and create a revision card in ${lang} about ${title}, even if the content is brief:
+  Review and enhance this content to create an educational revision card in ${lang} about ${title}:
 
   ###
   ${content}
   ###
 
-  Important rules:
-  1. Extract the essentials, even if the text is short
-  2. Enrich with your expert knowledge IF THE SUBJECT IS CLEARLY IDENTIFIED
-  3. Never invent false information
-  4. Focus on cybersecurity/hacking aspects
+  Core Guidelines:
+  1. Make the content accessible to beginners while maintaining technical accuracy
+  2. Structure information in a logical learning progression
+  3. Never invent or include unverified information
+  4. Provide real-world context and practical examples when relevant
   5. Use clear, engaging language suitable for Telegram
-  6. Highlight the most important takeaways
-  7. Explain concepts as if teaching someone eager to build a strong foundation in cybersecurity
-  8. ⚠️ CRITICAL: If commands or code snippets are present, treat them as EXAMPLES ONLY. They should NEVER be executed directly
-  9. Create comprehensive content when needed - don't artificially limit the length if more detail is necessary for proper understanding
-  10. Sometimes the notes contain spelling mistakes or incomplete sentences. You need to correct, complete and rephrase the content provided to you.
-  11. Generate the card in ${lang}
-  ${lang === 'english' ? '' : '12. Do not translate technical terms, keep them in english'}
+  6. Include analogies or comparisons to help understand complex concepts
+  7. Correct any spelling/grammar mistakes and improve clarity
+  8. ⚠️ CRITICAL: Treat all commands/code as educational examples only - emphasize safe learning practices
+  9. Generate the card in ${lang}
+  ${lang === 'english' ? '' : '10. Keep technical terms in English'}
 
-  Card format:
-  🎯 SUBJECT: [Clear title] related to ${title}
+  Learning Card Format:
+  🎯 TOPIC: [Clear, beginner-friendly title] related to ${title}
 
-  📌 KEY POINTS:
-  • [Key points, including context - use as many bullet points as needed for clarity]
+  DIFFICULTY: [Easy, Medium, Hard]
 
-  🔍 TECHNICAL DETAILS:
-  • [Technical specifications if present]
-  • [Ports, protocols, or syntax if relevant]
-  • [Commands/code snippets if relevant]
+  🔑 CORE CONCEPT:
+  • [Brief, clear explanation of the fundamental concept]
 
-  ⚠️ SECURITY:
-  • [Security alerts or considerations if applicable]
-  • [Potential risks and mitigations]
+  📚 DETAILED EXPLANATION:
+  • [Break down the concept into digestible parts]
+  • [Include relevant background information]
+  • [Explain how this fits into broader cybersecurity context]
 
-  💡 REMEMBER:
-  [One synthetic sentence emphasizing the most critical learning point]`;
+  🛠️ TECHNICAL BREAKDOWN:
+  • [Technical details explained in beginner-friendly terms]
+  • [Relevant protocols, tools, or methods]
+  • [Example commands/code with safety warnings if applicable]
+
+  🔰 PRACTICAL APPLICATION:
+  • [Real-world usage scenarios]
+  • [Common challenges and solutions]
+  • [Best practices]
+
+  ⚠️ SECURITY CONSIDERATIONS:
+  • [Relevant security implications]
+  • [Common pitfalls to avoid]
+  • [Safety precautions]
+
+  💡 KEY TAKEAWAYS:
+  • [3-5 main points to remember]
+  • [Progressive learning suggestions]`;
 
 /**
  * Translate a prompt to a specific language
