@@ -21,6 +21,7 @@
     "commander": "^13.1.0",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
+    "mysql2": "^3.12.0",
     "node-telegram-bot-api": "^0.66.0",
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
