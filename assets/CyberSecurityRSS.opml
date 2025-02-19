@@ -14,5 +14,15 @@
 <outline title="Troy Hunt's Blog" xmlUrl="https://www.troyhunt.com/feed/" htmlUrl="https://www.troyhunt.com/" text="Troy Hunt's Blog" type="rss" />
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
 <outline title="Caleb's Tech Blog" xmlUrl="https://www.caleb-tech.blog/api/rss" htmlUrl="https://www.caleb-tech.blog/" text="Caleb's Tech Blog" type="rss" />
+<outline title="Bing Cybersecurity News" xmlUrl="https://www.bing.com/news/search?q=cybers%C3%A9curit%C3%A9&qft=sortbydate%3d%221%22%2Binterval%3d%227%22&form=YFNR&format=rss&cc=fr" htmlUrl="https://www.bing.com/news" text="The Register" type="rss" />
+<outline title="Bing Cryptography News" xmlUrl="https://www.bing.com/news/search?q=cryptographie&qft=sortbydate%3d%221%22%2Binterval%3d%227%22&form=YFNR&format=rss&cc=fr" htmlUrl="https://www.bing.com/news/" text="Bing Cryptography News" type="rss" />
+<outline title="Cyberveille" xmlUrl="https://cyberveille.curated.co/issues.rss" htmlUrl="https://cyberveille.curated.co/" text="Cyberveille" type="rss" />
+<outline title="Easter" xmlUrl="https://bridge.easter.fr/?action=display&bridge=DuckDuckGoBridge&u=cybers%C3%A9curit%C3%A9&sort=+sort%3Adate&format=Mrss" htmlUrl="https://bridge.easter.fr/" text="Easter" type="rss" />
+<outline title="Journal du Hacker" xmlUrl="https://www.journalduhacker.net/t/s%C3%A9curit%C3%A9.rss" htmlUrl="https://www.journalduhacker.net/t/s%C3%A9curit%C3%A9.rss" text="Journal du Hacker" type="rss" />
+<outline title="France 24" xmlUrl="https://www.france24.com/fr/tag/cybers%C3%A9curit%C3%A9/rss" htmlUrl="https://www.france24.com/fr/tag/cybers%C3%A9curit%C3%A9/" text="France 24" type="rss" />
+<outline title="Le Monde" xmlUrl="https://www.lemonde.fr/cybercriminalite/rss_full.xml" htmlUrl="https://www.lemonde.fr/cybercriminalite/" text="Le Monde" type="rss" />
+<outline title="Undernews" xmlUrl="https://www.undernews.fr/theme/hacking-hacktivisme/feed" htmlUrl="https://www.undernews.fr/theme/hacking-hacktivisme/" text="Undernews" type="rss" />
+<outline title="Securite FM" xmlUrl="https://securite.fm/episodes.m4a.rss" htmlUrl="https://securite.fm/" text="Securite FM" type="rss" />
+<outline title="NoLimitSecu" xmlUrl="https://www.nolimitsecu.fr/feed/podcast/" htmlUrl="https://nolimitsecu.fr/" text="NoLimitSecu" type="rss" />
 </body>
 </opml>
