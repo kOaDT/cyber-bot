@@ -1,8 +1,13 @@
 # Cyber Bot
 
+![Logo](./assets/logo.jpg)
+
 Cyber Bot is an open-source Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
 
-Want to see it in action? Join our Telegram channel: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
+Want to see it in action?
+
+- Join our Telegram channel: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
+- Join our Bluesky community: [@calebpr.bsky.social](https://bsky.app/profile/calebpr.bsky.social)
 
 ## Features
 
@@ -137,5 +142,3 @@ Contributions are welcome! Feel free to:
 ## License
 
 UNLICENSED - This project is released into the public domain.
-
-![QR Code](./assets/qr.jpg)
