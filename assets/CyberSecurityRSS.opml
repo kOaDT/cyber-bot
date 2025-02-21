@@ -5,7 +5,7 @@
 </head>
 <body>
 <outline title="Krebs on Security" xmlUrl="http://krebsonsecurity.com/feed/" htmlUrl="http://krebsonsecurity.com/" text="Krebs on Security" type="rss" />
-<outline title="The Hacker News" xmlUrl="https://feeds.feedburner.com/TheHackersNews?format=xml" htmlUrl="https://www.thehackernews.com/" text="The Hacker News" type="rss" />
+<outline title="The Hacker News" xmlUrl="https://feeds.feedburner.com/TheHackersNews" htmlUrl="https://www.thehackernews.com/" text="The Hacker News" type="rss" />
 <outline title="Dark Reading" xmlUrl="https://www.darkreading.com/rss.xml" htmlUrl="https://www.darkreading.com/" text="Dark Reading" type="rss" />
 <outline title="SecurityWeek" xmlUrl="https://www.securityweek.com/feed/" htmlUrl="https://www.securityweek.com/" text="SecurityWeek" type="rss" />
 <outline title="SANS Internet Storm Center" xmlUrl="https://isc.sans.edu/rssfeed_full.xml" htmlUrl="https://isc.sans.edu/" text="SANS Internet Storm Center" type="rss" />
@@ -23,5 +23,18 @@
 <outline title="Securite FM" xmlUrl="https://securite.fm/episodes.m4a.rss" htmlUrl="https://securite.fm/" text="Securite FM" type="rss" />
 <outline title="NoLimitSecu" xmlUrl="https://www.nolimitsecu.fr/feed/podcast/" htmlUrl="https://nolimitsecu.fr/" text="NoLimitSecu" type="rss" />
 <outline title="Root Me" xmlUrl="https://www.root-me.org/?page=backend" htmlUrl="https://www.root-me.org/" text="Root Me" type="rss" />
+<outline title="welivesecurity" xmlUrl="https://www.welivesecurity.com/en/rss/feed/" htmlUrl="https://www.welivesecurity.com/" text="welivesecurity" type="rss" />
+<outline title="schneier" xmlUrl="https://www.schneier.com/feed/atom/" htmlUrl="https://www.schneier.com/blog/" text="schneier" type="rss" />
+<outline title="securityaffairs" xmlUrl="https://securityaffairs.com/feed" htmlUrl="https://securityaffairs.com/" text="securityaffairs" type="rss" />
+<outline title="cyberhoot" xmlUrl="https://cyberhoot.com/category/blog/feed/" htmlUrl="https://cyberhoot.com/" text="cyberhoot" type="rss" />
+<outline title="security magazine" xmlUrl="https://www.securitymagazine.com/rss/15" htmlUrl="https://www.securitymagazine.com/" text="security magazine" type="rss" />
+<outline title="databreaches" xmlUrl="https://databreaches.net/feed/" htmlUrl="https://www.databreaches.net/" text="databreaches" type="rss" />
+<outline title="cshub" xmlUrl="https://www.cshub.com/rss/articles" htmlUrl="https://cshub.com/" text="cshub" type="rss" />
+<outline title="heise" xmlUrl="https://www.heise.de/security/feed.xml" htmlUrl="https://www.heise.de/security/" text="heise" type="rss" />
+<outline title="cybersecurity360" xmlUrl="https://www.cybersecurity360.it/feed/" htmlUrl="https://cybersecurity360.com/" text="cybersecurity360" type="rss" />
+<outline title="freebuf" xmlUrl="https://www.freebuf.com/feed" htmlUrl="https://www.freebuf.com/" text="freebuf" type="rss" />
+<outline title="xakep" xmlUrl="https://xakep.ru/feed/" htmlUrl="https://xakep.ru/" text="xakep" type="rss" />
+<outline title="unaaldia hispasec" xmlUrl="https://unaaldia.hispasec.com/feed" htmlUrl="https://unaaldia.hispasec.com/hispasec/" text="unaaldia hispasec" type="rss" />
+<outline title="cyber arabs" xmlUrl="https://cyber-arabs.com/feed/" htmlUrl="https://cyber-arabs.com/" text="cyber arabs" type="rss" />
 </body>
 </opml>
