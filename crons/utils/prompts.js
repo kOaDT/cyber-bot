@@ -106,7 +106,7 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     1. Use clear, direct language avoiding technical jargon unless essential
     2. ${lang === 'english' ? '' : 'Keep technical terms, CVE numbers, tool names, and security standards in English'}
     3. Write in an analytical tone, not alarmist or marketing-style
-    4. Keep the total length between 150-250 words, it shouldn't be too long
+    4. Keep the total length between 50-150 words, it's very important that it shouldn't be too long
     5. Do not use bullet points or markdown formatting
     6. Focus on facts and verified information only
     7. Include specific numbers, dates, and technical details when available
