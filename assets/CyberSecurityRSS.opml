@@ -15,7 +15,6 @@
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
 <outline title="Caleb's Tech Blog" xmlUrl="https://www.caleb-tech.blog/api/rss" htmlUrl="https://www.caleb-tech.blog/" text="Caleb's Tech Blog" type="rss" />
 <outline title="Cyberveille" xmlUrl="https://cyberveille.curated.co/issues.rss" htmlUrl="https://cyberveille.curated.co/" text="Cyberveille" type="rss" />
-<outline title="Easter" xmlUrl="https://bridge.easter.fr/?action=display&amp;bridge=DuckDuckGoBridge&amp;u=cybers%C3%A9curit%C3%A9&amp;sort%3D+sort%3Adate&amp;format=Mrss" htmlUrl="https://bridge.easter.fr/" text="Easter" type="rss" />
 <outline title="Journal du Hacker" xmlUrl="https://www.journalduhacker.net/t/s%C3%A9curit%C3%A9.rss" htmlUrl="https://www.journalduhacker.net/t/s%C3%A9curit%C3%A9.rss" text="Journal du Hacker" type="rss" />
 <outline title="France 24" xmlUrl="https://www.france24.com/fr/tag/cybers%C3%A9curit%C3%A9/rss" htmlUrl="https://www.france24.com/fr/tag/cybers%C3%A9curit%C3%A9/" text="France 24" type="rss" />
 <outline title="Le Monde" xmlUrl="https://www.lemonde.fr/cybercriminalite/rss_full.xml" htmlUrl="https://www.lemonde.fr/cybercriminalite/" text="Le Monde" type="rss" />
