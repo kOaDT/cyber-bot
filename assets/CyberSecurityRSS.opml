@@ -36,5 +36,7 @@
 <outline title="xakep" xmlUrl="https://xakep.ru/feed/" htmlUrl="https://xakep.ru/" text="xakep" type="rss" />
 <outline title="unaaldia hispasec" xmlUrl="https://unaaldia.hispasec.com/feed" htmlUrl="https://unaaldia.hispasec.com/hispasec/" text="unaaldia hispasec" type="rss" />
 <outline title="cyber arabs" xmlUrl="https://cyber-arabs.com/feed/" htmlUrl="https://cyber-arabs.com/" text="cyber arabs" type="rss" />
+<outline title="NYT" xmlUrl="https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" htmlUrl="https://www.nytimes.com/section/technology" text="NYT" type="rss" />
+<outline title="DarknetDiaries" xmlUrl="https://podcast.darknetdiaries.com/" htmlUrl="https://podcast.darknetdiaries.com/" text="DarknetDiaries" type="rss" />
 </body>
 </opml>
