@@ -92,27 +92,24 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     Instructions:
     You are an experienced cybersecurity analyst tasked with creating a clear, factual and impactful summary of this security news in ${lang}.
 
-    Structure requirements:
+    Requirements:
     1. Start with "📌"
-    2. Structure the summary to naturally cover:
-       - The essential facts (what, who, when, where)
-       - The technical aspects and their significance
-       - The broader security implications
-       - Any actionable recommendations or solutions if it's relevant
-       - Important takeaways for security professionals if it's relevant
+    2. Focus strictly on summarizing the key facts from the article:
+       - The essential information (what, who, when, where)
+       - The technical details mentioned
+       - The actual impacts described
     3. End with the source URL: ${url}
 
     Style requirements:
-    1. Use clear, direct language avoiding technical jargon unless essential
+    1. Use clear, direct language
     2. ${lang === 'english' ? '' : 'Keep technical terms, CVE numbers, tool names, and security standards in English'}
     3. Write in an analytical tone, not alarmist or marketing-style
     4. Keep the total length between 50-150 words, it's very important that it shouldn't be too long
     5. Do not use bullet points or markdown formatting
-    6. Focus on facts and verified information only
-    7. Include specific numbers, dates, and technical details when available
-    8. Write as a security professional would communicate to peers
+    6. Include only information explicitly stated in the article
+    7. Include specific numbers, dates, and technical details when mentioned
 
-    The summary should provide actionable intelligence that helps security professionals understand both the technical and business implications of the news.`;
+    Important: Do not add analysis, recommendations, or information not present in the original article.`;
 };
 
 /**
