@@ -162,7 +162,11 @@ const run = async ({ dryMode, lang }) => {
     logger.info(`Preparing news resume for ${selectedArticles.length} articles...`);
 
     for (const article of selectedArticles) {
-      const prompt = createNewsResumePrompt(article.title, article.categories, article.link, article.content, lang);
+      const categories = Array.isArray(article.categories)
+        ? article.categories.map((cat) => (typeof cat === 'string' ? cat : String(cat)))
+        : [];
+
+      const prompt = createNewsResumePrompt(article.title, categories, article.link, article.content, lang);
       const newsResume = await generate(prompt);
 
       if (dryMode) {

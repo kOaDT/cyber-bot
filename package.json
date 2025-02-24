@@ -26,7 +26,7 @@
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
     "winston": "^3.17.0",
-    "youtube-dl-exec": "^3.0.15",
+    "youtube-dl-exec": "^3.0.16",
     "youtubei.js": "^13.1.0"
   },
   "devDependencies": {
