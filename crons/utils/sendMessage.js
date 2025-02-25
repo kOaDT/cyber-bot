@@ -13,9 +13,10 @@ const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
  * Sends a message to Telegram and logs it to the database
  * @param {string} message - The message to send
  * @param {number} topicId - The topic ID to send the message to
+ * @param {string[]} categories - The categories of the message
  * @returns {Promise<void>} - A promise that resolves when the message is sent and logged
  */
-const sendMessage = async (message, topicId = null) => {
+const sendMessage = async (message, topicId = null, categories = null) => {
   try {
     const options = topicId ? { message_thread_id: topicId } : {};
 
@@ -42,9 +43,9 @@ const sendMessage = async (message, topicId = null) => {
   }
 
   try {
-    await saveMessageInDb(message, topicId);
+    await saveMessageInDb(message, topicId, categories);
   } catch (dbError) {
-    logger.warn('Failed to save message in database:', dbError.message);
+    logger.warn(`Failed to save message in database: ${dbError.message}`);
   }
 };
 
@@ -52,13 +53,15 @@ const sendMessage = async (message, topicId = null) => {
  * Saves a message to the database
  * @param {string} message - The message to save
  * @param {number} topicId - The topic ID to save the message to
+ * @param {string[]} categories - The categories of the message
  * @returns {Promise<void>} - A promise that resolves when the message is saved
  */
-const saveMessageInDb = async (message, topicId = null) => {
-  const [result] = await db.execute('INSERT INTO TelegramLogs (message, topicId, dateAdd) VALUES (?, ?, NOW())', [
-    message,
-    topicId,
-  ]);
+const saveMessageInDb = async (message, topicId = null, categories = null) => {
+  const categoriesString = categories ? categories.join(',') : null;
+  const [result] = await db.execute(
+    'INSERT INTO TelegramLogs (message, categories, topicId, dateAdd) VALUES (?, ?, ?, NOW())',
+    [message, categoriesString, topicId]
+  );
   return result;
 };
 

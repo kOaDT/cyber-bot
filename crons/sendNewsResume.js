@@ -174,7 +174,7 @@ const run = async ({ dryMode, lang }) => {
         logger.info(newsResume);
         continue;
       }
-      await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS);
+      await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS, categories);
       await saveProcessedArticle(article.link);
       await delay(DELAY_BETWEEN_ARTICLES);
     }
