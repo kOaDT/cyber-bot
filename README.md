@@ -19,7 +19,7 @@ Cyber Bot is an Node.js project that helps users enhance their cybersecurity ski
 
 - 📱 Telegram: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
 - 🦋 Bluesky: [@calebpr.bsky.social](https://bsky.app/profile/calebpr.bsky.social)
-- 🌐 Website: [cyber-bot-web.vercel.app](https://cyber-bot-web.vercel.app/)
+- 🌐 Website: [www.cyberhub.blog](https//www.cyberhub.blog/)
 
 ## ⚡ Features
 
