@@ -4,25 +4,34 @@ const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
 const { createPodcastResumePrompt } = require('./utils/prompts');
 const fs = require('fs').promises;
-const cheerio = require('cheerio');
+const { BrowserManager } = require('./utils/puppeteerUtils');
 
 /**
  * Get the last episode of the podcast
  * @returns {Object} The last episode of the podcast
  */
-const getLastDDEpisode = async () => {
-  const response = await fetch('https://darknetdiaries.com/episode/');
-  const html = await response.text();
-  const $ = cheerio.load(html);
-  const episodeElement = $('h2').first();
-  const title = episodeElement.text();
-  const episodeNumber = title.match(/\d+/)[0];
+const getLastSnykEpisode = async () => {
+  const browser = await new BrowserManager().init();
 
-  return {
-    title,
-    episodeNumber: parseInt(episodeNumber),
-    url: `https://darknetdiaries.com/episode/${episodeNumber}/`,
-  };
+  try {
+    await browser.navigateTo('https://snyk.io/podcasts/the-secure-developer/');
+    const episodeLink = await browser.getAttributeValue('article a[title="View episode"]', 'href');
+    await browser.navigateTo(`https://snyk.io${episodeLink}`);
+    await browser.clickAndWait('button[title="View transcript"]', { waitForSelector: '.marg-t-extra-large .txt-rich' });
+    const transcriptContent = await browser.getText('.marg-t-extra-large .txt-rich');
+    const pageTitle = await browser.getPageTitle();
+    const episodeNb = pageTitle.match(/\d+/)?.[0];
+    const title = await browser.getText('h1');
+
+    return {
+      episodeNumber: parseInt(episodeNb),
+      title,
+      transcript: transcriptContent,
+      url: `https://snyk.io${episodeLink}`,
+    };
+  } finally {
+    await browser.close();
+  }
 };
 
 /**
@@ -31,7 +40,7 @@ const getLastDDEpisode = async () => {
  */
 const getLastProcessedEpisode = async () => {
   try {
-    const data = await fs.readFile('assets/lastProcessedDD.json', 'utf8');
+    const data = await fs.readFile('assets/lastProcessedSnyk.json', 'utf8');
     return JSON.parse(data);
   } catch (error) {
     logger.warn('No last processed episode found, creating a new one:' + error.message);
@@ -45,7 +54,7 @@ const getLastProcessedEpisode = async () => {
  */
 const saveLastProcessedEpisode = async (episodeData) => {
   await fs.writeFile(
-    'assets/lastProcessedDD.json',
+    'assets/lastProcessedSnyk.json',
     JSON.stringify({
       episodeNumber: episodeData.episodeNumber,
       processedAt: new Date().toISOString(),
@@ -53,36 +62,22 @@ const saveLastProcessedEpisode = async (episodeData) => {
   );
 };
 
-/**
- * Get the transcription of the episode
- * @param {number} episode - The episode number
- * @returns {string} The transcription of the episode
- */
-const getTranscription = async (episode) => {
-  const response = await fetch(`https://darknetdiaries.com/transcript/${episode}/`);
-  const html = await response.text();
-  const $ = cheerio.load(html);
-  const transcription = $('pre').first().text();
-  return transcription;
-};
-
 const run = async ({ dryMode, lang }) => {
   try {
-    const lastEpisode = await getLastDDEpisode();
+    const lastEpisode = await getLastSnykEpisode();
     const lastProcessed = await getLastProcessedEpisode();
 
     if (lastEpisode.episodeNumber > lastProcessed.episodeNumber) {
       logger.info(`New episode found: ${lastEpisode.episodeNumber}`);
 
-      const transcription = await getTranscription(lastEpisode.episodeNumber);
       const prompt = createPodcastResumePrompt(
-        'Darknet Diaries',
+        'Snyk',
         lastEpisode.title,
-        transcription,
+        lastEpisode.transcript,
         lastEpisode.url,
         lang
       );
-      const summary = await generate(prompt);
+      let summary = await generate(prompt);
 
       if (!dryMode) {
         await saveLastProcessedEpisode(lastEpisode);

@@ -114,12 +114,14 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
 
 /**
  * Create a podcast resume prompt
+ * @param {string} podcast - The podcast name
  * @param {string} title - The title of the podcast
  * @param {string} transcription - The transcription of the podcast
+ * @param {string} url - The URL of the podcast
  * @param {string} lang - The language to translate to
  * @returns {string} The podcast resume prompt
  */
-const createPodcastResumePrompt = (title, transcription, lang) => {
+const createPodcastResumePrompt = (podcast, title, transcription, url, lang) => {
   return `Title: ${title}
 
     Transcription:
@@ -151,8 +153,8 @@ const createPodcastResumePrompt = (title, transcription, lang) => {
     - Ensure the summary is coherent and flows logically from one point to the next.
     - Avoid using overly technical jargon without explanation.
     - Maintain a clear and concise writing style while covering all important details.
-    - Start with: 🎙️ NEW EPISODE OF DARKNET DIARIES: ${title}
-
+    - Start with: 🎙️ NEW EPISODE OF ${podcast.toUpperCase()}: ${title}
+    - Finish with the podcast url: ${url}
     ---
 
     Summary:

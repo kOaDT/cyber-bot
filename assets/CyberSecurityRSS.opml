@@ -42,5 +42,6 @@
 <outline title="ReliaQuest" xmlUrl="https://www.reliaquest.com/feed/" htmlUrl="https://www.reliaquest.com/blog/" text="ReliaQuest" type="rss" />
 <outline title="NCCGroup" xmlUrl="https://www.nccgroup.com/us/research-blog/feed/" htmlUrl="https://www.nccgroup.com/" text="NCCGroup" type="rss" />
 <outline title="Cryptographyengineering" xmlUrl="https://blog.cryptographyengineering.com/feed/" htmlUrl="https://blog.cryptographyengineering.com/" text="Cryptographyengineering" type="rss" />
+<outline title="Snyk" xmlUrl="https://snyk.io/fr/blog/feed/" htmlUrl="https://snyk.io/fr/blog/" text="Snyk" type="rss" />
 </body>
 </opml>

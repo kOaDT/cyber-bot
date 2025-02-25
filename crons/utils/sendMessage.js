@@ -5,6 +5,8 @@ const pool = require('../utils/database');
 
 const db = pool.promise();
 
+const MAX_MESSAGE_LENGTH = 4096;
+
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 
 /**
@@ -16,7 +18,24 @@ const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 const sendMessage = async (message, topicId = null) => {
   try {
     const options = topicId ? { message_thread_id: topicId } : {};
-    await bot.sendMessage(process.env.CHAT_ID, message, options);
+
+    const messageChunks = [];
+    let currentChunk = '';
+    const lines = message.split('\n').filter((line) => line.trim() !== '');
+
+    for (const line of lines) {
+      if (currentChunk.length + line.length + 1 <= MAX_MESSAGE_LENGTH) {
+        currentChunk += (currentChunk ? '\n' : '') + line;
+      } else {
+        if (currentChunk) messageChunks.push(currentChunk);
+        currentChunk = line;
+      }
+    }
+    if (currentChunk) messageChunks.push(currentChunk);
+
+    for (const chunk of messageChunks) {
+      await bot.sendMessage(process.env.CHAT_ID, chunk, options);
+    }
     logger.info('Message sent successfully');
   } catch (err) {
     onError(err, 'run');

@@ -45,12 +45,20 @@ Aggregates and summarizes news from our [curated RSS feed](https://raw.githubuse
 npm run cron -- -c sendNewsResume
 ```
 
-### 🎙️ Darknet Diaries Summaries
+### 🎙️ Darknet Diaries Podcast Summaries
 
 Provides summaries of the latest [Darknet Diaries](https://darknetdiaries.com/) podcast episodes
 
 ```
 npm run cron -- -c sendDarknetDiariesResume
+```
+
+### 🎙️ Snyk Podcast Summaries
+
+Provides summaries of the latest [Snyk](https://snyk.io/fr/podcasts/the-secure-developer/) podcast episodes
+
+```
+npm run cron -- -c sendSnykResume
 ```
 
 ### 🎬 YouTube Content
@@ -89,9 +97,10 @@ cd cyber-bot
 # Create tracking files
 mkdir -p assets
 touch assets/processedArticles.json    # News tracking
-touch assets/lastProcessedDD.json      # Darknet Diaries tracking
-touch assets/lastProcessedYt.json      # YouTube tracking
 touch assets/processedShorts.json      # Shorts tracking
+touch assets/lastProcessedDD.json      # Darknet Diaries Podcast tracking
+touch assets/lastProcessedSnyk.json    # Snyk Podcast tracking
+touch assets/lastProcessedYt.json      # YouTube tracking
 ```
 
 2. **Install Dependencies**
@@ -118,7 +127,7 @@ CHAT_ID=
 TELEGRAM_TOPIC_THM=
 TELEGRAM_TOPIC_NEWS=
 TELEGRAM_TOPIC_YOUTUBE=
-TELEGRAM_TOPIC_DARKNET=
+TELEGRAM_TOPIC_PODCAST=
 TELEGRAM_TOPIC_GITHUB=
 
 # Mistral AI Settings
