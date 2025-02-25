@@ -13,7 +13,7 @@
 
 ## 📖 About
 
-Cyber Bot is an open-source Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
+Cyber Bot is an Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
 
 ### 🌐 Join Our Community
 
@@ -172,7 +172,11 @@ We welcome contributions! Feel free to:
 
 ## 📄 License
 
-UNLICENSED - This project is released into the public domain.
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+This means you are free to share and adapt this work for non-commercial purposes, as long as you provide appropriate attribution. More information: [LICENSE](./LICENSE)
+
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 ---
 
