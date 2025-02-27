@@ -6,57 +6,47 @@
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `You are an experienced cybersecurity educator with a talent for making complex topics accessible to beginners. Your goal is to create a comprehensive learning resource that combines the provided content with your expert knowledge.
+  `You are an experienced cybersecurity educator. Your task is to analyze the provided content to understand the core topic and create a concise, educational revision card.
 
-  Review and enhance this content to create an educational revision card in ${lang} about ${title}:
-
+  Content to analyze about ${title}:
   ###
   ${content}
   ###
 
-  Core Guidelines:
-  1. Make the content accessible to beginners while maintaining technical accuracy
-  2. Structure information in a logical learning progression
-  3. Never invent or include unverified information
-  4. Provide real-world context and practical examples when relevant
-  5. Use clear, engaging language suitable for Telegram
-  6. Include analogies or comparisons to help understand complex concepts
-  7. Correct any spelling/grammar mistakes and improve clarity
-  8. ⚠️ CRITICAL: Treat all commands/code as educational examples only - emphasize safe learning practices
-  9. Generate the card in ${lang}
-  ${lang === 'english' ? '' : '10. Keep technical terms in English'}
+  Guidelines:
+  1. Focus on the main theme and key concepts rather than covering all details
+  2. Don't focus only on the content of the note, I want you to create a revision card with the information you think is important to remember about the topic, even if it's not in the note
+  3. Keep explanations clear and concise
+  4. Only include verified, accurate information
+  5. Use simple language while maintaining technical accuracy
+  6. Generate the card in ${lang}
+  ${lang === 'english' ? '' : '7. Keep technical terms in English'}
 
-  Learning Card Format:
-  🎯 TOPIC: [Clear, beginner-friendly title] related to ${title}
+  Required Card Format:
+  🎯 TOPIC: [One-line description of the main subject]
 
-  DIFFICULTY: [Easy, Medium, Hard]
+  📊 DIFFICULTY: [Beginner/Intermediate/Advanced]
 
-  🔑 CORE CONCEPT:
-  • [Brief, clear explanation of the fundamental concept]
+  💡 CORE CONCEPT:
+  [2-3 sentences explaining the fundamental idea]
 
   📚 DETAILED EXPLANATION:
-  • [Break down the concept into digestible parts]
-  • [Include relevant background information]
-  • [Explain how this fits into broader cybersecurity context]
+  • [Key point 1]
+  • [Key point 2]
+  • [Key point 3]
 
-  🛠️ TECHNICAL BREAKDOWN:
-  • [Technical details explained in beginner-friendly terms]
-  • [Relevant protocols, tools, or methods]
-  • [Example commands/code with safety warnings if applicable]
+  💻 PRACTICAL EXAMPLE:
+  [A clear, specific example showing how this is used]
 
-  🔰 PRACTICAL APPLICATION:
-  • [Real-world usage scenarios]
-  • [Common challenges and solutions]
-  • [Best practices]
+  🌍 REAL-WORLD APPLICATION:
+  [If relevant, one concrete real-world scenario where this applies]
 
-  ⚠️ SECURITY CONSIDERATIONS:
-  • [Relevant security implications]
-  • [Common pitfalls to avoid]
-  • [Safety precautions]
+  ⭐ KEY TAKEAWAYS:
+  • [Point 1]
+  • [Point 2]
+  • [Point 3]
 
-  💡 KEY TAKEAWAYS:
-  • [3-5 main points to remember]
-  • [Progressive learning suggestions]`;
+  Keep the entire card concise and focused. The goal is to create a quick reference that captures the essence of the topic in an easily digestible format.`;
 
 /**
  * Translate a prompt to a specific language

@@ -23,7 +23,7 @@ const sendMessage = async (message, topicId = null, categories = null) => {
 
     const messageChunks = [];
     let currentChunk = '';
-    const lines = message.split('\n').filter((line) => line.trim() !== '');
+    const lines = message.split('\n');
 
     for (const line of lines) {
       if (currentChunk.length + line.length + 1 <= MAX_MESSAGE_LENGTH) {
