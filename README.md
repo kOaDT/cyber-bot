@@ -137,7 +137,16 @@ AUTHORIZED_LANGUAGES=
 
 # YouTube Settings
 YOUTUBE_API_KEY=
+
+# Optional Database Settings
+MYSQL_HOST=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_DATABASE=
+I_WANT_TO_SAVE_MESSAGES_IN_DB=true # Enable message logging in database
 ```
+
+> 📝 Note: This project is designed to work without a database by default. However, you can enable message logging in a MySQL database by setting `I_WANT_TO_SAVE_MESSAGES_IN_DB=true` and configuring the database connection variables defined in `/config/dbConfig.js`. The database should contain a `TelegramLogs` table with at least two columns: `message` and `dateAdd`. This feature uses the `mysql2` package.
 
 4. **Optional: Customize Mistral AI parameters**
 

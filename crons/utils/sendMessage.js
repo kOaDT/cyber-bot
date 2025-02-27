@@ -6,6 +6,7 @@ const pool = require('../utils/database');
 const db = pool.promise();
 
 const MAX_MESSAGE_LENGTH = 4096;
+const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 
@@ -42,10 +43,12 @@ const sendMessage = async (message, topicId = null, categories = null) => {
     onError(err, 'run');
   }
 
-  try {
-    await saveMessageInDb(message, topicId, categories);
-  } catch (dbError) {
-    logger.warn(`Failed to save message in database: ${dbError.message}`);
+  if (isDb) {
+    try {
+      await saveMessageInDb(message, topicId, categories);
+    } catch (dbError) {
+      logger.warn(`Failed to save message in database: ${dbError.message}`);
+    }
   }
 };
 
