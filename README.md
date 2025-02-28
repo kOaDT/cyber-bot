@@ -61,6 +61,14 @@ Provides summaries of the latest [Snyk](https://snyk.io/fr/podcasts/the-secure-d
 npm run cron -- -c sendSnykResume
 ```
 
+### 💬 Reddit Content
+
+Fetches and summarizes posts from specified cybersecurity subreddit
+
+```
+npm run cron -- -c sendRedditPost
+```
+
 ### 🎬 YouTube Content
 
 Summarizes the latest videos from specified channels
@@ -98,9 +106,10 @@ cd cyber-bot
 mkdir -p assets
 touch assets/processedArticles.json    # News tracking
 touch assets/processedShorts.json      # Shorts tracking
-touch assets/lastProcessedDD.json      # Darknet Diaries Podcast tracking
-touch assets/lastProcessedSnyk.json    # Snyk Podcast tracking
-touch assets/lastProcessedYt.json      # YouTube tracking
+touch assets/processedDD.json          # Darknet Diaries Podcast tracking
+touch assets/processedSnyk.json        # Snyk Podcast tracking
+touch assets/processedYt.json          # YouTube tracking
+touch assets/processedReddit.json      # Reddit post tracking
 ```
 
 2. **Install Dependencies**
@@ -129,6 +138,7 @@ TELEGRAM_TOPIC_NEWS=
 TELEGRAM_TOPIC_YOUTUBE=
 TELEGRAM_TOPIC_PODCAST=
 TELEGRAM_TOPIC_GITHUB=
+TELEGRAM_TOPIC_REDDIT=
 
 # Mistral AI Settings
 MISTRAL_API_KEY=
@@ -137,6 +147,10 @@ AUTHORIZED_LANGUAGES=
 
 # YouTube Settings
 YOUTUBE_API_KEY=
+
+# Reddit
+REDDIT_SUBREDDITS=
+REDDIT_DAYS_LOOKBACK=
 
 # Optional Database Settings
 MYSQL_HOST=

@@ -40,7 +40,7 @@ const getLastSnykEpisode = async () => {
  */
 const getLastProcessedEpisode = async () => {
   try {
-    const data = await fs.readFile('assets/lastProcessedSnyk.json', 'utf8');
+    const data = await fs.readFile('assets/processedSnyk.json', 'utf8');
     return JSON.parse(data);
   } catch (error) {
     logger.warn('No last processed episode found, creating a new one:' + error.message);
@@ -54,7 +54,7 @@ const getLastProcessedEpisode = async () => {
  */
 const saveLastProcessedEpisode = async (episodeData) => {
   await fs.writeFile(
-    'assets/lastProcessedSnyk.json',
+    'assets/processedSnyk.json',
     JSON.stringify({
       episodeNumber: episodeData.episodeNumber,
       processedAt: new Date().toISOString(),

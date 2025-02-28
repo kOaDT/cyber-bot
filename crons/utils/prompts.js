@@ -202,10 +202,40 @@ const createYoutubeResumePrompt = (channel, videoId, transcription, lang) => {
   `;
 };
 
+/**
+ * Creates a prompt for summarizing Reddit content.
+ *
+ * @param {string} title - Post title
+ * @param {string} content - Post content
+ * @param {string} url - The URL of the post
+ * @param {string} lang - Language for the summary
+ * @returns {string} The formatted prompt
+ */
+const createRedditPrompt = (title, content, url, lang) => {
+  return `Instructions:
+Create a factual summary of this Reddit post about cybersecurity in ${lang}.
+
+Content to analyze:
+Title: ${title}
+Content: ${content}
+
+Requirements:
+1. Provide a purely descriptive summary of 2-4 sentences
+2. Focus only on information explicitly stated in the post
+3. Do not add analysis, recommendations, or external information
+4. ${lang === 'english' ? '' : 'Keep technical terms in English'}
+5. Use clear, direct language
+6. Start with "💬 [Title]" and an empty line
+7. End with the source URL: ${url}
+
+The summary should be concise and factual, focusing solely on describing what is discussed in the post.`;
+};
+
 module.exports = {
   createRevisionCardPrompt,
   translatePrompt,
   createNewsResumePrompt,
   createPodcastResumePrompt,
   createYoutubeResumePrompt,
+  createRedditPrompt,
 };

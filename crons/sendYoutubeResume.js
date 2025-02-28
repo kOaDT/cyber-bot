@@ -77,7 +77,7 @@ async function getLatestVideoUrl(channelUrl) {
  */
 const getLastProcessedEpisode = async (channel) => {
   try {
-    const data = await fs.readFile('assets/lastProcessedYT.json', 'utf8');
+    const data = await fs.readFile('assets/processedYT.json', 'utf8');
     const content = JSON.parse(data);
     return content[channel] || { videoId: null };
   } catch (error) {
@@ -95,7 +95,7 @@ const saveLastProcessedEpisode = async (channel, episodeData) => {
   try {
     let content = {};
     try {
-      const data = await fs.readFile('assets/lastProcessedYT.json', 'utf8');
+      const data = await fs.readFile('assets/processedYT.json', 'utf8');
       content = JSON.parse(data);
     } catch (error) {
       // If file doesn't exist or is invalid, start with empty object
@@ -107,7 +107,7 @@ const saveLastProcessedEpisode = async (channel, episodeData) => {
       processedAt: new Date().toISOString(),
     };
 
-    await fs.writeFile('assets/lastProcessedYT.json', JSON.stringify(content, null, 2));
+    await fs.writeFile('assets/processedYT.json', JSON.stringify(content, null, 2));
   } catch (error) {
     throw new Error(`Failed to save last processed episode: ${error.message}`);
   }
