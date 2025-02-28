@@ -29,6 +29,12 @@ Cyber Bot is an Node.js project that helps users enhance their cybersecurity ski
 npm run cron -- -c sendTHM
 ```
 
+### 🎯 TryHackMe Challenges
+
+```
+npm run cron -- -c sendTHMCTF
+```
+
 ### 📚 AI-Enhanced Study Notes
 
 Sends curated notes from a GitHub repository, enhanced by Mistral AI
@@ -110,6 +116,7 @@ touch assets/processedDD.json          # Darknet Diaries Podcast tracking
 touch assets/processedSnyk.json        # Snyk Podcast tracking
 touch assets/processedYt.json          # YouTube tracking
 touch assets/processedReddit.json      # Reddit post tracking
+touch assets/processedCTF.json         # CTF tracking
 ```
 
 2. **Install Dependencies**
