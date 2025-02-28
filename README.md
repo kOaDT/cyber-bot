@@ -67,6 +67,14 @@ Provides summaries of the latest [Snyk](https://snyk.io/fr/podcasts/the-secure-d
 npm run cron -- -c sendSnykResume
 ```
 
+### 🎙️ Security Now Podcast Summaries
+
+Provides summaries of the latest [Security Now](https://twit.tv/shows/security-now) podcast episodes
+
+```
+npm run cron -- -c sendSecurityNow
+```
+
 ### 💬 Reddit Content
 
 Fetches and summarizes posts from specified cybersecurity subreddit
@@ -117,6 +125,7 @@ touch assets/processedSnyk.json        # Snyk Podcast tracking
 touch assets/processedYt.json          # YouTube tracking
 touch assets/processedReddit.json      # Reddit post tracking
 touch assets/processedCTF.json         # CTF tracking
+touch assets/processedSecurityNow.json # Security Now Podcast tracking
 ```
 
 2. **Install Dependencies**
