@@ -118,6 +118,7 @@ cd cyber-bot
 
 # Create tracking files
 mkdir -p assets
+touch assets/processedNotes.json       # GithubNotes tracking
 touch assets/processedArticles.json    # News tracking
 touch assets/processedShorts.json      # Shorts tracking
 touch assets/processedDD.json          # Darknet Diaries Podcast tracking
