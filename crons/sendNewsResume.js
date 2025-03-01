@@ -60,7 +60,7 @@ const fetchArticles = async (feeds) => {
       const parsedFeed = await parser.parseURL(feed);
       allArticles.push(...parsedFeed.items);
     } catch (error) {
-      onError(error, `fetchArticles ${feed}`);
+      logger.warn(`Error fetching articles from ${feed}: ${error.message}`);
     }
   }
 

@@ -72,7 +72,7 @@ npm run cron -- -c sendSnykResume
 Provides summaries of the latest [Security Now](https://twit.tv/shows/security-now) podcast episodes
 
 ```
-npm run cron -- -c sendSecurityNow
+npm run cron -- -c sendSecurityNowResume
 ```
 
 ### 💬 Reddit Content
