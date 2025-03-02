@@ -164,7 +164,7 @@ const run = async ({ dryMode, lang }) => {
     for (const article of selectedArticles) {
       const categories =
         article.categories && Array.isArray(article.categories)
-          ? article.categories.map((cat) => (typeof cat === 'string' ? cat : String(cat)))
+          ? article.categories.map((cat) => cat?.toString?.() || '').filter(Boolean)
           : [];
 
       const prompt = createNewsResumePrompt(article.title, categories, article.link, article.content, lang);
