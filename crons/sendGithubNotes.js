@@ -1,7 +1,7 @@
 const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
-const crypto = require('crypto');
+const { randomInt } = require('node:crypto');
 const { createRevisionCardPrompt } = require('./utils/prompts');
 const { generate } = require('./utils/generate');
 const fs = require('fs').promises;
@@ -122,7 +122,7 @@ const getGithubFile = async () => {
 
     logger.info(`${markdownFiles.length} markdown files found`);
 
-    const randomIndex = crypto.randomInt(markdownFiles.length);
+    const randomIndex = randomInt(markdownFiles.length);
     const randomFile = markdownFiles[randomIndex];
 
     return { title: randomFile.name, content: randomFile.object.text };

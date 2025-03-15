@@ -2,7 +2,7 @@
 const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
-const crypto = require('crypto');
+const { randomInt } = require('node:crypto');
 const fs = require('fs').promises;
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
@@ -132,7 +132,7 @@ const run = async ({ dryMode }) => {
       return;
     }
 
-    const randomShort = filteredShorts[crypto.randomInt(filteredShorts.length)];
+    const randomShort = filteredShorts[randomInt(filteredShorts.length)];
     const videoId = randomShort.id.videoId;
     const title = randomShort.snippet.title;
     const description = randomShort.snippet.description;

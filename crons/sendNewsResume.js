@@ -1,7 +1,7 @@
 const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
-const crypto = require('crypto');
+const { randomInt } = require('node:crypto');
 const { generate } = require('./utils/generate');
 const { createNewsResumePrompt } = require('./utils/prompts');
 const fs = require('fs').promises;
@@ -102,7 +102,7 @@ const filterRecentArticles = async (articles) => {
  */
 const selectRandomArticles = (articles) => {
   if (articles.length === 0) return null;
-  const randomIndexes = Array.from({ length: NB_ARTICLES_TO_SEND }, () => crypto.randomInt(articles.length));
+  const randomIndexes = Array.from({ length: NB_ARTICLES_TO_SEND }, () => randomInt(articles.length));
   return randomIndexes.map((index) => articles[index]);
 };
 
