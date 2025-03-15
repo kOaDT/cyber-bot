@@ -29,6 +29,11 @@ if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
   process.exit(1);
 }
 
+if (youtube && !youtube.includes('https://www.youtube.com/')) {
+  logger.error('Invalid youtube channel');
+  process.exit(1);
+}
+
 (async () => {
   logger.info(`
   🤖 ===============================
