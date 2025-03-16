@@ -6,47 +6,51 @@
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `You are an experienced cybersecurity educator. Your task is to analyze the provided content to understand the core topic and create a concise, educational revision card.
+  `Analyze and optimize the following topic card content about cybersecurity for telegram display.
 
-  Content to analyze about ${title}:
-  ###
-  ${content}
-  ###
+Input Format:
+Title: ${title}
+Content: ${content}
 
-  Guidelines:
-  1. Focus on the main theme and key concepts rather than covering all details
-  2. Don't focus only on the content of the note, I want you to create a revision card with the information you think is important to remember about the topic, even if it's not in the note
-  3. Keep explanations clear and concise
-  4. Only include verified, accurate information
-  5. Use simple language while maintaining technical accuracy
-  6. Generate the card in ${lang}
-  ${lang === 'english' ? '' : '7. Keep technical terms in English'}
+Instructions:
+1. Restructure and enhance the content for optimal telegram readability while maintaining factual accuracy.
 
-  Required Card Format:
-  🎯 TOPIC: [One-line description of the main subject]
+2. Required Structure:
+   - Generate the content in ${lang}
+   - Generate a title for the revision card
+   - Start with a clear, concise introduction (2-3 sentences)
+   - Break down complex concepts into logical sections
+   - Use bullet points for lists and key takeaways
+   - Include practical examples or use cases only when relevant
+   - Add a "Learn More" section if adding new information
 
-  📊 DIFFICULTY: [Beginner/Intermediate/Advanced]
+3. Telegram Markdown Formatting Requirements:
+   - Use **bold** for important terms or concepts (double asterisks)
+   - Use \`code\` for technical terms, commands, or syntax
+   - Use proper spacing between sections (one blank line)
+   - Use a line of underscores _____ for horizontal rules to separate major sections
 
-  💡 CORE CONCEPT:
-  [2-3 sentences explaining the fundamental idea]
+4. Content Guidelines:
+   - Focus on clarity and scannability
+   - Use active voice
+   - Remove emojis and unnecessary formatting
+   - Maintain technical accuracy and factual correctness
+   - Feel free to adapt the content, adding examples, diagrams, etc.
 
-  📚 DETAILED EXPLANATION:
-  • [Key point 1]
-  • [Key point 2]
-  • [Key point 3]
+5. Generate the content in ${lang}
 
-  💻 PRACTICAL EXAMPLE:
-  [A clear, specific example showing how this is used]
+6. Structure the response in this exact format:
+[Title]
 
-  🌍 REAL-WORLD APPLICATION:
-  [If relevant, one concrete real-world scenario where this applies]
+[Core concept explanation]
 
-  ⭐ KEY TAKEAWAYS:
-  • [Point 1]
-  • [Point 2]
-  • [Point 3]
+**Key Points**
+- [Point 1]
+- [Point 2]
+...
 
-  Keep the entire card concise and focused. The goal is to create a quick reference that captures the essence of the topic in an easily digestible format.`;
+[Additional sections as needed, following the Content Guidelines]
+`;
 
 /**
  * Translate a prompt to a specific language
