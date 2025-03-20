@@ -6,48 +6,56 @@
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `Analyze and optimize the following topic card content about cybersecurity for telegram display.
+  `Analyze and optimize the following topic card content about cybersecurity for telegram display, while enriching it with your expert knowledge.
 
 Input Format:
 Title: ${title}
 Content: ${content}
 
 Instructions:
-1. Restructure and enhance the content for optimal telegram readability while maintaining factual accuracy.
+1. Consider the provided content as a starting point only. You are a cybersecurity expert and must enhance and improve this content.
 
-2. Required Structure:
+2. Required Actions:
+   - Correct any inaccurate or outdated information in the provided content
+   - Significantly enrich the content with your advanced cybersecurity knowledge
+   - Add relevant technical details that may be missing from the original content
+   - Complete any incomplete explanations with accurate and up-to-date information
+   - If necessary, completely restructure the content to improve its quality
+
+3. Required Structure:
    - Generate the content in ${lang}
    - Generate a title for the revision card
    - Start with a clear, concise introduction (2-3 sentences)
    - Break down complex concepts into logical sections
    - Use bullet points for lists and key takeaways
-   - Include practical examples or use cases only when relevant
-   - Add a "Learn More" section if adding new information
+   - Include practical examples or use cases to illustrate concepts
+   - Add a "Learn More" section with additional key information
 
-3. Telegram Markdown Formatting Requirements:
+4. Telegram Markdown Formatting Requirements:
    - Use **bold** for important terms or concepts (double asterisks)
    - Use \`code\` for technical terms, commands, or syntax
    - Use proper spacing between sections (one blank line)
    - Use a line of underscores _____ for horizontal rules to separate major sections
 
-4. Content Guidelines:
+5. Content Guidelines:
    - Focus on clarity and scannability
    - Use active voice
    - Remove emojis and unnecessary formatting
    - Maintain technical accuracy and factual correctness
-   - Feel free to adapt the content, adding examples, diagrams, etc.
-
-5. Generate the content in ${lang}
+   - Prioritize content quality and accuracy over fidelity to the original content
 
 6. Structure the response in this exact format:
 [Title]
 
-[Core concept explanation]
+[Core concept explanation - enriched with expert knowledge]
 
 **Key Points**
-- [Point 1]
-- [Point 2]
+- [Point 1 - ensure technical accuracy and completeness]
+- [Point 2 - add relevant details not in the original content]
 ...
+
+**Technical Details**
+[Add a section with precise technical information that may be missing from the original content]
 
 [Additional sections as needed, following the Content Guidelines]
 `;

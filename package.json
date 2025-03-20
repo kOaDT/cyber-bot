@@ -16,24 +16,24 @@
   "repository": "https://github.com/kOaDT/cyber-bot",
   "license": "CC-BY-NC-4.0",
   "dependencies": {
-    "@mistralai/mistralai": "^1.5.1",
+    "@mistralai/mistralai": "^1.5.2",
     "cheerio": "^1.0.0",
     "commander": "^13.1.0",
     "dotenv": "^16.4.7",
-    "mysql2": "^3.13.0",
+    "mysql2": "^3.14.0",
     "node-telegram-bot-api": "^0.66.0",
     "puppeteer": "^24.4.0",
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
     "winston": "^3.17.0",
     "youtube-dl-exec": "^3.0.19",
-    "youtubei.js": "^13.1.0"
+    "youtubei.js": "^13.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.22.0",
     "eslint": "9.22.0",
-    "eslint-config-next": "15.2.2",
+    "eslint-config-next": "15.2.3",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-security-node": "^1.1.4",
     "globals": "^16.0.0",
