@@ -10,12 +10,4 @@ temp/
 .eslintcache
 log-seed.txt
 logs/
-assets/processedDD.json
-assets/processedYT.json
-assets/processedArticles.json
-assets/processedShorts.json
-assets/processedSnyk.json
-assets/processedReddit.json
-assets/processedCTF.json
-assets/processedSecurityNow.json
-assets/processedNotes.json
+assets/processed*
