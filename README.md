@@ -75,6 +75,14 @@ Provides summaries of the latest [Security Now](https://twit.tv/shows/security-n
 npm run cron -- -c sendSecurityNowResume
 ```
 
+### 🎙️ The Cyber Show Podcast Summaries
+
+Provides summaries of the latest [The Cyber Show](https://cybershow.uk/episodes.php) podcast episodes
+
+```
+npm run cron -- -c sendCyberShowResume
+```
+
 ### 💬 Reddit Content
 
 Fetches and summarizes posts from specified cybersecurity subreddit
@@ -127,6 +135,7 @@ touch assets/processedYt.json          # YouTube tracking
 touch assets/processedReddit.json      # Reddit post tracking
 touch assets/processedCTF.json         # CTF tracking
 touch assets/processedSecurityNow.json # Security Now Podcast tracking
+touch assets/processedCyberShow.json   # The Cyber Show Podcast tracking
 ```
 
 2. **Install Dependencies**
@@ -161,6 +170,9 @@ TELEGRAM_TOPIC_REDDIT=
 MISTRAL_API_KEY=
 # Optional, comma-separated
 AUTHORIZED_LANGUAGES=
+
+# AssemblyAI - Text-to-Speech
+ASSEMBLYAI_API_KEY=
 
 # YouTube Settings
 YOUTUBE_API_KEY=
