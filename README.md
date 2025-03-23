@@ -223,7 +223,7 @@ npm run cron -- -c <CRON_NAME> -l <language>
 
 ## 📚 Documentation
 
-For VPS deployment guidance, visit our [deployment guide](https://www.caleb-tech.blog/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
+For VPS deployment guidance, visit our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
 
 ## 🤝 Contributing
 
