@@ -51,6 +51,16 @@ Aggregates and summarizes news from our [curated RSS feed](https://raw.githubuse
 npm run cron -- -c sendNewsResume
 ```
 
+### 🔍 CVE Updates
+
+Fetches and analyzes the latest CVE (Common Vulnerabilities and Exposures) entries
+
+```
+npm run cron -- -c sendCve
+```
+
+> Using https://nvd.nist.gov/developers/vulnerabilities
+
 ### 🎙️ Darknet Diaries Podcast Summaries
 
 Provides summaries of the latest [Darknet Diaries](https://darknetdiaries.com/) podcast episodes
@@ -165,6 +175,7 @@ TELEGRAM_TOPIC_YOUTUBE=
 TELEGRAM_TOPIC_PODCAST=
 TELEGRAM_TOPIC_GITHUB=
 TELEGRAM_TOPIC_REDDIT=
+TELEGRAM_TOPIC_CVE=
 
 # Mistral AI Settings
 MISTRAL_API_KEY=
@@ -182,6 +193,10 @@ REDDIT_SUBREDDITS=
 REDDIT_DAYS_LOOKBACK=
 REDDIT_CLIENT_ID=
 REDDIT_CLIENT_SECRET=
+
+# CVE
+CVSS_SEVERITY_THRESHOLD=   # Default >= 7.0
+HOURS_DELAY=               # Default 24 hours
 
 # Optional Database Settings
 MYSQL_HOST=
