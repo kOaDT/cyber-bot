@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
@@ -61,7 +62,7 @@ const fetchCVEPage = async (url) => {
 };
 
 /**
- * Fetches all CVEs from the NVD API for the last 24 hours
+ * Fetches all CVEs from the NVD API for the last HOURS_DELAY hours
  * @see https://nvd.nist.gov/developers/vulnerabilities
  *
  * @returns {Promise<Array>} Array of CVEs
@@ -141,12 +142,14 @@ const formatCVEsForPrompt = (cves) => {
 /**
  * Filters CVEs to only include severe ones based on CVSS threshold
  * @param {Array} cves - Array of CVEs to filter
+ * @see https://nvd.nist.gov/vuln/vulnerability-status#divNvdStatus
+ *
  * @returns {Array} Filtered array of severe CVEs
  */
 const filterSevereCVEs = (cves) => {
   return cves.filter((cve) => {
     const severity = getCVSSScore(cve.cve.metrics);
-    return cve.cve.vulnStatus === 'Received' && severity >= CVSS_SEVERITY_THRESHOLD;
+    return ['Analyzed', 'Modified'].includes(cve.cve.vulnStatus) && severity >= CVSS_SEVERITY_THRESHOLD;
   });
 };
 
@@ -160,9 +163,7 @@ const createCVEMessage = async (severeCves, lang) => {
   const enrichedCves = enrichAndSortCVEs(severeCves);
   const formattedCves = formatCVEsForPrompt(enrichedCves);
 
-  const header =
-    // eslint-disable-next-line max-len
-    `🔍 ${severeCves.length} new CVEs (CVSS ≥ ${CVSS_SEVERITY_THRESHOLD}) have been published in the last ${HOURS_DELAY} hours:\n\n`;
+  const header = `🔍 ${severeCves.length} new CVEs (CVSS ≥ ${CVSS_SEVERITY_THRESHOLD}) have been published in the last ${HOURS_DELAY} hours:\n\n`;
   const prompt = createCVEsPrompt(formattedCves, lang);
   const formattedCVEs = await generate(prompt);
   return header + formattedCVEs;
@@ -179,16 +180,18 @@ const run = async ({ dryMode, lang }) => {
     const cves = await fetchCVEs();
 
     if (cves.length === 0) {
-      logger.info('No new CVEs found in the last 24 hours');
+      logger.info(`No new CVEs found in the last ${HOURS_DELAY} hours`);
       return;
     }
 
     const severeCves = filterSevereCVEs(cves);
     if (severeCves.length === 0) {
-      logger.info('No severe CVEs found in the last 24 hours');
+      logger.info(`No new CVEs found in the last ${HOURS_DELAY} hours`);
       return;
     }
-    logger.info(`Found ${cves.length} new CVEs in the last 24 hours, ${severeCves.length} are severe (CVSS ≥ 7.0)`);
+    logger.info(
+      `Found ${cves.length} new CVEs in the last ${HOURS_DELAY} hours, ${severeCves.length} are severe (CVSS ≥ ${CVSS_SEVERITY_THRESHOLD})`
+    );
 
     const message = await createCVEMessage(severeCves, lang);
 
