@@ -6,58 +6,61 @@
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `Analyze and optimize the following topic card content about cybersecurity for telegram display, while enriching it with your expert knowledge.
+  `Analyze and enhance the following cybersecurity topic card for telegram display, creating an optimal blend of the original content with expert knowledge.
 
 Input Format:
 Title: ${title}
 Content: ${content}
 
 Instructions:
-1. Consider the provided content as a starting point only. You are a cybersecurity expert and must enhance and improve this content.
+1. Create a balanced synthesis between:
+   - The core information from the provided content
+   - Your expert cybersecurity knowledge
 
-2. Required Actions:
-   - Correct any inaccurate or outdated information in the provided content
-   - Significantly enrich the content with your advanced cybersecurity knowledge
-   - Add relevant technical details that may be missing from the original content
-   - Complete any incomplete explanations with accurate and up-to-date information
-   - If necessary, completely restructure the content to improve its quality
+2. Enhancement Guidelines:
+   - Preserve the essential concepts from the original content
+   - Supplement with accurate technical details and context
+   - Update any outdated information
+   - Add practical applications or real-world examples
+   - Include recent developments or emerging trends when relevant
 
-3. Required Structure:
-   - Generate the content in ${lang}
-   - Generate a title for the revision card
-   - Start with a clear, concise introduction (2-3 sentences)
-   - Break down complex concepts into logical sections
-   - Use bullet points for lists and key takeaways
-   - Include practical examples or use cases to illustrate concepts
-   - Add a "Learn More" section with additional key information
+3. Content Structure in ${lang}:
+   - Begin with a concise, compelling title
+   - Provide a clear introduction (2-3 sentences)
+   - Organize information in logical sections with clear headings
+   - Use bullet points for key concepts and takeaways
+   - Include a "Technical Details" section with precise information
+   - Add a brief "Security Implications" section when applicable
+   - Conclude with a "Learn More" section containing additional key points
+   - Keep technical terms in English
 
-4. Telegram Markdown Formatting Requirements:
-   - Use **bold** for important terms or concepts (double asterisks)
-   - Use \`code\` for technical terms, commands, or syntax
-   - Use proper spacing between sections (one blank line)
-   - Use a line of underscores _____ for horizontal rules to separate major sections
+5. Tone and Style:
+   - Prioritize clarity and readability
+   - Use technical language appropriately, explaining complex concepts
+   - Maintain an informative, authoritative voice
+   - Keep content concise but comprehensive
 
-5. Content Guidelines:
-   - Focus on clarity and scannability
-   - Use active voice
-   - Remove emojis and unnecessary formatting
-   - Maintain technical accuracy and factual correctness
-   - Prioritize content quality and accuracy over fidelity to the original content
-
-6. Structure the response in this exact format:
+Format the response exactly as:
 [Title]
 
-[Core concept explanation - enriched with expert knowledge]
+[Introduction with core concept explanation]
 
-**Key Points**
-- [Point 1 - ensure technical accuracy and completeness]
-- [Point 2 - add relevant details not in the original content]
-...
+**Key Concepts**
+- [Essential concept 1 from original content, enhanced]
+- [Essential concept 2 from original content, enhanced]
+- [Additional relevant concept if applicable]
 
 **Technical Details**
-[Add a section with precise technical information that may be missing from the original content]
+[Precise technical information, combining original data with expert knowledge]
 
-[Additional sections as needed, following the Content Guidelines]
+**Security Implications**
+[Practical impact and relevance of this topic]
+
+_____ 
+
+**Learn More**
+- [Additional important point]
+- [Relevant context or advanced concept]
 `;
 
 /**
