@@ -1,4 +1,3 @@
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { Innertube } = require('youtubei.js');
 const youtubedl = require('youtube-dl-exec');
@@ -24,7 +23,7 @@ async function getVideoTranscript(videoId) {
     const transcriptData = await info.getTranscript();
     return transcriptData.transcript.content.body.initial_segments.map((segment) => segment.snippet.text).join(' ');
   } catch (error) {
-    logger.error(`Failed to fetch transcript: ${error.message}`);
+    logger.error(`Failed to fetch transcript`, { error: error.message });
     throw new Error(`Failed to fetch transcript for video ${videoId}: ${error.message}`);
   }
 }
@@ -81,7 +80,7 @@ const getLastProcessedEpisode = async (channel) => {
     const content = JSON.parse(data);
     return content[channel] || { videoId: null };
   } catch (error) {
-    logger.warn('No last processed episode found, creating a new one:' + error.message);
+    logger.warn('No last processed episode found, creating a new one', { error: error.message });
     return { [channel]: { videoId: null } };
   }
 };
@@ -99,7 +98,7 @@ const saveLastProcessedEpisode = async (channel, episodeData) => {
       content = JSON.parse(data);
     } catch (error) {
       // If file doesn't exist or is invalid, start with empty object
-      logger.warn('Could not read existing data, starting fresh:', error.message);
+      logger.warn('Could not read existing data, starting fresh', { error: error.message });
     }
 
     content[channel] = {
@@ -125,7 +124,7 @@ async function run({ dryMode, lang, youtube }) {
   try {
     const channelName = youtube.split('/').pop();
     const latestVideoUrl = await getLatestVideoUrl(youtube);
-    logger.info(`Processing latest video: ${latestVideoUrl}`);
+    logger.info(`Processing latest video`, { latestVideoUrl });
 
     const videoId = extractVideoId(latestVideoUrl);
     const lastProcessedEpisode = await getLastProcessedEpisode(channelName);
@@ -146,15 +145,14 @@ async function run({ dryMode, lang, youtube }) {
     logger.info(`Summary created successfully`);
 
     if (dryMode) {
-      logger.info(`Dry mode enabled, skipping summary sending`);
-      logger.info(`Summary: ${summary}`);
+      logger.info(`Dry mode enabled, skipping summary sending`, { summary });
       return;
     }
     await sendMessage(summary, process.env.TELEGRAM_TOPIC_YOUTUBE);
 
     await saveLastProcessedEpisode(channelName, videoId);
   } catch (error) {
-    onError(error, 'Error processing the YouTube video');
+    logger.error('Error sending Youtube resume', { error: error.message });
   }
 }
 

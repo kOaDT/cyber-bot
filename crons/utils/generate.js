@@ -16,7 +16,7 @@ const generate = async (prompt, overrideParams = {}) => {
 
     return response.choices[0].message.content;
   } catch (err) {
-    onError(err, 'generate');
+    logger.error('Error generating', { error: err.message });
   }
 };
 

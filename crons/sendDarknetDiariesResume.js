@@ -1,4 +1,3 @@
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
@@ -34,7 +33,7 @@ const getLastProcessedEpisode = async () => {
     const data = await fs.readFile('assets/processedDD.json', 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    logger.warn('No last processed episode found, creating a new one:' + error.message);
+    logger.warn('No last processed episode found, creating a new one', { error: error.message });
     return { episodeNumber: 0 };
   }
 };
@@ -72,7 +71,7 @@ const run = async ({ dryMode, lang }) => {
     const lastProcessed = await getLastProcessedEpisode();
 
     if (lastEpisode.episodeNumber > lastProcessed.episodeNumber) {
-      logger.info(`New episode found: ${lastEpisode.episodeNumber}`);
+      logger.info(`New episode found`, { episodeNumber: lastEpisode.episodeNumber });
 
       const transcription = await getTranscription(lastEpisode.episodeNumber);
       const prompt = createPodcastResumePrompt(
@@ -88,14 +87,13 @@ const run = async ({ dryMode, lang }) => {
         await saveLastProcessedEpisode(lastEpisode);
         await sendMessage(summary, process.env.TELEGRAM_TOPIC_PODCAST);
       } else {
-        logger.info('Dry mode: No message sent');
-        logger.info(summary);
+        logger.info('Dry mode: No message sent', { summary });
       }
     } else {
       logger.info('No new episode to process');
     }
   } catch (error) {
-    onError(error, 'Error processing the podcast');
+    logger.error('Error sending Darknet Diaries resume', { error: error.message });
   }
 };
 

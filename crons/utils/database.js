@@ -22,6 +22,6 @@ try {
   });
   module.exports = pool;
 } catch (err) {
-  logger.error(err);
+  logger.error('Error connecting to database', { error: err.message });
   throw err;
 }

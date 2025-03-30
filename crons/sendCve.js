@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { createCVEsPrompt } = require('./utils/prompts');
@@ -89,7 +88,7 @@ const fetchCVEs = async () => {
 
       await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
     } catch (error) {
-      logger.error('Error fetching CVEs:', error.message);
+      logger.error('Error fetching CVEs', { error: error.message });
       throw error;
     }
   }
@@ -196,14 +195,14 @@ const run = async ({ dryMode, lang }) => {
     const message = await createCVEMessage(severeCves, lang);
 
     if (dryMode) {
-      logger.info(`Would send Telegram message: ${message}`);
+      logger.info(`Would send Telegram message`, { message });
       return;
     }
 
     await sendMessage(message, process.env.TELEGRAM_TOPIC_CVE);
     logger.info('CVE message sent successfully');
   } catch (err) {
-    onError(err, 'run');
+    logger.error('Error sending CVE message', { error: err.message });
   }
 };
 

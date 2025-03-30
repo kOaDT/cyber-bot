@@ -1,4 +1,3 @@
-const { onError } = require('../config/errors');
 const logger = require('../config/logger');
 const TelegramBot = require('node-telegram-bot-api');
 const pool = require('../utils/database');
@@ -40,14 +39,14 @@ const sendMessage = async (message, topicId = null, categories = null) => {
     }
     logger.info('Message sent successfully');
   } catch (err) {
-    onError(err, 'run');
+    logger.error('Error sending message', { error: err.message });
   }
 
   if (isDb) {
     try {
       await saveMessageInDb(message, topicId, categories);
     } catch (dbError) {
-      logger.warn(`Failed to save message in database: ${dbError.message}`);
+      logger.warn('Failed to save message in database', { error: dbError.message });
     }
   }
 };

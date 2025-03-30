@@ -1,4 +1,3 @@
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
@@ -57,7 +56,7 @@ const loadProcessedPosts = async () => {
     const data = await fs.readFile(PROCESSED_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    logger.warn('Could not read processed posts file:', error.message);
+    logger.warn('Could not read processed posts file', { error: error.message });
     return [];
   }
 };
@@ -74,7 +73,7 @@ const saveProcessedPost = async (postId) => {
       const fileContent = await fs.readFile(PROCESSED_FILE, 'utf8');
       processedPosts = JSON.parse(fileContent);
     } catch (error) {
-      logger.warn('Could not read existing data, starting fresh:', error.message);
+      logger.warn('Could not read existing data, starting fresh', { error: error.message });
     }
 
     processedPosts.push({
@@ -84,7 +83,7 @@ const saveProcessedPost = async (postId) => {
 
     await fs.writeFile(PROCESSED_FILE, JSON.stringify(processedPosts, null, 2));
   } catch (error) {
-    onError(error, 'saveProcessedPost');
+    logger.error('Error saving processed post', { error: error.message });
   }
 };
 
@@ -124,7 +123,7 @@ const fetchSubredditPosts = async (subreddit, daysLookBack) => {
         created: post.data.created_utc,
       }));
   } catch (error) {
-    onError(error, `fetchSubredditPosts ${subreddit}`);
+    logger.error('Error fetching posts', { error: error.message });
     return [];
   }
 };
@@ -165,7 +164,7 @@ const run = async ({ dryMode, lang } = {}) => {
     const summary = await generate(prompt);
 
     if (dryMode) {
-      logger.info(summary);
+      logger.info(`Would send Telegram message`, { summary });
       await saveProcessedPost(bestPost.id);
       return;
     }
@@ -173,9 +172,9 @@ const run = async ({ dryMode, lang } = {}) => {
     await sendMessage(summary, process.env.TELEGRAM_TOPIC_REDDIT);
     await saveProcessedPost(bestPost.id);
 
-    logger.info(`Successfully sent Reddit post: ${bestPost.id}`);
+    logger.info(`Successfully sent Reddit post`, { id: bestPost.id });
   } catch (error) {
-    onError(error, 'run');
+    logger.error('Error sending Reddit post', { error: error.message });
   }
 };
 

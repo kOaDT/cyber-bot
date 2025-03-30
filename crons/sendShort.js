@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
@@ -69,7 +68,7 @@ const saveProcessedShorts = async (id) => {
       processedShorts = JSON.parse(fileContent);
     } catch (error) {
       // If the file doesn't exist or is empty, continue with an empty array
-      logger.warn('Could not read existing data, starting fresh:', error.message);
+      logger.warn('Could not read existing data, starting fresh', { error: error.message });
     }
 
     processedShorts.push({
@@ -79,7 +78,7 @@ const saveProcessedShorts = async (id) => {
 
     await fs.writeFile(filePath, JSON.stringify(processedShorts, null, 2));
   } catch (error) {
-    onError(error, 'saveProcessedShorts');
+    logger.error('Error saving processed short', { error: error.message });
   }
 };
 
@@ -105,7 +104,7 @@ const run = async ({ dryMode }) => {
       const fileContent = await fs.readFile('./assets/processedShorts.json', 'utf8');
       processedShorts = JSON.parse(fileContent);
     } catch (error) {
-      logger.warn('Could not read processed shorts file:', error.message);
+      logger.warn('Could not read processed shorts file', { error: error.message });
     }
 
     const processedIds = new Set(processedShorts.map((short) => short.id));
@@ -139,7 +138,7 @@ const run = async ({ dryMode }) => {
     const message = `https://www.youtube.com/watch?v=${videoId}\n\n${title}\n\n${description}`;
 
     if (dryMode) {
-      logger.info(`Would send Telegram message: ${message}`);
+      logger.info(`Would send Telegram message`, { message });
       return;
     }
 
@@ -147,7 +146,7 @@ const run = async ({ dryMode }) => {
     await saveProcessedShorts(videoId);
     logger.info('Message sent successfully');
   } catch (err) {
-    onError(err, 'run');
+    logger.error('Error sending short', { error: err.message });
   }
 };
 

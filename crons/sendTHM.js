@@ -1,4 +1,3 @@
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { translatePrompt } = require('./utils/prompts');
@@ -14,14 +13,14 @@ const run = async ({ dryMode, lang }) => {
     }
 
     if (dryMode) {
-      logger.info(`Would send Telegram message: ${message}`);
+      logger.info(`Would send Telegram message`, { message });
       return;
     }
 
     await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
     logger.info('Message sent successfully');
   } catch (err) {
-    onError(err, 'run');
+    logger.error('Error sending THM', { error: err.message });
   }
 };
 

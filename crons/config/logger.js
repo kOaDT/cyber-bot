@@ -1,9 +1,11 @@
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, colorize, printf, errors } = format;
 
+// Custom format for log messages
 const myFormat = printf(({ level, message, timestamp, ...metadata }) => {
   let formattedMessage = message;
 
+  // Handle different message types
   if (typeof message === 'object' && message !== null) {
     if (message instanceof Error) {
       formattedMessage = `${message.message} - ${message.stack || ''}`;
@@ -11,18 +13,18 @@ const myFormat = printf(({ level, message, timestamp, ...metadata }) => {
       try {
         formattedMessage = JSON.stringify(message, null, 2);
       } catch (e) {
-        console.error(e);
-        formattedMessage = '[Objet non sérialisable]';
+        formattedMessage = '[Non-serializable object]';
       }
     }
   }
 
+  // Format metadata
   let metadataStr = '';
   if (Object.keys(metadata).length > 0 && metadata.stack === undefined) {
     try {
       metadataStr = ` | ${JSON.stringify(metadata, null, 2)}`;
     } catch (e) {
-      metadataStr = ' | [Métadonnées non sérialisables]';
+      metadataStr = ' | [Non-serializable metadata]';
     }
   }
 
@@ -70,19 +72,25 @@ if (process.env.NODE_ENV !== 'production') {
   );
 }
 
-logger.object = (obj, level = 'info', message = '') => {
-  logger.log(level, message, obj);
+// Enhanced logging methods
+logger.object = (obj, level = 'info', message = '', metadata = {}) => {
+  logger.log(level, message, { ...metadata, object: obj });
 };
 
-logger.error = (message, meta = null) => {
+logger.error = (message, metadata = null) => {
   if (message instanceof Error) {
     const { message: msg, stack, ...rest } = message;
-    logger.log('error', msg, { ...rest, stack });
-  } else if (meta !== null) {
-    logger.log('error', message, meta);
+    logger.log('error', msg, { ...rest, stack, ...(metadata || {}) });
+  } else if (metadata !== null) {
+    logger.log('error', message, metadata);
   } else {
     logger.log('error', message);
   }
+};
+
+// General purpose logging with metadata
+logger.logWithMeta = (level, message, metadata = {}) => {
+  logger.log(level, message, metadata);
 };
 
 module.exports = logger;

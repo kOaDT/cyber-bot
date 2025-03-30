@@ -1,6 +1,5 @@
 const fs = require('fs').promises;
 const logger = require('../config/logger');
-const { onError } = require('../config/errors');
 
 /**
  * Cleans the processed data file to keep only the data from the last X days.
@@ -24,7 +23,7 @@ const cleanProcessedData = async (daysToKeep, filePath) => {
     await fs.writeFile(filePath, JSON.stringify(filteredData, null, 2));
     logger.info(`Cleaned processed data file. Kept ${filteredData.length} recent entries.`);
   } catch (error) {
-    onError(error, 'cleanProcessedData');
+    logger.error('Error cleaning processed data file', { error: error.message });
   }
 };
 

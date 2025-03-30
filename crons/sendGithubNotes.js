@@ -1,4 +1,3 @@
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
@@ -45,7 +44,7 @@ const saveProcessedNote = async (title, content) => {
 
     await fs.writeFile(PROCESSED_NOTES_PATH, JSON.stringify(processedNotes, null, 2), 'utf8');
   } catch (err) {
-    onError(err, 'saveProcessedNote');
+    logger.error('Error saving processed note', { error: err.message });
   }
 };
 
@@ -64,7 +63,7 @@ const run = async ({ dryMode, lang }) => {
     const existingNote = processedNotes.find((note) => note.title === title);
 
     if (existingNote) {
-      logger.info(`Note "${title}" already processed, using existing content`);
+      logger.info(`Note already processed, using existing content`, { title });
       revisionCard = existingNote.content;
     } else {
       logger.info(`Generating a new revision card for "${title}"`);
@@ -76,9 +75,9 @@ const run = async ({ dryMode, lang }) => {
     if (!dryMode) {
       return await sendMessage(revisionCard, process.env.TELEGRAM_TOPIC_GITHUB);
     }
-    return logger.info(revisionCard);
+    return logger.info(`Revision card generated`, { revisionCard });
   } catch (err) {
-    onError(err, 'run');
+    logger.error('Error sending Github notes', { error: err.message });
   }
 };
 
@@ -127,7 +126,7 @@ const getGithubFile = async () => {
 
     return { title: randomFile.name, content: randomFile.object.text };
   } catch (err) {
-    onError(err, 'getGithubFile');
+    logger.error('Error getting Github file', { error: err.message });
   }
 };
 

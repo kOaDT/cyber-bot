@@ -1,4 +1,3 @@
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
@@ -41,7 +40,7 @@ const parseOPML = async (filePath) => {
     extractFeeds(outline);
     return feeds;
   } catch (error) {
-    onError(error, 'parseOPML');
+    logger.error('Error parsing OPML', { error: error.message });
   }
 };
 
@@ -60,7 +59,7 @@ const fetchArticles = async (feeds) => {
       const parsedFeed = await parser.parseURL(feed);
       allArticles.push(...parsedFeed.items);
     } catch (error) {
-      logger.warn(`Error fetching articles from ${feed}: ${error.message}`);
+      logger.warn(`Error fetching articles from ${feed}`, { error: error.message });
     }
   }
 
@@ -83,7 +82,7 @@ const filterRecentArticles = async (articles) => {
     const fileContent = await fs.readFile('./assets/processedArticles.json', 'utf8');
     processedArticles = JSON.parse(fileContent);
   } catch (error) {
-    logger.warn('Could not read processed articles file:', error.message);
+    logger.warn('Could not read processed articles file', { error: error.message });
   }
 
   const processedUrls = new Set(processedArticles.map((article) => article.url));
@@ -130,7 +129,7 @@ const saveProcessedArticle = async (articleUrl) => {
 
     await fs.writeFile(filePath, JSON.stringify(processedArticles, null, 2));
   } catch (error) {
-    onError(error, 'saveProcessedArticle');
+    logger.error('Error saving processed article', { error: error.message });
   }
 };
 
@@ -171,7 +170,7 @@ const run = async ({ dryMode, lang }) => {
       const newsResume = await generate(prompt);
 
       if (dryMode) {
-        logger.info(newsResume);
+        logger.info(`Would send Telegram message`, { newsResume });
         continue;
       }
       await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS, categories);
@@ -180,7 +179,7 @@ const run = async ({ dryMode, lang }) => {
     }
     return logger.info('News resume sent successfully.');
   } catch (error) {
-    onError(error, 'run');
+    logger.error('Error sending news resume', { error: error.message });
   }
 };
 

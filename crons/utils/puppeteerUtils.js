@@ -33,7 +33,7 @@ class BrowserManager {
 
       this.page.on('console', (msg) => {
         if (msg.type() === 'error') {
-          logger.error(`Page Error: ${msg.text()}`);
+          logger.error(`Page Error`, { error: msg.text() });
         }
       });
 
@@ -57,7 +57,7 @@ class BrowserManager {
         ...options,
       });
     } catch (error) {
-      logger.error(`Failed to navigate to ${url}:`, error);
+      logger.error(`Failed to navigate to ${url}`, { error: error.message });
       throw error;
     }
   }
@@ -81,7 +81,7 @@ class BrowserManager {
         await this.page.waitForSelector(options.waitForSelector);
       }
     } catch (error) {
-      logger.error(`Failed to click element ${selector}:`, error);
+      logger.error(`Failed to click element ${selector}`, { error: error.message });
       throw error;
     }
   }
@@ -96,7 +96,7 @@ class BrowserManager {
       await this.page.waitForSelector(selector);
       return await this.page.$eval(selector, (el) => el.textContent.trim());
     } catch (error) {
-      logger.error(`Failed to get text from ${selector}:`, error);
+      logger.error(`Failed to get text from ${selector}`, { error: error.message });
       throw error;
     }
   }
@@ -120,7 +120,7 @@ class BrowserManager {
       await this.page.waitForSelector(selector);
       return await this.page.$eval(selector, (el, attr) => el.getAttribute(attr), attribute);
     } catch (error) {
-      logger.error(`Failed to get attribute ${attribute} from ${selector}:`, error);
+      logger.error(`Failed to get attribute ${attribute} from ${selector}`, { error: error.message });
       throw error;
     }
   }
@@ -135,7 +135,7 @@ class BrowserManager {
     try {
       return await this.page.waitForSelector(selector, options);
     } catch (error) {
-      logger.error(`Failed to wait for element ${selector}:`, error);
+      logger.error(`Failed to wait for element ${selector}`, { error: error.message });
       throw error;
     }
   }

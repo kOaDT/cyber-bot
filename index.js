@@ -25,12 +25,12 @@ const lang = options.lang || 'english';
 const youtube = options.youtube;
 
 if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
-  logger.error('Invalid language');
+  logger.error('Invalid language', { lang_used: lang, available_languages: AUTHORIZED_LANGUAGES });
   process.exit(1);
 }
 
 if (youtube && !youtube.includes('https://www.youtube.com/')) {
-  logger.error('Invalid youtube channel');
+  logger.error('Invalid youtube channel', { youtube_used: youtube });
   process.exit(1);
 }
 

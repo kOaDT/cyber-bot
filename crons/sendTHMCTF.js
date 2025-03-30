@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-const { onError } = require('./config/errors');
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
@@ -15,7 +14,7 @@ const getProcessedCTFs = async () => {
     const data = await fs.readFile('assets/processedCTF.json', 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    logger.warn('No processed CTFs found, creating new file:', error.message);
+    logger.warn('No processed CTFs found, creating new file', { error: error.message });
     await fs.writeFile('assets/processedCTF.json', JSON.stringify([]));
     return [];
   }
@@ -68,7 +67,7 @@ const getLastCTF = async () => {
       logger.info(`Moving to page ${page}`);
     }
   } catch (error) {
-    logger.error('Error fetching challenges:', error);
+    logger.error('Error fetching challenges', { error: error.message });
     throw error;
   }
 };
@@ -82,7 +81,7 @@ const run = async ({ dryMode, lang }) => {
       return;
     }
 
-    logger.info(`New challenge found: ${newChallenge.title}`);
+    logger.info(`New challenge found`, { title: newChallenge.title });
 
     const difficultyEmoji = {
       easy: '🟢',
@@ -106,11 +105,10 @@ const run = async ({ dryMode, lang }) => {
 
       await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
     } else {
-      logger.info('Dry mode: No message sent');
-      logger.info(message);
+      logger.info('Dry mode: No message sent', { message });
     }
   } catch (error) {
-    onError(error, 'Error processing CTF');
+    logger.error('Error sending THM CTF', { error: error.message });
   }
 };
 
