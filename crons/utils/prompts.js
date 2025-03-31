@@ -251,33 +251,6 @@ Requirements:
 The summary should be concise and factual, focusing solely on describing what is discussed in the post.`;
 };
 
-/**
- * Creates a prompt for summarizing CVEs
- * @param {Array} cves - Array of formatted CVE objects with id, description, and severity
- * @param {string} lang - Language for the summary
- * @returns {string} The formatted prompt
- */
-const createCVEsPrompt = (cves, lang) => {
-  const cvesText = cves.map((cve) => `${cve.id} (CVSS: ${cve.severity}): ${cve.description}`).join('\n\n');
-
-  return `Analyze and summarize the following CVEs in ${lang}.
-
-CVEs to analyze:
-${cvesText}
-
-Instructions:
-1. For each CVE, provide:
-   - The CVE ID with its CVSS score
-   - A single sentence summary (maximum 15 words) that captures the core vulnerability
-2. Keep technical terms, CVE numbers, and product names in English
-3. Focus on clarity and precision
-4. Use bullet points for each CVE
-5. Start each line with "•"
-
-Format each CVE as:
-• CVE-ID (CVSS: X.X): [concise summary in ${lang}]`;
-};
-
 module.exports = {
   createRevisionCardPrompt,
   translatePrompt,
@@ -285,5 +258,4 @@ module.exports = {
   createPodcastResumePrompt,
   createYoutubeResumePrompt,
   createRedditPrompt,
-  createCVEsPrompt,
 };

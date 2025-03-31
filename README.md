@@ -197,6 +197,7 @@ REDDIT_CLIENT_SECRET=
 # CVE
 CVSS_SEVERITY_THRESHOLD=   # Default >= 7.0
 HOURS_DELAY=               # Default 24 hours
+TECHNOLOGIES_OF_INTEREST=
 
 # Optional Database Settings
 MYSQL_HOST=
