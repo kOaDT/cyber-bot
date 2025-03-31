@@ -359,7 +359,7 @@ const createCVEMessage = (processedCVEs, totalCves) => {
   });
 
   // Add the footer
-  const footer = `\n\n📚 *More information and complete analyses on https://www.cyberhub.blog/cves*`;
+  const footer = `\n\n📚 More information and complete analyses on https://www.cyberhub.blog/cves`;
 
   return header + summary + details + footer;
 };
