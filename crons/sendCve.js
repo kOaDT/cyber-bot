@@ -327,11 +327,8 @@ const formatCVEDetail = (cve) => {
  * @param {Object} processedCVEs - Processed CVEs
  * @returns {string} Formatted message
  */
-const createCVEMessage = (processedCVEs, totalCves) => {
-  const { all: allCves, categorized: categorizedCves } = processedCVEs;
-
-  // Create the header
-  const header = `🔍 ${totalCves} new vulnerabilities found in the last ${HOURS_DELAY} hours, ${allCves.length} are severe or critical (CVSS ≥ ${CVSS_SEVERITY_THRESHOLD})\n\n`;
+const createCVEMessage = (processedCVEs) => {
+  const { categorized: categorizedCves } = processedCVEs;
 
   // Create the summary
   const summary = createSummary(categorizedCves);
@@ -361,7 +358,7 @@ const createCVEMessage = (processedCVEs, totalCves) => {
   // Add the footer
   const footer = `\n\n📚 More information and complete analyses on https://www.cyberhub.blog/cves`;
 
-  return header + summary + details + footer;
+  return summary + details + footer;
 };
 
 /**
@@ -406,7 +403,7 @@ const run = async ({ dryMode }) => {
     const processedCVEs = processCVEs(severeCves);
 
     // Create the message
-    const message = createCVEMessage(processedCVEs, cves.length);
+    const message = createCVEMessage(processedCVEs);
 
     if (dryMode) {
       logger.info(`Would send Telegram message`, { message });
