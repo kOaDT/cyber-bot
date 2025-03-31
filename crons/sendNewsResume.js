@@ -8,9 +8,11 @@ const xml2js = require('xml2js');
 const RSSParser = require('rss-parser');
 const { delay } = require('./utils/delay');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
+
 const NB_DAYS_TO_FETCH = 3;
 const NB_ARTICLES_TO_SEND = 1;
 const DELAY_BETWEEN_ARTICLES = 10000;
+const MIN_CONTENT_LENGTH = 500;
 
 /**
  * Parses the OPML file to extract RSS feed URLs.
@@ -102,8 +104,8 @@ const filterRecentArticles = async (articles) => {
 const selectRandomArticles = (articles) => {
   if (articles.length === 0) return null;
 
-  // Filter out articles with content that is too short (less than 100 characters)
-  const validArticles = articles.filter((article) => article.content && article.content.length >= 1000);
+  // Filter out articles with content that is too short (less than MIN_CONTENT_LENGTH characters)
+  const validArticles = articles.filter((article) => article.content && article.content.length >= MIN_CONTENT_LENGTH);
 
   if (validArticles.length === 0) return null;
 
