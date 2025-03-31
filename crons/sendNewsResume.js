@@ -94,15 +94,21 @@ const filterRecentArticles = async (articles) => {
 };
 
 /**
- * Selects random articles from the provided list.
+ * Selects random articles from the provided list, excluding articles with content that is too short.
  *
  * @param {Object[]} articles - Array of articles.
  * @returns {Object[]} - The selected articles.
  */
 const selectRandomArticles = (articles) => {
   if (articles.length === 0) return null;
-  const randomIndexes = Array.from({ length: NB_ARTICLES_TO_SEND }, () => randomInt(articles.length));
-  return randomIndexes.map((index) => articles[index]);
+
+  // Filter out articles with content that is too short (less than 100 characters)
+  const validArticles = articles.filter((article) => article.content && article.content.length >= 1000);
+
+  if (validArticles.length === 0) return null;
+
+  const randomIndexes = Array.from({ length: NB_ARTICLES_TO_SEND }, () => randomInt(validArticles.length));
+  return randomIndexes.map((index) => validArticles[index]);
 };
 
 /**

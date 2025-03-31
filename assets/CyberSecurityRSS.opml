@@ -44,5 +44,6 @@
 <outline title="Cryptographyengineering" xmlUrl="https://blog.cryptographyengineering.com/feed/" htmlUrl="https://blog.cryptographyengineering.com/" text="Cryptographyengineering" type="rss" />
 <outline title="Snyk" xmlUrl="https://snyk.io/fr/blog/feed/" htmlUrl="https://snyk.io/fr/blog/" text="Snyk" type="rss" />
 <outline title="Cybershow" xmlUrl="https://cybershow.uk/blog/feed/" htmlUrl="https://cybershow.uk/blog/" text="Cybershow" type="rss" />
+<outline title="Hackread" xmlUrl="https://hackread.com/feed/" htmlUrl="https://hackread.com/" text="Hackread" type="rss" />
 </body>
 </opml>

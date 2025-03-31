@@ -40,6 +40,8 @@ Instructions:
    - Maintain an informative, authoritative voice
    - Keep content concise but comprehensive
 
+6. Generate the response in ${lang}
+
 Format the response exactly as:
 [Title]
 
@@ -95,7 +97,8 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     ---
 
     Instructions:
-    You are an experienced cybersecurity analyst tasked with creating a clear, factual and impactful summary of this security news in ${lang}.
+   You are a cybersecurity analyst. Your goal is to produce a concise, fact-based summary of the following security news in ${lang}. 
+   Do not include opinions, speculations, or marketing language.
 
     Requirements:
     1. Start with "📌"
@@ -109,10 +112,12 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
     1. Use clear, direct language
     2. ${lang === 'english' ? '' : 'Keep technical terms, CVE numbers, tool names, and security standards in English'}
     3. Write in an analytical tone, not alarmist or marketing-style
-    4. Keep the total length between 50-150 words, it's very important that it shouldn't be too long
-    5. Do not use bullet points or markdown formatting
-    6. Include only information explicitly stated in the article
-    7. Include specific numbers, dates, and technical details when mentioned
+    4. Use precise and neutral language.
+    5. Avoid unnecessary introductions like 'This article discusses...'
+    6. Keep the total length between 50-150 words. If too short, you may miss key details. If too long, you are including unnecessary information.
+    7. Do not use bullet points or markdown formatting
+    8. Include only information explicitly stated in the article
+    9. Include specific numbers, dates, and technical details when mentioned
 
     Important: Do not add analysis, recommendations, or information not present in the original article.`;
 };
