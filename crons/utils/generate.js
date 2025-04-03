@@ -1,4 +1,5 @@
 const { mistralClient, DEFAULT_PARAMS } = require('../config/mistral');
+const logger = require('../config/logger');
 
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
 
@@ -17,6 +18,7 @@ const generate = async (prompt, overrideParams = {}) => {
     return response.choices[0].message.content;
   } catch (err) {
     logger.error('Error generating', { error: err.message });
+    return null;
   }
 };
 
