@@ -8,7 +8,6 @@
 <outline title="The Hacker News" xmlUrl="https://feeds.feedburner.com/TheHackersNews" htmlUrl="https://www.thehackernews.com/" text="The Hacker News" type="rss" />
 <outline title="Dark Reading" xmlUrl="https://www.darkreading.com/rss.xml" htmlUrl="https://www.darkreading.com/" text="Dark Reading" type="rss" />
 <outline title="SecurityWeek" xmlUrl="https://www.securityweek.com/feed/" htmlUrl="https://www.securityweek.com/" text="SecurityWeek" type="rss" />
-<outline title="SANS Internet Storm Center" xmlUrl="https://isc.sans.edu/rssfeed_full.xml" htmlUrl="https://isc.sans.edu/" text="SANS Internet Storm Center" type="rss" />
 <outline title="HackerOne Blog" xmlUrl="https://www.hackerone.com/blog.rss" htmlUrl="https://www.hackerone.com/blog" text="HackerOne Blog" type="rss" />
 <outline title="BleepingComputer" xmlUrl="https://www.bleepingcomputer.com/feed/" htmlUrl="https://www.bleepingcomputer.com/" text="BleepingComputer" type="rss" />
 <outline title="Troy Hunt's Blog" xmlUrl="https://www.troyhunt.com/feed/" htmlUrl="https://www.troyhunt.com/" text="Troy Hunt's Blog" type="rss" />
