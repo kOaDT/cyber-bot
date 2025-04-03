@@ -16,7 +16,8 @@ const getLastCyberShowEpisode = async () => {
   const $ = cheerio.load(html);
   const episodeElement = $('.card-body.details').first();
   const title = episodeElement.find('h2').first().text();
-  const audioUrl = episodeElement.find('a[download="./media/episodes/ztw-p1.mp3"]').first().attr('href');
+  const parentCard = episodeElement.closest('.card');
+  const audioUrl = parentCard.find('.card-footer a[href$=".mp3"]').attr('href');
   const episodeNumber = parseInt(title.split(' ')[0].replace('#', ''));
 
   return {
@@ -110,7 +111,6 @@ const run = async ({ dryMode, lang }) => {
 
     if (lastEpisode.episodeNumber > lastProcessed.episodeNumber) {
       logger.info(`New episode found`, { episodeNumber: lastEpisode.episodeNumber });
-
       const transcription = await getTranscription(lastEpisode.audioUrl);
       const prompt = createPodcastResumePrompt(
         'The Cyber Show',
