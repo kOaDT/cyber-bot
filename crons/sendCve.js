@@ -6,7 +6,6 @@ const { sendMessage } = require('./utils/sendMessage');
 const NVD_API_BASE_URL = 'https://services.nvd.nist.gov/rest/json/cves/2.0';
 const RESULTS_PER_PAGE = 2000;
 const CVSS_SEVERITY_THRESHOLD = parseFloat(process.env.CVSS_SEVERITY_THRESHOLD || 7.0);
-const RATE_LIMIT_DELAY = 1000; // 1 second
 const HOURS_DELAY = parseInt(process.env.HOURS_DELAY || 24);
 
 // configuration
@@ -97,31 +96,23 @@ const fetchCVEPage = async (url) => {
 const fetchCVEs = async () => {
   const searchParams = createSearchParams();
   let allCVEs = [];
-  let hasMoreResults = true;
 
-  while (hasMoreResults) {
-    try {
-      const url = `${NVD_API_BASE_URL}?${searchParams.toString()}`;
-      const data = await fetchCVEPage(url);
+  try {
+    const url = `${NVD_API_BASE_URL}?${searchParams.toString()}`;
+    const data = await fetchCVEPage(url);
 
-      if (data.vulnerabilities) {
-        allCVEs = allCVEs.concat(data.vulnerabilities);
-      }
-
-      hasMoreResults = allCVEs.length < data.totalResults;
-      if (hasMoreResults) {
-        const nextIndex = parseInt(searchParams.get('startIndex')) + RESULTS_PER_PAGE;
-        searchParams.set('startIndex', nextIndex.toString());
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
-    } catch (error) {
-      logger.error('Error fetching CVEs', { error: error.message });
-      throw error;
+    if (data.vulnerabilities && data.vulnerabilities.length > 0) {
+      allCVEs = data.vulnerabilities;
+      logger.info(`Found ${data.totalResults} CVEs in total`);
+    } else {
+      logger.info('No vulnerabilities found in the specified time range');
     }
-  }
 
-  return allCVEs;
+    return allCVEs;
+  } catch (error) {
+    logger.error('Error fetching CVEs:', error.message);
+    throw error;
+  }
 };
 
 /**
