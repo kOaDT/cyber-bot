@@ -20,6 +20,7 @@ Cyber Bot is an Node.js project that helps users enhance their cybersecurity ski
 - 📱 Telegram: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
 - 🦋 Bluesky: [@calebpr.bsky.social](https://bsky.app/profile/calebpr.bsky.social)
 - 🌐 Website: [www.cyberhub.blog](https://www.cyberhub.blog/)
+- 📚 Documentation: [koadt.github.io/cyber-bot](https://koadt.github.io/cyber-bot/)
 
 ## ⚡ Features
 
@@ -239,7 +240,9 @@ npm run cron -- -c <CRON_NAME> -l <language>
 
 ## 📚 Documentation
 
-For VPS deployment guidance, visit our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
+For complete documentation of all features, visit our [official documentation site](https://koadt.github.io/cyber-bot/).
+
+For VPS deployment guidance, you can also check our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
 
 ## 🤝 Contributing
 
