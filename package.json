@@ -17,7 +17,7 @@
     "check-coverage": "jest --coverage --coverageThreshold='{\"global\":{\"statements\":50,\"branches\":50,\"functions\":50,\"lines\":50}}'"
   },
   "keywords": [],
-  "author": "leogrambert@proton.me",
+  "author": "kOaDT",
   "repository": "https://github.com/kOaDT/cyber-bot",
   "license": "CC-BY-NC-4.0",
   "dependencies": {
