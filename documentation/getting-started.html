@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started - Cyber Bot Documentation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="../../assets/logo.jpg" type="image/svg+xml">
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn" aria-label="Toggle dark/light mode">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span></span>
+                <h1>Cyber Bot</h1>
+            </div>
+            <button class="mobile-close" id="sidebar-close">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html">Overview</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="getting-started.html" class="active">Getting Started</a></li>
+                <li><a href="ai-content.html">AI Generated Content</a></li>
+                <li>
+                    <span class="nav-category">Crons</span>
+                    <ul>
+                        <li><a href="crons/thm.html">TryHackMe Reminders</a></li>
+                        <li><a href="crons/thm-ctf.html">TryHackMe CTF</a></li>
+                        <li><a href="crons/github-notes.html">GitHub Notes</a></li>
+                        <li><a href="crons/news.html">Cybersecurity News</a></li>
+                        <li><a href="crons/cve.html">CVE Updates</a></li>
+                        <li><a href="crons/podcast-darknet.html">Darknet Diaries</a></li>
+                        <li><a href="crons/podcast-snyk.html">Snyk Podcast</a></li>
+                        <li><a href="crons/podcast-security-now.html">Security Now</a></li>
+                        <li><a href="crons/podcast-cyber-show.html">The Cyber Show</a></li>
+                        <li><a href="crons/reddit.html">Reddit Content</a></li>
+                        <li><a href="crons/youtube.html">YouTube Content</a></li>
+                        <li><a href="crons/shorts.html">YouTube Shorts</a></li>
+                    </ul>
+                </li>
+                <li><a href="deployment.html">Deployment</a></li>
+                <li><a href="contributing.html">Contributing</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="content-wrapper">
+        <main class="content">
+            <h1>Getting Started</h1>
+            <p>After completing the installation process, this guide will help you start using Cyber Bot effectively. We'll cover how to run your first cron jobs, customize the bot's behavior, and understand the command structure.</p>
+
+            <section id="quick-start">
+                <h2>Quick Start</h2>
+                <p>If you've already completed the installation, you can quickly test the bot with one of these commands:</p>
+                
+                <div class="code-block">
+                    <pre><code># Send a TryHackMe reminder
+npm run cron -- -c sendTHM
+
+# Get latest cybersecurity news
+npm run cron -- -c sendNewsResume
+
+# Fetch the latest CVEs
+npm run cron -- -c sendCve</code></pre>
+                </div>
+                
+                <p>These commands will execute a single cron job immediately and send the results to your configured Telegram chat.</p>
+            </section>
+
+            <section id="command-structure">
+                <h2>Command Structure</h2>
+                <p>Cyber Bot uses a consistent command structure for running cron jobs:</p>
+                
+                <div class="code-block">
+                    <pre><code>npm run cron -- -c [cronName] [-l language] [-y youtubeChannel] [-p param]</code></pre>
+                </div>
+                
+                <p>Where:</p>
+                <ul>
+                    <li><code>cronName</code>: The name of the cron job to run (required)</li>
+                    <li><code>language</code>: The language for generated content (optional, defaults to 'english')</li>
+                </ul>
+                
+                <h3>Examples</h3>
+                <div class="code-block">
+                    <pre><code># Run with English content (default)
+npm run cron -- -c sendNewsResume
+
+# Run with French content
+npm run cron -- -c sendNewsResume -l french</code></pre>
+                </div>
+            </section>
+
+            <section id="available-crons">
+                <h2>Available Cron Jobs</h2>
+                <p>Cyber Bot comes with several pre-configured cron jobs for different cybersecurity tasks:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                            <th>Recommended Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>sendTHM</code></td>
+                            <td>Sends TryHackMe daily challenge reminders</td>
+                            <td>Daily (morning)</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendThmCTF</code></td>
+                            <td>Notifies about TryHackMe CTF competitions</td>
+                            <td>Weekly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendGithubNotes</code></td>
+                            <td>Processes and sends GitHub notes with enhanced context</td>
+                            <td>Daily or Weekly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendNewsResume</code></td>
+                            <td>Summarizes latest cybersecurity news</td>
+                            <td>Hourly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendCve</code></td>
+                            <td>Sends important CVE updates</td>
+                            <td>Every 6 hours</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendPodcastDD</code></td>
+                            <td>Shares new Darknet Diaries podcast episodes</td>
+                            <td>Weekly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendPodcastSnyk</code></td>
+                            <td>Shares new Snyk podcast episodes</td>
+                            <td>Weekly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendPodcastSecurityNow</code></td>
+                            <td>Shares new Security Now podcast episodes</td>
+                            <td>Weekly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendPodcastCyberShow</code></td>
+                            <td>Shares new The Cyber Show podcast episodes</td>
+                            <td>Weekly</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendRedditPost</code></td>
+                            <td>Shares popular Reddit posts from cybersecurity subreddits</td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendYoutubeVideo</code></td>
+                            <td>Shares new YouTube videos from cybersecurity channels</td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td><code>sendYoutubeShorts</code></td>
+                            <td>Shares new YouTube Shorts from cybersecurity channels</td>
+                            <td>Weekly</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>For detailed information about each cron job, refer to the specific documentation page in the Crons section.</p>
+            </section>
+
+            <section id="scheduling">
+                <h2>Setting Up Scheduling</h2>
+                <p>To automate Cyber Bot, you'll need to set up scheduled tasks using your system's scheduler. Here are examples using crontab on Linux/macOS:</p>
+                
+                <h3>Example Crontab Schedule</h3>
+                <div class="code-block">
+                    <pre><code># Daily TryHackMe reminder at 8:00 AM
+0 8 * * * cd /path/to/cyber-bot && /usr/bin/npm run cron -- -c sendTHM >> /path/to/cyber-bot/logs/thm.log 2>&1
+
+# Cybersecurity news digest at 6:00 PM
+0 18 * * * cd /path/to/cyber-bot && /usr/bin/npm run cron -- -c sendNewsResume >> /path/to/cyber-bot/logs/news.log 2>&1
+
+# CVE updates every 6 hours
+0 */6 * * * cd /path/to/cyber-bot && /usr/bin/npm run cron -- -c sendCve >> /path/to/cyber-bot/logs/cve.log 2>&1
+
+# Weekly podcast updates on Sunday at 9:00 AM
+0 9 * * 0 cd /path/to/cyber-bot && /usr/bin/npm run cron -- -c sendPodcastDD >> /path/to/cyber-bot/logs/podcast.log 2>&1
+
+# Daily Reddit posts at 12:00 PM
+0 12 * * * cd /path/to/cyber-bot && /usr/bin/npm run cron -- -c sendRedditPost >> /path/to/cyber-bot/logs/reddit.log 2>&1</code></pre>
+                </div>
+                
+                <p>To edit your crontab on Linux/macOS, run <code>crontab -e</code> and add the desired entries.</p>
+                
+                <div class="info-box">
+                    <h3>Log Rotation</h3>
+                    <p>Consider setting up log rotation to manage the log files generated by your scheduled cron jobs. This prevents log files from growing too large over time.</p>
+                </div>
+            </section>
+
+            <section id="testing">
+                <h2>Testing Your Setup</h2>
+                <p>Before setting up automation, it's a good idea to test each cron job manually to ensure it works as expected:</p>
+                
+                <ol>
+                    <li>Run each cron job manually using the command structure described above</li>
+                    <li>Check your Telegram chat to ensure messages are being delivered correctly</li>
+                    <li>Verify that the content is formatted properly and contains the expected information</li>
+                    <li>Check for any errors in the console output</li>
+                </ol>   
+            </section>
+
+            <section id="customization">
+                <h2>Basic Customization</h2>
+                
+                <h3>Environment Variables</h3>
+                <p>Most behavior can be customized through environment variables in your <code>.env</code> file. Here are some key settings you might want to adjust:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Purpose</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>AUTHORIZED_LANGUAGES</code></td>
+                            <td>Languages available for content generation</td>
+                            <td><code>english,french,spanish</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>REDDIT_SUBREDDITS</code></td>
+                            <td>Subreddits to monitor for content</td>
+                            <td><code>cybersecurity,netsec,hacking</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>REDDIT_DAYS_LOOKBACK</code></td>
+                            <td>How many days to look back for Reddit posts</td>
+                            <td><code>7</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>CVSS_SEVERITY_THRESHOLD</code></td>
+                            <td>Minimum CVSS score for reported CVEs</td>
+                            <td><code>7.0</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>HOURS_DELAY</code></td>
+                            <td>Hours to look back for new CVEs</td>
+                            <td><code>24</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>TELEGRAM_TOPIC_*</code></td>
+                            <td>Telegram topic IDs for message organization</td>
+                            <td><code>12345</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Prompt Customization</h3>
+                <p>You can customize how AI generates content by modifying the prompt templates in the <code>/crons/utils/prompts</code> directory.</p>
+            </section>
+
+            <section id="logging">
+                <h2>Logging and Monitoring</h2>
+                <p>Cyber Bot includes basic logging to help you track its operation:</p>
+            </section>
+
+            <div class="next-steps">
+                <h2>Next Steps</h2>
+                <p>Now that you've set up Cyber Bot and understand the basics, you may want to explore:</p>
+                <ul>
+                    <li>Detailed documentation for specific <a href="#available-crons">cron jobs</a></li>
+                    <li>Advanced customization options in the <a href="deployment.html">Deployment</a> guide</li>
+                    <li>How to <a href="contributing.html">contribute</a> to the Cyber Bot project</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://t.me/bot_cyber_fr" target="_blank">Telegram</a>
+                    <a href="https://bsky.app/profile/calebpr.bsky.social" target="_blank">Bluesky</a>
+                    <a href="https://www.cyberhub.blog/" target="_blank">Website</a>
+                    <a href="https://github.com/kOaDT/cyber-bot" target="_blank">GitHub</a>
+                </div>
+                <div class="footer-copyright">
+                    <p>© 2025 Cyber Bot Project. Licensed under <a href="license.html">CC-BY-NC-4.0</a>.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html> 

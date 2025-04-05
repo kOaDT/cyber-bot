@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributing - Cyber Bot Documentation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="../../assets/logo.jpg" type="image/svg+xml">
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn" aria-label="Toggle dark/light mode">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span></span>
+                <h1>Cyber Bot</h1>
+            </div>
+            <button class="mobile-close" id="sidebar-close">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html">Overview</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="getting-started.html">Getting Started</a></li>
+                <li><a href="ai-content.html">AI Generated Content</a></li>
+                <li>
+                    <span class="nav-category">Crons</span>
+                    <ul>
+                        <li><a href="crons/thm.html">TryHackMe Reminders</a></li>
+                        <li><a href="crons/thm-ctf.html">TryHackMe CTF</a></li>
+                        <li><a href="crons/github-notes.html">GitHub Notes</a></li>
+                        <li><a href="crons/news.html">Cybersecurity News</a></li>
+                        <li><a href="crons/cve.html">CVE Updates</a></li>
+                        <li><a href="crons/podcast-darknet.html">Darknet Diaries</a></li>
+                        <li><a href="crons/podcast-snyk.html">Snyk Podcast</a></li>
+                        <li><a href="crons/podcast-security-now.html">Security Now</a></li>
+                        <li><a href="crons/podcast-cyber-show.html">The Cyber Show</a></li>
+                        <li><a href="crons/reddit.html">Reddit Content</a></li>
+                        <li><a href="crons/youtube.html">YouTube Content</a></li>
+                        <li><a href="crons/shorts.html">YouTube Shorts</a></li>
+                    </ul>
+                </li>
+                <li><a href="deployment.html">Deployment</a></li>
+                <li><a href="contributing.html" class="active">Contributing</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="content-wrapper">
+        <main class="content">
+            <h1>Contributing</h1>
+            <p>Cyber Bot is free and open to contributions. This guide will help you get started with contributing to the project, whether you're fixing bugs, adding features, or improving documentation.</p>
+
+            <section id="code-of-conduct">
+                <h2>Code of Conduct</h2>
+                <p>By participating in this project, you are expected to uphold our Code of Conduct:</p>
+                <ul>
+                    <li>Be respectful and inclusive toward other contributors</li>
+                    <li>Use welcoming and inclusive language</li>
+                    <li>Be accepting of constructive criticism</li>
+                    <li>Focus on what is best for the community</li>
+                    <li>Show empathy towards other community members</li>
+                </ul>
+            </section>
+
+            <section id="types-of-contributions">
+                <h2>Types of Contributions</h2>
+                <p>There are many ways to contribute to Cyber Bot:</p>
+                
+                <div class="contribution-types">
+                    <div class="contribution-type">
+                        <h3>Code Contributions</h3>
+                        <ul>
+                            <li>Fixing bugs</li>
+                            <li>Adding new features</li>
+                            <li>Improving existing functionality</li>
+                            <li>Optimizing performance</li>
+                            <li>Writing tests</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="contribution-type">
+                        <h3>Documentation</h3>
+                        <ul>
+                            <li>Improving existing documentation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="contribution-type">
+                        <h3>Content & Data</h3>
+                        <ul>
+                            <li>Adding new data sources</li>
+                            <li>Improving prompt templates</li>
+                            <li>Adding support for new APIs</li>
+                            <li>Curating cybersecurity resources</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="contribution-type">
+                        <h3>Community Support</h3>
+                        <ul>
+                            <li>Answering questions</li>
+                            <li>Reporting bugs</li>
+                            <li>Suggesting features</li>
+                            <li>Sharing the project</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="getting-started">
+                <h2>Getting Started</h2>
+                
+                <h3>Setting Up Your Development Environment</h3>
+                <ol>
+                    <li>Fork the repository on GitHub</li>
+                    <li>Clone your fork locally:
+                        <div class="code-block">
+                            <pre><code>git clone https://github.com/YOUR_USERNAME/cyber-bot.git
+cd cyber-bot</code></pre>
+                        </div>
+                    </li>
+                    <li>Add the upstream repository as a remote:
+                        <div class="code-block">
+                            <pre><code>git remote add upstream https://github.com/kOaDT/cyber-bot.git</code></pre>
+                        </div>
+                    </li>
+                    <li>Create a new branch for your changes:
+                        <div class="code-block">
+                            <pre><code>git checkout -b feature/your-feature-name</code></pre>
+                        </div>
+                    </li>
+                    <li>Install dependencies:
+                        <div class="code-block">
+                            <pre><code>npm install</code></pre>
+                        </div>
+                    </li>
+                    <li>Set up your environment variables by copying the example file:
+                        <div class="code-block">
+                            <pre><code>cp .env.example .env</code></pre>
+                        </div>
+                    </li>
+                </ol>
+
+                <h3>Making Changes</h3>
+                <ol>
+                    <li>Make your changes to the codebase</li>
+                    <li>Ensure your code follows the project's coding standards</li>
+                    <li>Add or update tests as necessary</li>
+                    <li>Run tests to make sure everything works:
+                        <div class="code-block">
+                            <pre><code>npm test</code></pre>
+                        </div>
+                    </li>
+                    <li>Update documentation as needed</li>
+                </ol>
+
+                <h3>Submitting Changes</h3>
+                <ol>
+                    <li>Commit your changes with a descriptive commit message:
+                        <div class="code-block">
+                            <pre><code>git add .
+git commit -m "Add feature: your feature description"</code></pre>
+                        </div>
+                    </li>
+                    <li>Push your branch to your fork:
+                        <div class="code-block">
+                            <pre><code>git push origin feature/your-feature-name</code></pre>
+                        </div>
+                    </li>
+                    <li>Create a pull request from your fork to the main repository</li>
+                    <li>Describe your changes in the pull request, including the motivation for the changes and any additional context</li>
+                </ol>
+            </section>
+
+            <section id="pull-request-process">
+                <h2>Pull Request Process</h2>
+                <p>When submitting a pull request:</p>
+                <ol>
+                    <li>Ensure your code follows the project's coding standards</li>
+                    <li>Include tests for new functionality</li>
+                    <li>Update documentation as necessary</li>
+                    <li>Link any related issues in the pull request description</li>
+                    <li>Be responsive to feedback and be willing to make changes to your pull request if requested</li>
+                </ol>
+                
+                <div class="info-box">
+                    <h3>Pull Request Checklist</h3>
+                    <ul>
+                        <li>✅ Code follows project coding standards</li>
+                        <li>✅ Tests have been added/updated and pass</li>
+                        <li>✅ Documentation has been updated</li>
+                        <li>✅ Commit messages are clear and descriptive</li>
+                        <li>✅ Branch is up to date with the main branch</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="coding-standards">
+                <h2>Coding Standards</h2>
+                
+                <h3>File Organization</h3>
+                <p>The project follows this general file organization:</p>
+                <ul>
+                    <li><code>/crons</code> - Individual cron job scripts</li>
+                    <li><code>/crons/utils</code> - Shared utility functions</li>
+                    <li><code>/crons/utils/prompts</code> - AI prompt templates</li>
+                    <li><code>/services</code> - External API service integrations</li>
+                    <li><code>/config</code> - Configuration files</li>
+                    <li><code>/documentation</code> - Project documentation</li>
+                    <li><code>/assets</code> - Tracking files and other assets</li>
+                </ul>
+            </section>
+
+            <section id="adding-new-cron-jobs">
+                <h2>Adding New Cron Jobs</h2>
+                <p>If you want to add a new cron job to Cyber Bot, follow these steps:</p>
+                
+                <ol>
+                    <li>Create a new file in the <code>/crons</code> directory with a descriptive name (e.g., <code>sendNewFeature.js</code>)</li>
+                    <li>Implement the cron job using the established patterns:
+                        <div class="code-block">
+                            <pre><code>// Example structure for a new cron job
+const logger = require('./config/logger');
+const { sendMessage } = require('./utils/sendMessage');
+
+const run = async ({ dryMode, lang }) => {
+  try {
+    // Your code here
+    await sendMessage(message);
+    logger.info('Message sent successfully');
+  } catch (err) {
+    logger.error('Error', { error: err.message });
+  }
+};
+
+module.exports = { run };</code></pre>
+                        </div>
+                    </li>
+                    <li>Add appropriate tracking files if needed</li>
+                    <li>Write tests for your cron job</li>
+                    <li>Update documentation to describe your new feature</li>
+                </ol>
+            </section>
+
+            <section id="license">
+                <h2>License</h2>
+                <p>By contributing to Cyber Bot, you agree that your contributions will be licensed under the project's license.</p>
+                
+                <div class="info-box">
+                    <p>Cyber Bot is licensed under the <a href="license.html">Creative Commons Attribution-NonCommercial 4.0 International License (CC-BY-NC-4.0)</a>.</p>
+                </div>
+            </section>
+
+            <div class="next-steps">
+                <h2>Ready to Contribute?</h2>
+                <p>We're excited to have you join the Cyber Bot community! If you have any questions about contributing, feel free to open an issue on GitHub or reach out to the maintainers.</p>
+                <p><a href="https://github.com/kOaDT/cyber-bot" class="btn secondary" target="_blank">GitHub</a></p>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://t.me/bot_cyber_fr" target="_blank">Telegram</a>
+                    <a href="https://bsky.app/profile/calebpr.bsky.social" target="_blank">Bluesky</a>
+                    <a href="https://www.cyberhub.blog/" target="_blank">Website</a>
+                    <a href="https://github.com/kOaDT/cyber-bot" target="_blank">GitHub</a>
+                </div>
+                <div class="footer-copyright">
+                    <p>© 2025 Cyber Bot Project. Licensed under <a href="license.html">CC-BY-NC-4.0</a>.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html> 

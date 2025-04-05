@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment - Cyber Bot Documentation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="../../assets/logo.jpg" type="image/svg+xml">
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn" aria-label="Toggle dark/light mode">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span></span>
+                <h1>Cyber Bot</h1>
+            </div>
+            <button class="mobile-close" id="sidebar-close">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html">Overview</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="getting-started.html">Getting Started</a></li>
+                <li><a href="ai-content.html">AI Generated Content</a></li>
+                <li>
+                    <span class="nav-category">Crons</span>
+                    <ul>
+                        <li><a href="crons/thm.html">TryHackMe Reminders</a></li>
+                        <li><a href="crons/thm-ctf.html">TryHackMe CTF</a></li>
+                        <li><a href="crons/github-notes.html">GitHub Notes</a></li>
+                        <li><a href="crons/news.html">Cybersecurity News</a></li>
+                        <li><a href="crons/cve.html">CVE Updates</a></li>
+                        <li><a href="crons/podcast-darknet.html">Darknet Diaries</a></li>
+                        <li><a href="crons/podcast-snyk.html">Snyk Podcast</a></li>
+                        <li><a href="crons/podcast-security-now.html">Security Now</a></li>
+                        <li><a href="crons/podcast-cyber-show.html">The Cyber Show</a></li>
+                        <li><a href="crons/reddit.html">Reddit Content</a></li>
+                        <li><a href="crons/youtube.html">YouTube Content</a></li>
+                        <li><a href="crons/shorts.html">YouTube Shorts</a></li>
+                    </ul>
+                </li>
+                <li><a href="deployment.html" class="active">Deployment</a></li>
+                <li><a href="contributing.html">Contributing</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="content-wrapper">
+ 
+        <main class="content">
+            <h1>Deployment to Production</h1>
+            <p>This guide provides instructions on how to deploy Cyber Bot to a production environment. The recommended approach is using a Virtual Private Server (VPS) with scheduled cron jobs.</p>
+
+            <section id="deployment-options">
+                <h2>Deployment Options</h2>
+                
+                <p>There are several ways to deploy Cyber Bot to production, each with its own advantages:</p>
+                
+                <div class="deployment-options">
+                    <div class="option-card">
+                        <h3>VPS/Dedicated Server <span class="tag recommended">Recommended</span></h3>
+                        <p>Running on a Virtual Private Server (VPS) provides full control and reliable scheduling.</p>
+                        <ul>
+                            <li><strong>Pros:</strong> Full control, reliable cron scheduling, persistent file storage</li>
+                            <li><strong>Cons:</strong> Requires server management knowledge, monthly cost</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="option-card">
+                        <h3>Containerized Deployment</h3>
+                        <p>Using Docker containers to standardize the deployment environment.</p>
+                        <ul>
+                            <li><strong>Pros:</strong> Consistent environment, easier scaling, portable</li>
+                            <li><strong>Cons:</strong> Additional complexity, requires Docker knowledge</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="option-card">
+                        <h3>Serverless Functions</h3>
+                        <p>Deploy components as serverless functions on platforms like AWS Lambda or Azure Functions.</p>
+                        <ul>
+                            <li><strong>Pros:</strong> Cost-effective for low usage, managed infrastructure</li>
+                            <li><strong>Cons:</strong> Execution time limits, cold starts, more complex setup</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="security-considerations">
+                <h2>Security Considerations</h2>
+                
+                <p>Implement these security measures to protect your deployment:</p>
+                
+                <ul>
+                    <li><strong>API Key Management:</strong> Never store API keys directly in your code or expose them in public repositories</li>
+                    <li><strong>Regular Updates:</strong> Keep your server, Node.js, and dependencies updated</li>
+                    <li><strong>Firewalls:</strong> Configure firewall rules to allow only necessary connections</li>
+                    <li><strong>SSH Security:</strong> Disable password authentication and use SSH keys</li>
+                    <li><strong>Limited Permissions:</strong> Run the bot with a dedicated user with limited permissions</li>
+                    <li><strong>Secure .env File:</strong> Set restrictive permissions on your .env file (<code>chmod 600 .env</code>)</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://t.me/bot_cyber_fr" target="_blank">Telegram</a>
+                    <a href="https://bsky.app/profile/calebpr.bsky.social" target="_blank">Bluesky</a>
+                    <a href="https://www.cyberhub.blog/" target="_blank">Website</a>
+                    <a href="https://github.com/kOaDT/cyber-bot" target="_blank">GitHub</a>
+                </div>
+                <div class="footer-copyright">
+                    <p>© 2025 Cyber Bot Project. Licensed under <a href="license.html">CC-BY-NC-4.0</a>.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html> 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation - Cyber Bot Documentation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="../../assets/logo.jpg" type="image/svg+xml">
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn" aria-label="Toggle dark/light mode">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span></span>
+                <h1>Cyber Bot</h1>
+            </div>
+            <button class="mobile-close" id="sidebar-close">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html">Overview</a></li>
+                <li><a href="installation.html" class="active">Installation</a></li>
+                <li><a href="getting-started.html">Getting Started</a></li>
+                <li><a href="ai-content.html">AI Generated Content</a></li>
+                <li>
+                    <span class="nav-category">Crons</span>
+                    <ul>
+                        <li><a href="crons/thm.html">TryHackMe Reminders</a></li>
+                        <li><a href="crons/thm-ctf.html">TryHackMe CTF</a></li>
+                        <li><a href="crons/github-notes.html">GitHub Notes</a></li>
+                        <li><a href="crons/news.html">Cybersecurity News</a></li>
+                        <li><a href="crons/cve.html">CVE Updates</a></li>
+                        <li><a href="crons/podcast-darknet.html">Darknet Diaries</a></li>
+                        <li><a href="crons/podcast-snyk.html">Snyk Podcast</a></li>
+                        <li><a href="crons/podcast-security-now.html">Security Now</a></li>
+                        <li><a href="crons/podcast-cyber-show.html">The Cyber Show</a></li>
+                        <li><a href="crons/reddit.html">Reddit Content</a></li>
+                        <li><a href="crons/youtube.html">YouTube Content</a></li>
+                        <li><a href="crons/shorts.html">YouTube Shorts</a></li>
+                    </ul>
+                </li>
+                <li><a href="deployment.html">Deployment</a></li>
+                <li><a href="contributing.html">Contributing</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="content-wrapper">
+
+        <main class="content">
+            <h1>Installation</h1>
+            <p>This guide will walk you through the process of installing Cyber Bot on your system. Follow these steps to set up the bot and prepare it for operation.</p>
+
+            <section id="prerequisites">
+                <h2>Prerequisites</h2>
+                <p>Before you begin, ensure you have the following:</p>
+                <ul>
+                    <li><strong>Node.js</strong> - Version 16.x or higher is recommended</li>
+                    <li><strong>npm</strong> - Usually comes with Node.js</li>
+                    <li><strong>Git</strong> - For cloning the repository</li>
+                    <li><strong>Telegram Bot Token</strong> - Created through <a href="https://t.me/BotFather" target="_blank">BotFather</a></li>
+                    <li><strong>Mistral AI API Key</strong> - Obtained from <a href="https://mistral.ai/" target="_blank">Mistral AI</a></li>
+                    <li><strong>Optional: MySQL Database</strong> - For message logging (optional feature)</li>
+                </ul>
+            </section>
+
+            <section id="installation-steps">
+                <h2>Installation Steps</h2>
+                
+                <h3>1. Clone the Repository</h3>
+                <div class="code-block">
+                    <pre><code>git clone git@github.com:kOaDT/cyber-bot.git
+cd cyber-bot</code></pre>
+                    <button class="copy-button" data-clipboard-target="#clone-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <h3>2. Create Tracking Files</h3>
+                <p>These files are used to track which content has already been processed to avoid duplicates:</p>
+                <div class="code-block">
+                    <pre><code>mkdir -p assets
+touch assets/processedNotes.json       # GithubNotes tracking
+touch assets/processedArticles.json    # News tracking
+touch assets/processedShorts.json      # Shorts tracking
+touch assets/processedDD.json          # Darknet Diaries Podcast tracking
+touch assets/processedSnyk.json        # Snyk Podcast tracking
+touch assets/processedYt.json          # YouTube tracking
+touch assets/processedReddit.json      # Reddit post tracking
+touch assets/processedCTF.json         # CTF tracking
+touch assets/processedSecurityNow.json # Security Now Podcast tracking
+touch assets/processedCyberShow.json   # The Cyber Show Podcast tracking</code></pre>
+                    <button class="copy-button" data-clipboard-target="#tracking-files-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <h3>3. Install Dependencies</h3>
+                <div class="code-block">
+                    <pre><code>npm install</code></pre>
+                    <button class="copy-button" data-clipboard-target="#install-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <h3>4. Configure Environment</h3>
+                <p>Create a <code>.env</code> file in the root directory with your configuration:</p>
+                <div class="code-block">
+                    <pre><code># GitHub Settings
+GITHUB_SECRET=your_github_token
+GITHUB_USERNAME=your_github_username
+GITHUB_REPO=your_repo_name
+# Optional
+EXCLUDED_GITHUB_FILES=file1.md,file2.md
+
+# Telegram Settings
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+CHAT_ID=your_chat_id
+# Optional Topic IDs for message organization
+TELEGRAM_TOPIC_THM=12345
+TELEGRAM_TOPIC_NEWS=12346
+TELEGRAM_TOPIC_YOUTUBE=12347
+TELEGRAM_TOPIC_PODCAST=12348
+TELEGRAM_TOPIC_GITHUB=12349
+TELEGRAM_TOPIC_REDDIT=12350
+TELEGRAM_TOPIC_CVE=12351
+
+# Mistral AI Settings
+MISTRAL_API_KEY=your_mistral_api_key
+# Optional, comma-separated
+AUTHORIZED_LANGUAGES=en,fr
+
+# AssemblyAI - Text-to-Speech
+ASSEMBLYAI_API_KEY=your_assemblyai_api_key
+
+# YouTube Settings
+YOUTUBE_API_KEY=your_youtube_api_key
+
+# Reddit
+REDDIT_SUBREDDITS=cybersecurity,netsec,hacking
+REDDIT_DAYS_LOOKBACK=7
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+
+# CVE
+CVSS_SEVERITY_THRESHOLD=7.0   # Default >= 7.0
+HOURS_DELAY=24                # Default 24 hours
+TECHNOLOGIES_OF_INTEREST=windows,linux,apache,nginx
+
+# Optional Database Settings
+MYSQL_HOST=localhost
+MYSQL_USER=db_user
+MYSQL_PASSWORD=db_password
+MYSQL_DATABASE=cyber_bot
+I_WANT_TO_SAVE_MESSAGES_IN_DB=true</code></pre>
+                    <button class="copy-button" data-clipboard-target="#env-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="api-keys">
+                <h2>Obtaining API Keys</h2>
+
+                <h3>Telegram Bot Token</h3>
+                <ol>
+                    <li>Open Telegram and search for <a href="https://t.me/BotFather" target="_blank">@BotFather</a></li>
+                    <li>Start a chat with BotFather and send the command <code>/newbot</code></li>
+                    <li>Follow the instructions to name your bot and choose a username (must end in 'bot')</li>
+                    <li>Once created, BotFather will provide you with a token</li>
+                    <li>Copy this token to your <code>.env</code> file as <code>TELEGRAM_BOT_TOKEN</code></li>
+                </ol>
+
+                <h3>Mistral AI API Key</h3>
+                <ol>
+                    <li>Visit <a href="https://mistral.ai/" target="_blank">Mistral AI's website</a></li>
+                    <li>Sign up for an account or log in</li>
+                    <li>Navigate to your account settings or API section</li>
+                    <li>Generate a new API key</li>
+                    <li>Copy this key to your <code>.env</code> file as <code>MISTRAL_API_KEY</code></li>
+                </ol>
+
+                <h3>YouTube API Key</h3>
+                <ol>
+                    <li>Go to the <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
+                    <li>Create a new project or select an existing one</li>
+                    <li>Enable the YouTube Data API v3</li>
+                    <li>Go to the Credentials section and create an API key</li>
+                    <li>Copy this key to your <code>.env</code> file as <code>YOUTUBE_API_KEY</code></li>
+                </ol>
+
+                <h3>Reddit API Credentials</h3>
+                <ol>
+                    <li>Visit <a href="https://www.reddit.com/prefs/apps" target="_blank">Reddit's app preferences</a></li>
+                    <li>Scroll down and click "create app" or "create another app"</li>
+                    <li>Fill in the required fields (name, app type, redirect URI)</li>
+                    <li>For app type, select "script"</li>
+                    <li>For redirect URI, you can use <code>http://localhost:8000</code></li>
+                    <li>After creating the app, note the client ID and client secret</li>
+                    <li>Copy these values to your <code>.env</code> file as <code>REDDIT_CLIENT_ID</code> and <code>REDDIT_CLIENT_SECRET</code></li>
+                </ol>
+            </section>
+
+            <section id="verify-installation">
+                <h2>Verifying Installation</h2>
+                <p>After completing the installation steps, you can verify that everything is working by running a simple test:</p>
+                
+                <div class="code-block">
+                    <pre><code>npm run cron -- -c sendTHM</code></pre>
+                    <button class="copy-button" data-clipboard-target="#test-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+                
+                <p>This command will test the TryHackMe reminder functionality. If it runs without errors and you receive a message in your Telegram chat, the installation was successful.</p>
+            </section>
+
+            <div class="next-steps">
+                <h2>Next Steps</h2>
+                <p>Now that you've successfully installed Cyber Bot, you're ready to begin using it:</p>
+                <ul>
+                    <li>Learn how to run different cron jobs in the <a href="getting-started.html">Getting Started</a> guide</li>
+                    <li>Explore customizing prompts and AI content generation</li>
+                    <li>Set up automated scheduling through the <a href="deployment.html">Deployment</a> documentation</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://t.me/bot_cyber_fr" target="_blank">Telegram</a>
+                    <a href="https://bsky.app/profile/calebpr.bsky.social" target="_blank">Bluesky</a>
+                    <a href="https://www.cyberhub.blog/" target="_blank">Website</a>
+                    <a href="https://github.com/kOaDT/cyber-bot" target="_blank">GitHub</a>
+                </div>
+                <div class="footer-copyright">
+                    <p>© 2025 Cyber Bot Project. Licensed under <a href="license.html">CC-BY-NC-4.0</a>.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html>
