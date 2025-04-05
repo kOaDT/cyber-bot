@@ -1,6 +1,3 @@
-const logger = require('../../../crons/config/logger');
-
-// Mock mistral config module
 jest.mock('../../../crons/config/mistral', () => ({
   mistralClient: {
     chat: {
@@ -13,12 +10,10 @@ jest.mock('../../../crons/config/mistral', () => ({
   },
 }));
 
-// Mock logger - this must be before requiring generate
 jest.mock('../../../crons/config/logger', () => ({
   error: jest.fn(),
 }));
 
-// Fix generate.js in the test by manually adding the missing logger import
 jest.mock('../../../crons/utils/generate', () => {
   const { mistralClient, DEFAULT_PARAMS } = require('../../../crons/config/mistral');
   const logger = require('../../../crons/config/logger');
@@ -112,7 +107,6 @@ describe('generate utility', () => {
     const { mistralClient } = require('../../../crons/config/mistral');
     const logger = require('../../../crons/config/logger');
 
-    // Set up mock to reject with an error
     mistralClient.chat.complete.mockRejectedValue(new Error('API error'));
 
     const { generate } = require('../../../crons/utils/generate');
