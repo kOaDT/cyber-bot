@@ -28,6 +28,10 @@ class BrowserManager {
     try {
       this.browser = await puppeteer.launch(this.options);
       this.page = await this.browser.newPage();
+      await this.page.setUserAgent(
+        // eslint-disable-next-line max-len
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+      );
       await this.page.setDefaultTimeout(this.options.timeout);
       await this.page.setDefaultNavigationTimeout(this.options.timeout);
 
