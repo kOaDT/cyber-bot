@@ -32,6 +32,7 @@ describe('BrowserManager', () => {
       waitForNavigation: jest.fn(),
       $eval: jest.fn(),
       title: jest.fn(),
+      setUserAgent: jest.fn(),
     };
 
     mockBrowser = {
