@@ -6,12 +6,14 @@ const fs = require('fs').promises;
 const cheerio = require('cheerio');
 const { AssemblyAI } = require('assemblyai');
 
+const PROTOCOL = process.env.CYBERSHOW_PROTOCOL || 'https://';
+
 /**
  * Get the last episode of the podcast
  * @returns {Object} The last episode of the podcast
  */
 const getLastCyberShowEpisode = async () => {
-  const response = await fetch('https://cybershow.uk/episodes.php');
+  const response = await fetch(`${PROTOCOL}cybershow.uk/episodes.php`);
   const html = await response.text();
   const $ = cheerio.load(html);
   const episodeElement = $('.card-body.details').first();
@@ -66,7 +68,7 @@ const getTranscription = async (audioUrl) => {
 
   try {
     // Download the audio
-    const audioResponse = await fetch(`https://cybershow.uk/${audioUrl}`);
+    const audioResponse = await fetch(`${PROTOCOL}cybershow.uk/${audioUrl}`);
     const audioBuffer = await audioResponse.arrayBuffer();
     await fs.writeFile(tempFilePath, Buffer.from(audioBuffer));
 
@@ -116,7 +118,7 @@ const run = async ({ dryMode, lang }) => {
         'The Cyber Show',
         lastEpisode.title,
         transcription,
-        `https://cybershow.uk/episodes.php?id=${lastEpisode.episodeNumber}`,
+        `${PROTOCOL}cybershow.uk/episodes.php?id=${lastEpisode.episodeNumber}`,
         lang
       );
       const summary = await generate(prompt);
