@@ -17,7 +17,10 @@ const generate = async (prompt, overrideParams = {}) => {
 
     return response.choices[0].message.content;
   } catch (err) {
-    logger.error('Error generating', { error: err.message });
+    if (err.statusCode === 429) {
+      logger.error('Mistral API rate limit exceeded - exiting');
+      process.exit(1);
+    }
     return null;
   }
 };
