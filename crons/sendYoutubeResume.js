@@ -1,5 +1,4 @@
 const logger = require('./config/logger');
-const { Innertube } = require('youtubei.js');
 const youtubedl = require('youtube-dl-exec');
 const { createYoutubeResumePrompt } = require('./utils/prompts');
 const { sendMessage } = require('./utils/sendMessage');
@@ -14,6 +13,7 @@ const fs = require('fs').promises;
  */
 async function getVideoTranscript(videoId) {
   try {
+    const { Innertube } = await import('youtubei.js');
     const yt = await Innertube.create({
       lang: 'en',
       location: 'US',
