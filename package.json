@@ -22,7 +22,7 @@
   "license": "CC-BY-NC-4.0",
   "dependencies": {
     "@mistralai/mistralai": "^1.9.18",
-    "assemblyai": "^4.15.0",
+    "assemblyai": "^4.16.0",
     "cheerio": "^1.1.2",
     "commander": "^14.0.0",
     "dotenv": "^17.2.1",
