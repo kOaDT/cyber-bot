@@ -21,7 +21,7 @@
   "repository": "https://github.com/kOaDT/cyber-bot",
   "license": "CC-BY-NC-4.0",
   "dependencies": {
-    "@mistralai/mistralai": "^1.9.18",
+    "@mistralai/mistralai": "^1.10.0",
     "assemblyai": "^4.15.0",
     "cheerio": "^1.1.2",
     "commander": "^14.0.0",
