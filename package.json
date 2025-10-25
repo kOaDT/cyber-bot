@@ -31,7 +31,7 @@
     "puppeteer": "^24.22.3",
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
-    "winston": "^3.17.0",
+    "winston": "^3.18.3",
     "youtube-dl-exec": "^3.0.24",
     "youtubei.js": "^15.0.1"
   },
