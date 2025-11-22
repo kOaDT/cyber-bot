@@ -28,7 +28,7 @@
     "dotenv": "^17.2.3",
     "mysql2": "^3.15.3",
     "node-telegram-bot-api": "^0.66.0",
-    "puppeteer": "^24.26.1",
+    "puppeteer": "^24.27.0",
     "request": "^2.88.2",
     "rss-parser": "^3.13.0",
     "winston": "^3.18.3",
