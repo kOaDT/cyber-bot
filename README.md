@@ -240,8 +240,6 @@ npm run cron -- -c <CRON_NAME> -l <language>
 
 ## 📚 Documentation
 
-For complete documentation of all features, visit our [official documentation site](https://koadt.github.io/cyber-bot/).
-
 For VPS deployment guidance, you can also check our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
 
 ## 🤝 Contributing
