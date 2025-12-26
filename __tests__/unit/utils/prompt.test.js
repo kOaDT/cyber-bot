@@ -168,10 +168,10 @@ describe('Prompt utils', () => {
 
       expect(result).toContain(`Channel: ${channel}`);
       expect(result).toContain(`Transcription:\n    ${transcription}`);
-      expect(result).toContain(`The summary should be in ${lang}`);
-      expect(result).toContain(`Start with: 🎬 NEW VIDEO FROM ${channel}`);
-      expect(result).toContain(`Finish with the video url: https://www.youtube.com/watch?v=${videoId}`);
-      expect(result).not.toContain('Do not translate technical terms');
+      expect(result).toContain(`produce a concise, fact-based summary of the following YouTube video in ${lang}`);
+      expect(result).toContain('1. Start with "🎬"');
+      expect(result).toContain(`3. End with the video URL: https://www.youtube.com/watch?v=${videoId}`);
+      expect(result).not.toContain('Keep technical terms, tool names, CVE numbers, and security standards in English');
     });
 
     test('should generate proper youtube resume prompt with non-english language', () => {
@@ -182,8 +182,8 @@ describe('Prompt utils', () => {
 
       const result = createYoutubeResumePrompt(channel, videoId, transcription, lang);
 
-      expect(result).toContain(`The summary should be in ${lang}`);
-      expect(result).toContain('Do not translate technical terms, keep them in english');
+      expect(result).toContain(`produce a concise, fact-based summary of the following YouTube video in ${lang}`);
+      expect(result).toContain('Keep technical terms, tool names, CVE numbers, and security standards in English');
     });
   });
 
@@ -206,7 +206,6 @@ describe('Prompt utils', () => {
 
     test('should generate proper reddit prompt with non-english language', () => {
       const title = 'Comment sécuriser mon réseau domestique?';
-      // eslint-disable-next-line max-len
       const content = "J'ai récemment acheté un nouveau routeur et je veux m'assurer que mon réseau est sécurisé...";
       const url = 'https://reddit.com/r/cybersecurity/posts/12345';
       const lang = 'french';

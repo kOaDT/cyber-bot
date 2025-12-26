@@ -1,6 +1,6 @@
 {
   "name": "cyber-bot",
-  "version": "1.18.13",
+  "version": "1.19.0",
   "description": "Cyber Bot is an Node.js project designed to help users improve their cybersecurity skills through scheduled Telegram messages",
   "main": "index.js",
   "scripts": {
