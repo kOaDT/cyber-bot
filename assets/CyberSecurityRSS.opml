@@ -8,7 +8,6 @@
 <outline title="The Hacker News" xmlUrl="https://feeds.feedburner.com/TheHackersNews" htmlUrl="https://www.thehackernews.com/" text="The Hacker News" type="rss" />
 <outline title="Dark Reading" xmlUrl="https://www.darkreading.com/rss.xml" htmlUrl="https://www.darkreading.com/" text="Dark Reading" type="rss" />
 <outline title="SecurityWeek" xmlUrl="https://www.securityweek.com/feed/" htmlUrl="https://www.securityweek.com/" text="SecurityWeek" type="rss" />
-<outline title="HackerOne Blog" xmlUrl="https://www.hackerone.com/blog.rss" htmlUrl="https://www.hackerone.com/blog" text="HackerOne Blog" type="rss" />
 <outline title="BleepingComputer" xmlUrl="https://www.bleepingcomputer.com/feed/" htmlUrl="https://www.bleepingcomputer.com/" text="BleepingComputer" type="rss" />
 <outline title="Troy Hunt's Blog" xmlUrl="https://www.troyhunt.com/feed/" htmlUrl="https://www.troyhunt.com/" text="Troy Hunt's Blog" type="rss" />
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
@@ -38,7 +37,6 @@
 <outline title="DarknetDiaries" xmlUrl="https://podcast.darknetdiaries.com/" htmlUrl="https://podcast.darknetdiaries.com/" text="DarknetDiaries" type="rss" />
 <outline title="TLDR" xmlUrl="https://tldr.tech/api/rss/infosec" htmlUrl="https://tldr.tech/infosec" text="TLDR" type="rss" />
 <outline title="TechCrunch" xmlUrl="https://techcrunch.com/category/security/feed/" htmlUrl="https://techcrunch.com/category/security/" text="TechCrunch" type="rss" />
-<outline title="ReliaQuest" xmlUrl="https://www.reliaquest.com/feed/" htmlUrl="https://www.reliaquest.com/blog/" text="ReliaQuest" type="rss" />
 <outline title="NCCGroup" xmlUrl="https://www.nccgroup.com/us/research-blog/feed/" htmlUrl="https://www.nccgroup.com/" text="NCCGroup" type="rss" />
 <outline title="Cryptographyengineering" xmlUrl="https://blog.cryptographyengineering.com/feed/" htmlUrl="https://blog.cryptographyengineering.com/" text="Cryptographyengineering" type="rss" />
 <outline title="Snyk" xmlUrl="https://snyk.io/fr/blog/feed/" htmlUrl="https://snyk.io/fr/blog/" text="Snyk" type="rss" />
