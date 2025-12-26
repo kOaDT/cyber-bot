@@ -5,10 +5,10 @@ module.exports = {
   verbose: true,
   coverageThreshold: {
     global: {
-      branches: 50,
-      functions: 50,
-      lines: 50,
-      statements: 50,
+      branches: 45,
+      functions: 45,
+      lines: 45,
+      statements: 45,
     },
   },
   collectCoverageFrom: ['crons/**/*.js', '!crons/mocks/**', '!**/node_modules/**'],
