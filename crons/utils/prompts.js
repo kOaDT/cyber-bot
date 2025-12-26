@@ -189,37 +189,31 @@ const createYoutubeResumePrompt = (channel, videoId, transcription, lang) => {
     ---
 
     Instructions:
-    Create a detailed summary of the above youtube video transcription. The summary should be 
-    comprehensive and capture all the key points, insights, and discussions presented 
-    in the video. Focus on the following aspects:
+    You are a cybersecurity analyst. Your goal is to produce a concise, fact-based summary of the following YouTube video in ${lang}. 
+    Do not include opinions, speculations, or marketing language.
 
-    1. **Key Topics**: Identify and summarize the main topics discussed in the video.
-    2. **Important Insights**: Highlight any significant insights, revelations, or expert opinions 
-    shared in the video.
-    3. **Technical Details**: Explain any technical terms or concepts in a clear and understandable 
-    manner. Use analogies or examples where necessary to clarify complex ideas.
-    4. **Practical Implications**: Discuss the practical implications of the information presented. 
-    How can this information be applied in real-world scenarios?
-    5. **Engaging Style**: Write the summary in an engaging and informative style, suitable for someone 
-    eager to learn about cybersecurity and hacking.
-    6. **Do not use markdown formatting**
-    7. **Do not include sponsors or ads**
-    ${lang === 'english' ? '' : '8. Do not translate technical terms, keep them in english'}
-    
     Requirements:
-    - The summary should be several paragraphs long, providing an in-depth overview of the video content.
-    - The summary should be in ${lang}
-    - Ensure the summary is coherent and flows logically from one point to the next.
-    - Avoid using overly technical jargon without explanation.
-    - Maintain a clear and concise writing style while covering all important details.
-    - Start with: 🎬 NEW VIDEO FROM ${channel}
-    - Finish with the video url: https://www.youtube.com/watch?v=${videoId}
+    1. Start with "🎬"
+    2. Focus strictly on summarizing the key facts from the video:
+       - The main topic and essential information (what, who, when, where)
+       - The technical details and concepts discussed
+       - The actual demonstrations, tools, or techniques shown
+       - Key takeaways or conclusions presented
+    3. End with the video URL: https://www.youtube.com/watch?v=${videoId}
 
-    ---
+    Style requirements:
+    1. Use clear, direct language
+    2. ${lang === 'english' ? '' : 'Keep technical terms, tool names, CVE numbers, and security standards in English'}
+    3. Write in an analytical tone, not alarmist or marketing-style
+    4. Use precise and neutral language
+    5. Avoid unnecessary introductions like 'This video discusses...'
+    6. Keep the total length between 100-200 words. If too short, you may miss key details. If too long, you are including unnecessary information.
+    7. Do not use bullet points or markdown formatting
+    8. Include only information explicitly stated in the transcription
+    9. Include specific numbers, dates, and technical details when mentioned
+    10. Do not include sponsors, ads, or promotional content
 
-    Summary:
-
-  `;
+    Important: Do not add analysis, recommendations, or information not present in the original transcription.`;
 };
 
 /**

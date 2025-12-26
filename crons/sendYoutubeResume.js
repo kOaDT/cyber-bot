@@ -1,31 +1,80 @@
 const logger = require('./config/logger');
 const youtubedl = require('youtube-dl-exec');
+const { Supadata } = require('@supadata/js');
 const { createYoutubeResumePrompt } = require('./utils/prompts');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
 const fs = require('fs').promises;
 
 /**
- * Fetches the transcript of a YouTube video
+ * Fetches the transcript of a YouTube video using Supadata
  * @param {string} videoId - The YouTube video ID
- * @returns {Promise<string>} The concatenated transcript text
+ * @returns {Promise<string>} The transcript text
  * @throws {Error} If the transcript cannot be fetched
  */
 async function getVideoTranscript(videoId) {
-  try {
-    const { Innertube } = await import('youtubei.js');
-    const yt = await Innertube.create({
-      lang: 'en',
-      location: 'US',
-      retrieve_player: false,
-    });
-    const info = await yt.getInfo(videoId);
-    const transcriptData = await info.getTranscript();
-    return transcriptData.transcript.content.body.initial_segments.map((segment) => segment.snippet.text).join(' ');
-  } catch (error) {
-    logger.error(`Failed to fetch transcript`, { error: error.message });
-    throw new Error(`Failed to fetch transcript for video ${videoId}: ${error.message}`);
+  if (!process.env.SUPADATA_KEY) {
+    throw new Error('SUPADATA_KEY environment variable is not set');
   }
+
+  const supadata = new Supadata({
+    apiKey: process.env.SUPADATA_KEY,
+  });
+
+  const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+  let transcriptResult = await supadata.transcript({
+    url: videoUrl,
+    lang: 'en',
+    text: true,
+    mode: 'native',
+  });
+
+  if (transcriptResult.jobId || !transcriptResult.content) {
+    logger.info('Native transcript not available, trying auto mode', { videoId });
+    transcriptResult = await supadata.transcript({
+      url: videoUrl,
+      lang: 'en',
+      text: true,
+      mode: 'auto',
+    });
+  }
+
+  if (transcriptResult.jobId) {
+    logger.info('Polling for async job completion', {
+      videoId,
+      jobId: transcriptResult.jobId,
+    });
+
+    const startTime = Date.now();
+    const timeout = 60000;
+    const pollInterval = 2000;
+
+    while (Date.now() - startTime < timeout) {
+      await new Promise((resolve) => setTimeout(resolve, pollInterval));
+
+      const jobResult = await supadata.transcript.getJobStatus(transcriptResult.jobId);
+
+      if (jobResult.status === 'completed') {
+        if (!jobResult.content || jobResult.content.length === 0) {
+          throw new Error('Job completed but transcript content is empty');
+        }
+        return jobResult.content;
+      }
+
+      if (jobResult.status === 'failed') {
+        throw new Error(`Job failed: ${jobResult.error || 'Unknown error'}`);
+      }
+    }
+
+    throw new Error('Job did not complete within timeout');
+  }
+
+  if (!transcriptResult.content || transcriptResult.content.length === 0) {
+    throw new Error('No transcript content received from Supadata');
+  }
+
+  return transcriptResult.content;
 }
 
 /**
@@ -72,33 +121,36 @@ async function getLatestVideoUrl(channelUrl) {
 /**
  * Get the last processed episode
  * @param {string} channel - The channel name
- * @returns {Object} The last processed episode
+ * @returns {Promise<Object>} The last processed episode
  */
-const getLastProcessedEpisode = async (channel) => {
+async function getLastProcessedEpisode(channel) {
   try {
     const data = await fs.readFile('assets/processedYT.json', 'utf8');
     const content = JSON.parse(data);
     return content[channel] || { videoId: null };
   } catch (error) {
-    logger.warn('No last processed episode found, creating a new one', { error: error.message });
+    logger.warn('No last processed episode found, creating a new one', {
+      error: error.message,
+    });
     return { [channel]: { videoId: null } };
   }
-};
+}
 
 /**
  * Save the last processed episode
  * @param {string} channel - The channel name
  * @param {Object} episodeData - The episode data
  */
-const saveLastProcessedEpisode = async (channel, episodeData) => {
+async function saveLastProcessedEpisode(channel, episodeData) {
   try {
     let content = {};
     try {
       const data = await fs.readFile('assets/processedYT.json', 'utf8');
       content = JSON.parse(data);
     } catch (error) {
-      // If file doesn't exist or is invalid, start with empty object
-      logger.warn('Could not read existing data, starting fresh', { error: error.message });
+      logger.warn('Could not read existing data, starting fresh', {
+        error: error.message,
+      });
     }
 
     content[channel] = {
@@ -110,7 +162,7 @@ const saveLastProcessedEpisode = async (channel, episodeData) => {
   } catch (error) {
     throw new Error(`Failed to save last processed episode: ${error.message}`);
   }
-};
+}
 
 /**
  * Main function to process YouTube videos and generate transcripts
@@ -148,6 +200,7 @@ async function run({ dryMode, lang, youtube }) {
       logger.info(`Dry mode enabled, skipping summary sending`, { summary });
       return;
     }
+
     await sendMessage(summary, process.env.TELEGRAM_TOPIC_YOUTUBE);
 
     await saveLastProcessedEpisode(channelName, videoId);
