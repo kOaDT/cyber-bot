@@ -1,60 +1,64 @@
-# 🤖 Cyber Bot
+# Cyber Bot
 
 ![Logo](./assets/logo.jpg)
 
 <div align="center">
 
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/bot_cyber_fr)
-[![Mistral AI](https://img.shields.io/badge/Mistral%20AI-5A67D8?style=for-the-badge&logo=ai&logoColor=white)](https://mistral.ai/)
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kOaDT/cyber-bot)
+[![GitHub stars](https://img.shields.io/github/stars/kOaDT/cyber-bot?style=social)](https://github.com/kOaDT/cyber-bot/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/kOaDT/cyber-bot?style=social)](https://github.com/kOaDT/cyber-bot/network/members)
+
+[![Version](https://img.shields.io/badge/version-1.19.0-blue.svg)](https://github.com/kOaDT/cyber-bot/releases)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![Telegram](https://img.shields.io/badge/Telegram-@bot__cyber__fr-2CA5E0?logo=telegram&logoColor=white)](https://t.me/bot_cyber_fr)
+[![Mistral AI](https://img.shields.io/badge/Mistral%20AI-Powered-5A67D8?logo=ai&logoColor=white)](https://mistral.ai/)
 
 </div>
 
-## 📖 About
+## About
 
-Cyber Bot is an Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
+Cyber Bot is a Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
 
-### 🌐 Join Our Community
+### Community
 
-- 📱 Telegram: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
-- 🦋 Bluesky: [@calebpr.bsky.social](https://bsky.app/profile/cyberhub.blog)
-- 🌐 Website: [www.cyberhub.blog](https://www.cyberhub.blog/)
-- 📚 Documentation: [koadt.github.io/cyber-bot](https://koadt.github.io/cyber-bot/)
+- Telegram: [@bot_cyber_fr](https://t.me/bot_cyber_fr)
+- Bluesky: [@calebpr.bsky.social](https://bsky.app/profile/cyberhub.blog)
+- Website: [www.cyberhub.blog](https://www.cyberhub.blog/)
+- Documentation: [koadt.github.io/cyber-bot](https://koadt.github.io/cyber-bot/)
 
-## ⚡ Features
+## Features
 
-### 🎯 Daily TryHackMe Reminders
+### Daily TryHackMe Reminders
 
 ```
 npm run cron -- -c sendTHM
 ```
 
-### 🎯 TryHackMe Challenges
+### TryHackMe Challenges
 
 ```
 npm run cron -- -c sendTHMCTF
 ```
 
-### 📚 AI-Enhanced Study Notes
+### AI-Enhanced Study Notes
 
-Sends curated notes from a GitHub repository, enhanced by Mistral AI
+Sends curated notes from a GitHub repository, enhanced by Mistral AI.
 
 ```
 npm run cron -- -c sendGithubNotes
 ```
 
-### 📰 Cybersecurity News Digest
+### Cybersecurity News Digest
 
-Aggregates and summarizes news from our [curated RSS feed](https://raw.githubusercontent.com/kOaDT/cyber-bot/refs/heads/develop/assets/CyberSecurityRSS.opml)
+Aggregates and summarizes news from our [curated RSS feed](https://raw.githubusercontent.com/kOaDT/cyber-bot/refs/heads/develop/assets/CyberSecurityRSS.opml).
 
 ```
 npm run cron -- -c sendNewsResume
 ```
 
-### 🔍 CVE Updates
+### CVE Updates
 
-Fetches and analyzes the latest CVE (Common Vulnerabilities and Exposures) entries
+Fetches and analyzes the latest CVE (Common Vulnerabilities and Exposures) entries.
 
 ```
 npm run cron -- -c sendCve
@@ -62,49 +66,49 @@ npm run cron -- -c sendCve
 
 > Using https://nvd.nist.gov/developers/vulnerabilities
 
-### 🎙️ Darknet Diaries Podcast Summaries
+### Darknet Diaries Podcast Summaries
 
-Provides summaries of the latest [Darknet Diaries](https://darknetdiaries.com/) podcast episodes
+Provides summaries of the latest [Darknet Diaries](https://darknetdiaries.com/) podcast episodes.
 
 ```
 npm run cron -- -c sendDarknetDiariesResume
 ```
 
-### 🎙️ Snyk Podcast Summaries
+### Snyk Podcast Summaries
 
-Provides summaries of the latest [Snyk](https://snyk.io/fr/podcasts/the-secure-developer/) podcast episodes
+Provides summaries of the latest [Snyk](https://snyk.io/fr/podcasts/the-secure-developer/) podcast episodes.
 
 ```
 npm run cron -- -c sendSnykResume
 ```
 
-### 🎙️ Security Now Podcast Summaries
+### Security Now Podcast Summaries
 
-Provides summaries of the latest [Security Now](https://twit.tv/shows/security-now) podcast episodes
+Provides summaries of the latest [Security Now](https://twit.tv/shows/security-now) podcast episodes.
 
 ```
 npm run cron -- -c sendSecurityNowResume
 ```
 
-### 🎙️ The Cyber Show Podcast Summaries
+### The Cyber Show Podcast Summaries
 
-Provides summaries of the latest [The Cyber Show](https://cybershow.uk/episodes.php) podcast episodes
+Provides summaries of the latest [The Cyber Show](https://cybershow.uk/episodes.php) podcast episodes.
 
 ```
 npm run cron -- -c sendCyberShowResume
 ```
 
-### 💬 Reddit Content
+### Reddit Content
 
-Fetches and summarizes posts from specified cybersecurity subreddit
+Fetches and summarizes posts from specified cybersecurity subreddit.
 
 ```
 npm run cron -- -c sendRedditPost
 ```
 
-### 🎬 YouTube Content
+### YouTube Content
 
-Summarizes the latest videos from specified channels
+Summarizes the latest videos from specified channels.
 
 ```
 npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
@@ -118,14 +122,14 @@ Shares relevant short-form videos based on customizable parameters (search perio
 npm run cron -- -c sendShort
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- 📦 Node.js
-- 🤖 Telegram Bot Token ([BotFather](https://t.me/BotFather))
-- 🧠 Mistral AI API Key ([Register](https://mistral.ai/))
-- 💻 VPS (recommended)
+- Node.js 18+
+- Telegram Bot Token ([BotFather](https://t.me/BotFather))
+- Mistral AI API Key ([Register](https://mistral.ai/))
+- VPS (recommended)
 
 ### Installation
 
@@ -156,7 +160,8 @@ npm install
 ```
 
 3. **Configure Environment**
-   Create a `.env` file with the following variables:
+
+Create a `.env` file with the following variables:
 
 ```env
 # GitHub Settings
@@ -208,7 +213,7 @@ MYSQL_DATABASE=
 I_WANT_TO_SAVE_MESSAGES_IN_DB=true # Enable message logging in database
 ```
 
-> 📝 Note: This project is designed to work without a database by default. However, you can enable message logging in a MySQL database by setting `I_WANT_TO_SAVE_MESSAGES_IN_DB=true` and configuring the database connection variables defined in `/config/dbConfig.js`. The database should contain a `TelegramLogs` table with at least two columns: `message` and `dateAdd`. This feature uses the `mysql2` package.
+> **Note:** This project is designed to work without a database by default. However, you can enable message logging in a MySQL database by setting `I_WANT_TO_SAVE_MESSAGES_IN_DB=true` and configuring the database connection variables defined in `/config/dbConfig.js`. The database should contain a `TelegramLogs` table with at least two columns: `message` and `dateAdd`. This feature uses the `mysql2` package.
 
 4. **Optional: Customize Mistral AI parameters**
 
@@ -222,7 +227,7 @@ I_WANT_TO_SAVE_MESSAGES_IN_DB=true # Enable message logging in database
 /crons/utils/prompts
 ```
 
-## 🛠️ Usage
+## Usage
 
 ### Basic Command
 
@@ -236,21 +241,21 @@ npm run cron -- -c <CRON_NAME>
 npm run cron -- -c <CRON_NAME> -l <language>
 ```
 
-> 📝 Note: Content language is restricted by the `AUTHORIZED_LANGUAGES` environment variable to avoid prompt injection. Default is English.
+> **Note:** Content language is restricted by the `AUTHORIZED_LANGUAGES` environment variable to avoid prompt injection. Default is English.
 
-## 📚 Documentation
+## Documentation
 
-For VPS deployment guidance, you can also check our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
+For VPS deployment guidance, check our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Feel free to:
 
-- 🐛 Report issues
-- 🔀 Submit pull requests
-- 💡 Suggest new features
+- Report issues
+- Submit pull requests
+- Suggest new features
 
-## 📄 License
+## License
 
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
 
