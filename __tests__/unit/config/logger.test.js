@@ -1,6 +1,26 @@
-const logger = require('../../../crons/config/logger');
+const https = require('https');
 
 describe('logger configuration', () => {
+  let originalEnv;
+  let logger;
+
+  beforeAll(() => {
+    originalEnv = { ...process.env };
+  });
+
+  beforeEach(() => {
+    jest.resetModules();
+    process.env = { ...originalEnv };
+    delete process.env.SLACK_LOGGING_ENABLED;
+    delete process.env.SLACK_WEBHOOK_URL_INFO;
+    delete process.env.SLACK_WEBHOOK_URL_WARN;
+    delete process.env.SLACK_WEBHOOK_URL_ERROR;
+    logger = require('../../../crons/config/logger');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should have info method', () => {
     expect(typeof logger.info).toBe('function');
   });
@@ -92,6 +112,131 @@ describe('logger configuration', () => {
       logger.logWithMeta('info', 'Info message');
       expect(spy).toHaveBeenCalledWith('info', 'Info message', {});
       spy.mockRestore();
+    });
+  });
+
+  describe('Slack integration', () => {
+    test('should not add Slack transports when SLACK_LOGGING_ENABLED is not set', () => {
+      const transports = logger.transports || [];
+      const slackTransports = transports.filter((t) => t.constructor && t.constructor.name === 'SlackTransport');
+      expect(slackTransports.length).toBe(0);
+    });
+
+    test('should not add Slack transports when SLACK_LOGGING_ENABLED is false', () => {
+      process.env.SLACK_LOGGING_ENABLED = 'false';
+      jest.resetModules();
+      const loggerInstance = require('../../../crons/config/logger');
+      const transports = loggerInstance.transports || [];
+      const slackTransports = transports.filter((t) => t.constructor && t.constructor.name === 'SlackTransport');
+      expect(slackTransports.length).toBe(0);
+    });
+
+    test('should not add Slack transport when webhook URL is missing', () => {
+      process.env.SLACK_LOGGING_ENABLED = 'true';
+      jest.resetModules();
+      const loggerInstance = require('../../../crons/config/logger');
+      const transports = loggerInstance.transports || [];
+      const slackTransports = transports.filter((t) => t.constructor && t.constructor.name === 'SlackTransport');
+      expect(slackTransports.length).toBe(0);
+    });
+
+    test('should add Slack transport when enabled and webhook URL is provided', () => {
+      process.env.SLACK_LOGGING_ENABLED = 'true';
+      process.env.SLACK_WEBHOOK_URL_INFO = 'https://hooks.slack.com/services/test';
+      jest.resetModules();
+      const loggerInstance = require('../../../crons/config/logger');
+      const transports = loggerInstance.transports || [];
+      const slackTransports = transports.filter((t) => t.constructor && t.constructor.name === 'SlackTransport');
+      expect(slackTransports.length).toBeGreaterThan(0);
+    });
+
+    test('should filter logs by target level', (done) => {
+      process.env.SLACK_LOGGING_ENABLED = 'true';
+      process.env.SLACK_WEBHOOK_URL_INFO = 'https://hooks.slack.com/services/test';
+      jest.resetModules();
+
+      const mockWrite = jest.fn();
+      const mockEnd = jest.fn();
+      const mockSetTimeout = jest.fn();
+      const mockDestroy = jest.fn();
+
+      https.request = jest.fn().mockImplementation((options, callback) => {
+        setTimeout(() => {
+          if (callback) {
+            callback({ statusCode: 200 });
+          }
+        }, 0);
+        return {
+          on: jest.fn(),
+          write: mockWrite,
+          end: mockEnd,
+          setTimeout: mockSetTimeout,
+          destroy: mockDestroy,
+        };
+      });
+
+      const loggerInstance = require('../../../crons/config/logger');
+      const transports = loggerInstance.transports || [];
+      const slackTransport = transports.find(
+        (t) => t.constructor && t.constructor.name === 'SlackTransport' && t.targetLevel === 'info'
+      );
+
+      if (slackTransport) {
+        const callback = jest.fn();
+        slackTransport.log({ level: 'warn', message: 'test' }, callback);
+        setTimeout(() => {
+          expect(mockWrite).not.toHaveBeenCalled();
+          expect(callback).toHaveBeenCalled();
+          done();
+        }, 10);
+      } else {
+        done();
+      }
+    });
+
+    test('should send to Slack when level matches', (done) => {
+      process.env.SLACK_LOGGING_ENABLED = 'true';
+      process.env.SLACK_WEBHOOK_URL_INFO = 'https://hooks.slack.com/services/test';
+      jest.resetModules();
+
+      const mockWrite = jest.fn();
+      const mockEnd = jest.fn();
+
+      https.request = jest.fn().mockImplementation((options, callback) => {
+        setTimeout(() => {
+          if (callback) {
+            callback({ statusCode: 200 });
+          }
+        }, 0);
+        return {
+          on: jest.fn(),
+          write: mockWrite,
+          end: mockEnd,
+          setTimeout: jest.fn(),
+          destroy: jest.fn(),
+        };
+      });
+
+      const loggerInstance = require('../../../crons/config/logger');
+      const transports = loggerInstance.transports || [];
+      const slackTransport = transports.find(
+        (t) => t.constructor && t.constructor.name === 'SlackTransport' && t.targetLevel === 'info'
+      );
+
+      if (slackTransport) {
+        const callback = jest.fn();
+        slackTransport.log({ level: 'info', message: 'test message' }, callback);
+        setTimeout(() => {
+          expect(mockWrite).toHaveBeenCalled();
+          const writtenData = JSON.parse(mockWrite.mock.calls[0][0]);
+          expect(writtenData.text).toBe('test message');
+          expect(mockEnd).toHaveBeenCalled();
+          expect(callback).toHaveBeenCalled();
+          done();
+        }, 10);
+      } else {
+        done();
+      }
     });
   });
 });
