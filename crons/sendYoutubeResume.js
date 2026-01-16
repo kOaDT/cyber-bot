@@ -191,7 +191,6 @@ async function run({ dryMode, lang, youtube }) {
     logger.info(`Transcript fetched successfully`);
 
     const prompt = createYoutubeResumePrompt(channelName, videoId, transcriptText, lang);
-    logger.info(`Prompt created successfully`);
 
     const summary = await generate(prompt);
     logger.info(`Summary created successfully`);

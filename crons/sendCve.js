@@ -103,9 +103,6 @@ const fetchCVEs = async () => {
 
     if (data.vulnerabilities && data.vulnerabilities.length > 0) {
       allCVEs = data.vulnerabilities;
-      logger.info(`Found ${data.totalResults} CVEs in total`);
-    } else {
-      logger.info('No vulnerabilities found in the specified time range');
     }
 
     return allCVEs;

@@ -139,8 +139,6 @@ const run = async ({ dryMode, lang } = {}) => {
   try {
     await cleanProcessedData(DAYS, PROCESSED_FILE);
 
-    logger.info(`Fetching posts from ${SUBREDDITS.length} subreddits...`);
-
     let allPosts = [];
     for (const subreddit of SUBREDDITS) {
       const posts = await fetchSubredditPosts(subreddit, DAYS);

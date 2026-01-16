@@ -211,9 +211,17 @@ MYSQL_USER=
 MYSQL_PASSWORD=
 MYSQL_DATABASE=
 I_WANT_TO_SAVE_MESSAGES_IN_DB=true # Enable message logging in database
+
+# Optional Slack Logging
+SLACK_LOGGING_ENABLED=false # Set to true to enable Slack log forwarding
+SLACK_WEBHOOK_URL_INFO=     # Webhook URL for info level logs
+SLACK_WEBHOOK_URL_WARN=     # Webhook URL for warn level logs
+SLACK_WEBHOOK_URL_ERROR=    # Webhook URL for error level logs
 ```
 
 > **Note:** This project is designed to work without a database by default. However, you can enable message logging in a MySQL database by setting `I_WANT_TO_SAVE_MESSAGES_IN_DB=true` and configuring the database connection variables defined in `/config/dbConfig.js`. The database should contain a `TelegramLogs` table with at least two columns: `message` and `dateAdd`. This feature uses the `mysql2` package.
+
+> **Note:** Slack logging is optional and disabled by default. To enable it, set `SLACK_LOGGING_ENABLED=true` and provide the appropriate webhook URLs for each log level (info, warn, error). If a webhook URL is missing for a specific level, logs of that level will still be logged locally but won't be sent to Slack. Slack webhook failures are handled gracefully and won't affect the application's operation.
 
 4. **Optional: Customize Mistral AI parameters**
 

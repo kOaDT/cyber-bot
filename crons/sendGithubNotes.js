@@ -119,8 +119,6 @@ const getGithubFile = async () => {
       (file) => file.name.endsWith('.md') && file.type === 'blob' && !EXCLUDED_GITHUB_FILES.includes(file.name)
     );
 
-    logger.info(`${markdownFiles.length} markdown files found`);
-
     const randomIndex = randomInt(markdownFiles.length);
     const randomFile = markdownFiles[randomIndex];
 

@@ -140,8 +140,6 @@ const run = async ({ dryMode, lang }) => {
     await cleanProcessedData(NB_DAYS_TO_FETCH, './assets/processedArticles.json');
 
     const feeds = await parseOPML('./assets/CyberSecurityRSS.opml');
-    logger.info(`Fetched ${feeds.length} feeds from OPML.`);
-
     const articles = await fetchArticles(feeds);
     logger.info(`Fetched a total of ${articles.length} articles.`);
 
