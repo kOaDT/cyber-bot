@@ -186,6 +186,8 @@ async function run({ dryMode, lang, youtube }) {
       return;
     }
 
+    await saveLastProcessedEpisode(channelName, videoId);
+
     const transcriptText = await getVideoTranscript(videoId);
 
     logger.info(`Transcript fetched successfully`);
@@ -201,8 +203,6 @@ async function run({ dryMode, lang, youtube }) {
     }
 
     await sendMessage(summary, process.env.TELEGRAM_TOPIC_YOUTUBE);
-
-    await saveLastProcessedEpisode(channelName, videoId);
   } catch (error) {
     logger.error('Error sending Youtube resume', { error: error.message });
   }
