@@ -35,31 +35,52 @@ if (youtube && !youtube.includes('https://www.youtube.com/')) {
 }
 
 (async () => {
-  logger.info(`
-  🤖 ===============================
-   Launching CRON: ${cron}
-   Mode: ${dryMode ? '🧪 DRY-RUN' : '🚀 PRODUCTION'}
-  =============================== `);
+  const startMessage = [
+    '===========================================',
+    `Launching CRON: ${cron}`,
+    `Mode: ${dryMode ? 'DRY-RUN' : 'PRODUCTION'}`,
+    '===========================================',
+  ].join('\n');
+  logger.info(startMessage);
 
   try {
     const cronJob = require(`./crons/${cron}.js`);
     await cronJob.run({ dryMode, param, lang, youtube });
-    logger.info(`
-  ✨ ===============================
-   Job terminated: ${cron}
-   Status: 🎉 SUCCESS
-  =============================== `);
+
+    const successMessage = [
+      '===========================================',
+      `Job terminated: ${cron}`,
+      'Status: SUCCESS',
+      '===========================================',
+    ].join('\n');
+    logger.info(successMessage);
+
+    await new Promise((resolve) => {
+      logger.on('finish', resolve);
+      logger.end();
+    });
+
     process.exit(0);
   } catch (err) {
     if (process.env.NODE_ENV === 'development') {
       console.error(err);
     }
-    logger.error(`
-  ❌ ===============================
-   Job failed: ${cron}
-   Status: 💥 ERROR
-   Details: ${err}
-  =============================== `);
+
+    const errorDetails = err.stack || err.message || String(err);
+    const errorMessage = [
+      '===========================================',
+      `Job failed: ${cron}`,
+      'Status: ERROR',
+      `Details: ${errorDetails}`,
+      '===========================================',
+    ].join('\n');
+    logger.error(errorMessage);
+
+    await new Promise((resolve) => {
+      logger.on('finish', resolve);
+      logger.end();
+    });
+
     process.exit(1);
   }
 })();
