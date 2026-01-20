@@ -41,5 +41,6 @@
 <outline title="Cryptographyengineering" xmlUrl="https://blog.cryptographyengineering.com/feed/" htmlUrl="https://blog.cryptographyengineering.com/" text="Cryptographyengineering" type="rss" />
 <outline title="Snyk" xmlUrl="https://snyk.io/fr/blog/feed/" htmlUrl="https://snyk.io/fr/blog/" text="Snyk" type="rss" />
 <outline title="Hackread" xmlUrl="https://hackread.com/feed/" htmlUrl="https://hackread.com/" text="Hackread" type="rss" />
+<outline title="OopsSec Store" xmlUrl="https://koadt.github.io/oss-oopssec-store/rss.xml" htmlUrl="https://koadt.github.io/oss-oopssec-store/" text="OopsSec Store" type="rss" />
 </body>
 </opml>
