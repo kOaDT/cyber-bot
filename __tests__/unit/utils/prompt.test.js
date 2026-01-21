@@ -22,10 +22,10 @@ describe('Prompt utils', () => {
       expect(result).toContain(`Content: ${content}`);
       expect(result).toContain(`Content Structure in ${lang}`);
       expect(result).toContain('Generate the response in english');
-      expect(result).toContain('**Key Concepts**');
-      expect(result).toContain('**Technical Details**');
-      expect(result).toContain('**Security Implications**');
-      expect(result).toContain('**Learn More**');
+      expect(result).toContain('<b>Key Concepts</b>');
+      expect(result).toContain('<b>Technical Details</b>');
+      expect(result).toContain('<b>Security Implications</b>');
+      expect(result).toContain('<b>Learn More</b>');
     });
 
     test('should generate proper revision card prompt with french language', () => {

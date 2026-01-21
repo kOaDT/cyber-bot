@@ -73,7 +73,7 @@ const run = async ({ dryMode, lang }) => {
     }
 
     if (!dryMode) {
-      return await sendMessage(revisionCard, process.env.TELEGRAM_TOPIC_GITHUB);
+      return await sendMessage(revisionCard, process.env.TELEGRAM_TOPIC_GITHUB, null, { parse_mode: 'HTML' });
     }
     return logger.info(`Revision card generated`, { revisionCard });
   } catch (err) {

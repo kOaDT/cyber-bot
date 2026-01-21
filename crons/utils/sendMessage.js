@@ -14,11 +14,16 @@ const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
  * @param {string} message - The message to send
  * @param {number} topicId - The topic ID to send the message to
  * @param {string[]} categories - The categories of the message
+ * @param {object} sendOptions - Additional options for sending the message
+ * @param {string} sendOptions.parse_mode - The parse mode for the message (HTML, MarkdownV2)
  * @returns {Promise<void>} - A promise that resolves when the message is sent and logged
  */
-const sendMessage = async (message, topicId = null, categories = null) => {
+const sendMessage = async (message, topicId = null, categories = null, sendOptions = {}) => {
   try {
-    const options = topicId ? { message_thread_id: topicId } : {};
+    const options = {
+      ...(topicId && { message_thread_id: topicId }),
+      ...sendOptions,
+    };
 
     const messageChunks = [];
     let currentChunk = '';

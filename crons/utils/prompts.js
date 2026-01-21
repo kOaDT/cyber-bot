@@ -6,7 +6,7 @@
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `Analyze and enhance the following cybersecurity topic card for telegram display, creating an optimal blend of the original content with expert knowledge.
+  `Analyze and enhance the following cybersecurity topic card for Telegram display, creating an optimal blend of the original content with expert knowledge.
 
 Input Format:
 Title: ${title}
@@ -34,35 +34,43 @@ Instructions:
    - Conclude with a "Learn More" section containing additional key points
    - Keep technical terms in English
 
-5. Tone and Style:
+4. Tone and Style:
    - Prioritize clarity and readability
    - Use technical language appropriately, explaining complex concepts
    - Maintain an informative, authoritative voice
    - Keep content concise but comprehensive
 
-6. Generate the response in ${lang}
+5. Generate the response in ${lang}
+
+6. IMPORTANT - Use Telegram HTML formatting:
+   - Use <b>text</b> for bold (section headers)
+   - Use <i>text</i> for italic (emphasis)
+   - Use <code>text</code> for inline code or technical terms
+   - Use • for bullet points (not - or *)
+   - Use blank lines to separate sections
+   - Do NOT use markdown syntax (no **, no #, no ___)
 
 Format the response exactly as:
-[Title]
+<b>[Title]</b>
 
 [Introduction with core concept explanation]
 
-**Key Concepts**
-- [Essential concept 1 from original content, enhanced]
-- [Essential concept 2 from original content, enhanced]
-- [Additional relevant concept if applicable]
+<b>Key Concepts</b>
+• [Essential concept 1 from original content, enhanced]
+• [Essential concept 2 from original content, enhanced]
+• [Additional relevant concept if applicable]
 
-**Technical Details**
+<b>Technical Details</b>
 [Precise technical information, combining original data with expert knowledge]
 
-**Security Implications**
+<b>Security Implications</b>
 [Practical impact and relevance of this topic]
 
-_____ 
+━━━━━━━━━━━━━━━
 
-**Learn More**
-- [Additional important point]
-- [Relevant context or advanced concept]
+<b>Learn More</b>
+• [Additional important point]
+• [Relevant context or advanced concept]
 `;
 
 /**
