@@ -17,12 +17,9 @@ describe('Prompt utils', () => {
 
       const result = createRevisionCardPrompt(title, content, lang);
 
-      // Check if all required parts are included
+      // Check if all required parts are included (no sanitization for trusted GitHub source)
       expect(result).toContain(`Title: ${title}`);
-      expect(result).toContain('<CARD_CONTENT_START>');
-      expect(result).toContain(content);
-      expect(result).toContain('<CARD_CONTENT_END>');
-      expect(result).toContain('SECURITY NOTICE');
+      expect(result).toContain(`Content: ${content}`);
       expect(result).toContain(`Content Structure in ${lang}`);
       expect(result).toContain('Generate the response in english');
       expect(result).toContain('<b>Key Concepts</b>');
@@ -39,9 +36,7 @@ describe('Prompt utils', () => {
       const result = createRevisionCardPrompt(title, content, lang);
 
       expect(result).toContain(`Title: ${title}`);
-      expect(result).toContain('<CARD_CONTENT_START>');
-      expect(result).toContain(content);
-      expect(result).toContain('<CARD_CONTENT_END>');
+      expect(result).toContain(`Content: ${content}`);
       expect(result).toContain(`Content Structure in ${lang}`);
       expect(result).toContain('Generate the response in french');
     });

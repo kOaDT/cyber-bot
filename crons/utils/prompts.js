@@ -2,24 +2,18 @@
 const { sanitizeForPrompt, wrapUntrustedContent, getSecurityReminder } = require('./sanitize');
 
 /**
- * Create a revision card prompt
+ * Create a revision card prompt (trusted source - no sanitization needed)
  * @param {string} title - The title of the revision card
  * @param {string} content - The content of the revision card
  * @param {string} lang - The language for the output
  * @returns {string} The prompt
  */
-const createRevisionCardPrompt = (title, content, lang) => {
-  const sanitizedTitle = sanitizeForPrompt(title, { maxLength: 500 });
-  const wrappedContent = wrapUntrustedContent(content, 'CARD_CONTENT');
-
-  return `Analyze and enhance the following cybersecurity topic card for Telegram display, creating an optimal blend of the original content with expert knowledge.
-
-${getSecurityReminder('CARD_CONTENT')}
+const createRevisionCardPrompt = (title, content, lang) =>
+  `Analyze and enhance the following cybersecurity topic card for Telegram display, creating an optimal blend of the original content with expert knowledge.
 
 Input Format:
-Title: ${sanitizedTitle}
-Content:
-${wrappedContent}
+Title: ${title}
+Content: ${content}
 
 Instructions:
 1. Create a balanced synthesis between:
@@ -55,9 +49,11 @@ Instructions:
    - Use <b>text</b> for bold (section headers)
    - Use <i>text</i> for italic (emphasis)
    - Use <code>text</code> for inline code or technical terms
+   - Use <pre>code</pre> for code blocks
    - Use • for bullet points (not - or *)
    - Use blank lines to separate sections
    - Do NOT use markdown syntax (no **, no #, no ___)
+   - CRITICAL: Escape < and > characters in code examples using &lt; and &gt; (e.g., &lt;?php instead of <?php)
 
 Format the response exactly as:
 <b>[Title]</b>
@@ -80,7 +76,6 @@ Format the response exactly as:
 <b>Learn More</b>
 • [Additional important point]
 • [Relevant context or advanced concept]`;
-};
 
 /**
  * Translate a prompt to a specific language
