@@ -30,7 +30,6 @@ describe('Database configuration', () => {
       password: 'testpassword',
       database: 'testdb',
       port: '3306',
-      multipleStatements: true,
     });
   });
 
@@ -49,7 +48,6 @@ describe('Database configuration', () => {
       password: undefined,
       database: undefined,
       port: undefined,
-      multipleStatements: true,
     });
   });
 });

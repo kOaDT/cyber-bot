@@ -19,7 +19,10 @@ describe('Prompt utils', () => {
 
       // Check if all required parts are included
       expect(result).toContain(`Title: ${title}`);
-      expect(result).toContain(`Content: ${content}`);
+      expect(result).toContain('<CARD_CONTENT_START>');
+      expect(result).toContain(content);
+      expect(result).toContain('<CARD_CONTENT_END>');
+      expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`Content Structure in ${lang}`);
       expect(result).toContain('Generate the response in english');
       expect(result).toContain('<b>Key Concepts</b>');
@@ -36,7 +39,9 @@ describe('Prompt utils', () => {
       const result = createRevisionCardPrompt(title, content, lang);
 
       expect(result).toContain(`Title: ${title}`);
-      expect(result).toContain(`Content: ${content}`);
+      expect(result).toContain('<CARD_CONTENT_START>');
+      expect(result).toContain(content);
+      expect(result).toContain('<CARD_CONTENT_END>');
       expect(result).toContain(`Content Structure in ${lang}`);
       expect(result).toContain('Generate the response in french');
     });
@@ -78,7 +83,10 @@ describe('Prompt utils', () => {
 
       expect(result).toContain(`Title: ${title}`);
       expect(result).toContain(`Tags: ${tags.join(', ')}`);
-      expect(result).toContain(`Content:\n    ${content}`);
+      expect(result).toContain('<ARTICLE_START>');
+      expect(result).toContain(content);
+      expect(result).toContain('<ARTICLE_END>');
+      expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`security news in ${lang}`);
       expect(result).toContain(`End with the source URL: ${url}`);
       expect(result).not.toContain('Keep technical terms, CVE numbers');
@@ -134,8 +142,11 @@ describe('Prompt utils', () => {
 
       const result = createPodcastResumePrompt(podcast, title, transcription, url, lang);
 
-      expect(result).toContain(`Title: ${title}`);
-      expect(result).toContain(`Transcription:\n    ${transcription}`);
+      expect(result).toContain(`Episode Title: ${title}`);
+      expect(result).toContain('<TRANSCRIPT_START>');
+      expect(result).toContain(transcription);
+      expect(result).toContain('<TRANSCRIPT_END>');
+      expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`The summary should be in ${lang}`);
       expect(result).toContain(`Start with: 🎙️ NEW EPISODE OF ${podcast.toUpperCase()}: ${title}`);
       expect(result).toContain(`Finish with the podcast url: ${url}`);
@@ -167,7 +178,10 @@ describe('Prompt utils', () => {
       const result = createYoutubeResumePrompt(channel, videoId, transcription, lang);
 
       expect(result).toContain(`Channel: ${channel}`);
-      expect(result).toContain(`Transcription:\n    ${transcription}`);
+      expect(result).toContain('<TRANSCRIPT_START>');
+      expect(result).toContain(transcription);
+      expect(result).toContain('<TRANSCRIPT_END>');
+      expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`produce a concise, fact-based summary of the following YouTube video in ${lang}`);
       expect(result).toContain('1. Start with "🎬"');
       expect(result).toContain(`3. End with the video URL: https://www.youtube.com/watch?v=${videoId}`);
@@ -197,9 +211,12 @@ describe('Prompt utils', () => {
 
       const result = createRedditPrompt(title, content, url, lang);
 
-      expect(result).toContain(`Title: ${title}`);
-      expect(result).toContain(`Content: ${content}`);
-      expect(result).toContain(`cybersecurity in ${lang}`);
+      expect(result).toContain(`Post Title: ${title}`);
+      expect(result).toContain('<POST_START>');
+      expect(result).toContain(content);
+      expect(result).toContain('<POST_END>');
+      expect(result).toContain('SECURITY NOTICE');
+      expect(result).toContain(`Reddit post below in ${lang}`);
       expect(result).toContain(`End with the source URL: ${url}`);
       expect(result).not.toContain('Keep technical terms in English');
     });
@@ -212,7 +229,7 @@ describe('Prompt utils', () => {
 
       const result = createRedditPrompt(title, content, url, lang);
 
-      expect(result).toContain(`cybersecurity in ${lang}`);
+      expect(result).toContain(`Reddit post below in ${lang}`);
       expect(result).toContain('Keep technical terms in English');
     });
   });

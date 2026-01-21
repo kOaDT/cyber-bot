@@ -1,5 +1,6 @@
 const { mistralClient, DEFAULT_PARAMS } = require('../config/mistral');
 const logger = require('../config/logger');
+const { validateLLMOutput } = require('./sanitize');
 
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
 
@@ -15,7 +16,15 @@ const generate = async (prompt, overrideParams = {}) => {
       messages: [{ role: 'user', content: prompt }],
     });
 
-    return response.choices[0].message.content;
+    const output = response.choices[0].message.content;
+
+    const validation = validateLLMOutput(output);
+    if (!validation.valid) {
+      logger.warn(`Suspicious LLM output detected: ${validation.warnings.join(', ')}`);
+      return null;
+    }
+
+    return output;
   } catch (err) {
     if (err.statusCode === 429) {
       logger.error('Mistral API rate limit exceeded - exiting');
