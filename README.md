@@ -12,12 +12,13 @@
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Telegram](https://img.shields.io/badge/Telegram-@bot__cyber__fr-2CA5E0?logo=telegram&logoColor=white)](https://t.me/bot_cyber_fr)
 [![Mistral AI](https://img.shields.io/badge/Mistral%20AI-Powered-5A67D8?logo=ai&logoColor=white)](https://mistral.ai/)
+[![Claude AI](https://img.shields.io/badge/Claude%20AI-Powered-D97706?logo=anthropic&logoColor=white)](https://anthropic.com/)
 
 </div>
 
 ## About
 
-Cyber Bot is a Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages Mistral AI to generate cybersecurity-related content.
+Cyber Bot is a Node.js project that helps users enhance their cybersecurity skills through automated Telegram messages. The bot runs on a VPS (OVH) and leverages AI (Mistral or Claude) to generate cybersecurity-related content.
 
 ### Community
 
@@ -42,7 +43,7 @@ npm run cron -- -c sendTHMCTF
 
 ### AI-Enhanced Study Notes
 
-Sends curated notes from a GitHub repository, enhanced by Mistral AI.
+Sends curated notes from a GitHub repository, enhanced by AI.
 
 ```
 npm run cron -- -c sendGithubNotes
@@ -128,7 +129,7 @@ npm run cron -- -c sendShort
 
 - Node.js 18+
 - Telegram Bot Token ([BotFather](https://t.me/BotFather))
-- Mistral AI API Key ([Register](https://mistral.ai/))
+- AI Provider API Key: [Mistral AI](https://mistral.ai/) or [Claude (Anthropic)](https://console.anthropic.com/)
 - VPS (recommended)
 
 ### Installation
@@ -183,8 +184,23 @@ TELEGRAM_TOPIC_GITHUB=
 TELEGRAM_TOPIC_REDDIT=
 TELEGRAM_TOPIC_CVE=
 
-# Mistral AI Settings
+# AI Provider Settings
+AI_PROVIDER=mistral            # Choose: 'mistral' (default) or 'claude'
+
+# Mistral AI Settings (required if AI_PROVIDER=mistral)
 MISTRAL_API_KEY=
+# Optional Mistral parameters
+MISTRAL_MODEL=mistral-large-2411
+MISTRAL_TEMPERATURE=0.1
+MISTRAL_MAX_TOKENS=2000
+
+# Claude AI Settings (required if AI_PROVIDER=claude)
+CLAUDE_API_KEY=
+# Optional Claude parameters
+CLAUDE_MODEL=claude-opus-4-20250514
+CLAUDE_TEMPERATURE=0.1
+CLAUDE_MAX_TOKENS=2000
+
 # Optional, comma-separated
 AUTHORIZED_LANGUAGES=
 
@@ -223,10 +239,11 @@ SLACK_WEBHOOK_URL_ERROR=    # Webhook URL for error level logs
 
 > **Note:** Slack logging is optional and disabled by default. To enable it, set `SLACK_LOGGING_ENABLED=true` and provide the appropriate webhook URLs for each log level (info, warn, error). If a webhook URL is missing for a specific level, logs of that level will still be logged locally but won't be sent to Slack. Slack webhook failures are handled gracefully and won't affect the application's operation.
 
-4. **Optional: Customize Mistral AI parameters**
+4. **Optional: Customize AI provider parameters**
 
 ```
-/crons/config/mistral.js
+/crons/config/providers/mistral.js  # Mistral configuration
+/crons/config/providers/claude.js   # Claude configuration
 ```
 
 5. **Optional: Modify bot prompts**

@@ -13,6 +13,8 @@ const INJECTION_PATTERNS = [
 
 const SENSITIVE_OUTPUT_PATTERNS = [
   /MISTRAL_API_KEY\s*[=:]/i,
+  /CLAUDE_API_KEY\s*[=:]/i,
+  /ANTHROPIC_API_KEY\s*[=:]/i,
   /MYSQL_PASSWORD\s*[=:]/i,
   /TELEGRAM_BOT_TOKEN\s*[=:]/i,
   /GITHUB_SECRET\s*[=:]/i,

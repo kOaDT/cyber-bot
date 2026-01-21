@@ -1,22 +1,12 @@
-const { mistralClient, DEFAULT_PARAMS } = require('../config/mistral');
+const { getProvider } = require('../config/providers');
 const logger = require('../config/logger');
 const { validateLLMOutput } = require('./sanitize');
 
-const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
-
 const generate = async (prompt, overrideParams = {}) => {
-  if (!MISTRAL_API_KEY) {
-    throw new Error('MISTRAL_API_KEY is not set');
-  }
+  const provider = getProvider();
 
   try {
-    const response = await mistralClient.chat.complete({
-      ...DEFAULT_PARAMS,
-      ...overrideParams,
-      messages: [{ role: 'user', content: prompt }],
-    });
-
-    const output = response.choices[0].message.content;
+    const output = await provider.generate(prompt, overrideParams);
 
     const validation = validateLLMOutput(output);
     if (!validation.valid) {
@@ -26,10 +16,11 @@ const generate = async (prompt, overrideParams = {}) => {
 
     return output;
   } catch (err) {
-    if (err.statusCode === 429) {
-      logger.error('Mistral API rate limit exceeded - exiting');
+    if (err.statusCode === 429 || err.status === 429) {
+      logger.error(`${provider.name} API rate limit exceeded - exiting`);
       process.exit(1);
     }
+    logger.error(`${provider.name} API error: ${err.message}`);
     return null;
   }
 };

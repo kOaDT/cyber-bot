@@ -1,118 +1,111 @@
-jest.mock('../../../crons/config/mistral', () => ({
-  mistralClient: {
-    chat: {
-      complete: jest.fn(),
-    },
-  },
-  DEFAULT_PARAMS: {
-    model: 'test-model',
-    temperature: 0.1,
-  },
+const mockProvider = {
+  name: 'MockProvider',
+  generate: jest.fn(),
+};
+
+jest.mock('../../../crons/config/providers', () => ({
+  getProvider: jest.fn(() => mockProvider),
 }));
 
 jest.mock('../../../crons/config/logger', () => ({
   error: jest.fn(),
+  warn: jest.fn(),
 }));
 
-jest.mock('../../../crons/utils/generate', () => {
-  const { mistralClient, DEFAULT_PARAMS } = require('../../../crons/config/mistral');
-  const logger = require('../../../crons/config/logger');
-
-  const generate = async (prompt, overrideParams = {}) => {
-    if (!process.env.MISTRAL_API_KEY) {
-      throw new Error('MISTRAL_API_KEY is not set');
-    }
-
-    try {
-      const response = await mistralClient.chat.complete({
-        ...DEFAULT_PARAMS,
-        ...overrideParams,
-        messages: [{ role: 'user', content: prompt }],
-      });
-
-      return response.choices[0].message.content;
-    } catch (err) {
-      logger.error('Error generating', { error: err.message });
-      return null;
-    }
-  };
-
-  return { generate };
-});
+jest.mock('../../../crons/utils/sanitize', () => ({
+  validateLLMOutput: jest.fn((output) => ({ valid: true, output, warnings: [] })),
+}));
 
 describe('generate utility', () => {
-  let originalEnv;
+  let generate;
+  let logger;
+  let validateLLMOutput;
 
   beforeEach(() => {
-    originalEnv = { ...process.env };
-    process.env.MISTRAL_API_KEY = 'test-api-key';
-
-    // Clear all mock calls
     jest.clearAllMocks();
+    jest.resetModules();
+
+    mockProvider.generate.mockReset();
+
+    logger = require('../../../crons/config/logger');
+    validateLLMOutput = require('../../../crons/utils/sanitize').validateLLMOutput;
+    generate = require('../../../crons/utils/generate').generate;
   });
 
-  afterEach(() => {
-    process.env = originalEnv;
-  });
+  test('should call provider.generate with correct parameters', async () => {
+    mockProvider.generate.mockResolvedValue('Generated content');
 
-  test('should call mistralClient with correct parameters', async () => {
-    const { mistralClient } = require('../../../crons/config/mistral');
-    mistralClient.chat.complete.mockResolvedValue({
-      choices: [{ message: { content: 'Generated content' } }],
-    });
-
-    const { generate } = require('../../../crons/utils/generate');
     const result = await generate('Test prompt');
 
-    expect(mistralClient.chat.complete).toHaveBeenCalledWith(
-      expect.objectContaining({
-        messages: [{ role: 'user', content: 'Test prompt' }],
-      })
-    );
-
+    expect(mockProvider.generate).toHaveBeenCalledWith('Test prompt', {});
     expect(result).toBe('Generated content');
   });
 
-  test('should override default parameters when provided', async () => {
-    const { mistralClient } = require('../../../crons/config/mistral');
-    mistralClient.chat.complete.mockResolvedValue({
-      choices: [{ message: { content: 'Generated with custom params' } }],
-    });
+  test('should pass override parameters to provider', async () => {
+    mockProvider.generate.mockResolvedValue('Custom content');
 
-    const { generate } = require('../../../crons/utils/generate');
-    const customParams = {
-      temperature: 0.8,
-      max_tokens: 500,
-    };
+    const customParams = { temperature: 0.8, max_tokens: 500 };
+    await generate('Test prompt', customParams);
 
-    await generate('Custom prompt', customParams);
-
-    expect(mistralClient.chat.complete).toHaveBeenCalledWith(
-      expect.objectContaining({
-        temperature: 0.8,
-        max_tokens: 500,
-      })
-    );
+    expect(mockProvider.generate).toHaveBeenCalledWith('Test prompt', customParams);
   });
 
-  test('should throw error if MISTRAL_API_KEY is not set', async () => {
-    delete process.env.MISTRAL_API_KEY;
+  test('should validate LLM output', async () => {
+    mockProvider.generate.mockResolvedValue('Safe content');
 
-    const { generate } = require('../../../crons/utils/generate');
+    await generate('Test prompt');
 
-    await expect(generate('Test prompt')).rejects.toThrow('MISTRAL_API_KEY is not set');
+    expect(validateLLMOutput).toHaveBeenCalledWith('Safe content');
+  });
+
+  test('should return null for suspicious output', async () => {
+    mockProvider.generate.mockResolvedValue('Suspicious content');
+    validateLLMOutput.mockReturnValue({
+      valid: false,
+      output: 'Suspicious content',
+      warnings: ['Suspicious pattern detected'],
+    });
+
+    const result = await generate('Test prompt');
+
+    expect(logger.warn).toHaveBeenCalledWith('Suspicious LLM output detected: Suspicious pattern detected');
+    expect(result).toBeNull();
   });
 
   test('should handle API errors gracefully', async () => {
-    const { mistralClient } = require('../../../crons/config/mistral');
-    const logger = require('../../../crons/config/logger');
+    mockProvider.generate.mockRejectedValue(new Error('API error'));
 
-    mistralClient.chat.complete.mockRejectedValue(new Error('API error'));
-
-    const { generate } = require('../../../crons/utils/generate');
     const result = await generate('Test prompt');
 
-    expect(logger.error).toHaveBeenCalledWith('Error generating', { error: 'API error' });
+    expect(logger.error).toHaveBeenCalledWith('MockProvider API error: API error');
     expect(result).toBeNull();
+  });
+
+  test('should exit on rate limit error (statusCode 429)', async () => {
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+    const error = new Error('Rate limit');
+    error.statusCode = 429;
+    mockProvider.generate.mockRejectedValue(error);
+
+    await generate('Test prompt');
+
+    expect(logger.error).toHaveBeenCalledWith('MockProvider API rate limit exceeded - exiting');
+    expect(mockExit).toHaveBeenCalledWith(1);
+
+    mockExit.mockRestore();
+  });
+
+  test('should exit on rate limit error (status 429)', async () => {
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+    const error = new Error('Rate limit');
+    error.status = 429;
+    mockProvider.generate.mockRejectedValue(error);
+
+    await generate('Test prompt');
+
+    expect(logger.error).toHaveBeenCalledWith('MockProvider API rate limit exceeded - exiting');
+    expect(mockExit).toHaveBeenCalledWith(1);
+
+    mockExit.mockRestore();
   });
 });
