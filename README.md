@@ -219,7 +219,7 @@ REDDIT_CLIENT_SECRET=
 # CVE
 CVSS_SEVERITY_THRESHOLD=   # Default >= 7.0
 HOURS_DELAY=               # Default 24 hours
-TECHNOLOGIES_OF_INTEREST=
+ENABLE_CVE_STATS=false     # Enable historical stats (requires Cve table in DB)
 
 # Optional Database Settings
 MYSQL_HOST=
@@ -236,6 +236,8 @@ SLACK_WEBHOOK_URL_ERROR=    # Webhook URL for error level logs
 ```
 
 > **Note:** This project is designed to work without a database by default. However, you can enable message logging in a MySQL database by setting `I_WANT_TO_SAVE_MESSAGES_IN_DB=true` and configuring the database connection variables defined in `/config/dbConfig.js`. The database should contain a `TelegramLogs` table with at least two columns: `message` and `dateAdd`. This feature uses the `mysql2` package.
+
+> **Note:** CVE statistics (historical trends, year-over-year comparisons) require a `Cve` table in your database with columns: `cveId`, `cvss`, `published`. Set `ENABLE_CVE_STATS=true` to enable this feature. Without it, the CVE report shows only the daily summary.
 
 > **Note:** Slack logging is optional and disabled by default. To enable it, set `SLACK_LOGGING_ENABLED=true` and provide the appropriate webhook URLs for each log level (info, warn, error). If a webhook URL is missing for a specific level, logs of that level will still be logged locally but won't be sent to Slack. Slack webhook failures are handled gracefully and won't affect the application's operation.
 
