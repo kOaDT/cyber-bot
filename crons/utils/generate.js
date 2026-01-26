@@ -3,15 +3,18 @@ const logger = require('../config/logger');
 const { validateLLMOutput } = require('./sanitize');
 
 const generate = async (prompt, overrideParams = {}) => {
+  const { skipValidation = false, ...providerParams } = overrideParams;
   const provider = getProvider();
 
   try {
-    const output = await provider.generate(prompt, overrideParams);
+    const output = await provider.generate(prompt, providerParams);
 
-    const validation = validateLLMOutput(output);
-    if (!validation.valid) {
-      logger.warn(`Suspicious LLM output detected: ${validation.warnings.join(', ')}`);
-      return null;
+    if (!skipValidation) {
+      const validation = validateLLMOutput(output);
+      if (!validation.valid) {
+        logger.warn(`Suspicious LLM output detected: ${validation.warnings.join(', ')}`);
+        return null;
+      }
     }
 
     return output;

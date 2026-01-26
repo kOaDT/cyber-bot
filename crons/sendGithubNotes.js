@@ -68,7 +68,7 @@ const run = async ({ dryMode, lang }) => {
     } else {
       logger.info(`Generating a new revision card for "${title}"`);
       const prompt = createRevisionCardPrompt(title, content, lang);
-      revisionCard = await generate(prompt);
+      revisionCard = await generate(prompt, { skipValidation: true });
       await saveProcessedNote(title, revisionCard);
     }
 
