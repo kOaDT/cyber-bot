@@ -1,5 +1,5 @@
 const logger = require('./config/logger');
-const { sendMessage } = require('./utils/sendMessage');
+const { sendMessage, sanitizeTelegramHtml } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
 const { createRevisionCardPrompt } = require('./utils/prompts');
 const { generate } = require('./utils/generate');
@@ -73,7 +73,8 @@ const run = async ({ dryMode, lang }) => {
     }
 
     if (!dryMode) {
-      return await sendMessage(revisionCard, process.env.TELEGRAM_TOPIC_GITHUB, null, { parse_mode: 'HTML' });
+      const sanitized = sanitizeTelegramHtml(revisionCard);
+      return await sendMessage(sanitized, process.env.TELEGRAM_TOPIC_GITHUB, null, { parse_mode: 'HTML' });
     }
     return logger.info(`Revision card generated`, { revisionCard });
   } catch (err) {

@@ -11,7 +11,6 @@
 <outline title="BleepingComputer" xmlUrl="https://www.bleepingcomputer.com/feed/" htmlUrl="https://www.bleepingcomputer.com/" text="BleepingComputer" type="rss" />
 <outline title="Troy Hunt's Blog" xmlUrl="https://www.troyhunt.com/feed/" htmlUrl="https://www.troyhunt.com/" text="Troy Hunt's Blog" type="rss" />
 <outline title="Cybersecurity News" xmlUrl="https://www.cyberscoop.com/feed/" htmlUrl="https://www.cyberscoop.com/" text="Cybersecurity News" type="rss" />
-<outline title="kOaDT" xmlUrl="https://blog-koadt.netlify.app/rss.xml" htmlUrl="https://blog-koadt.netlify.app/" text="kOaDT" type="rss" />
 <outline title="Cyberveille" xmlUrl="https://cyberveille.curated.co/issues.rss" htmlUrl="https://cyberveille.curated.co/" text="Cyberveille" type="rss" />
 <outline title="Journal du Hacker" xmlUrl="https://www.journalduhacker.net/t/s%C3%A9curit%C3%A9.rss" htmlUrl="https://www.journalduhacker.net/t/s%C3%A9curit%C3%A9.rss" text="Journal du Hacker" type="rss" />
 <outline title="France 24" xmlUrl="https://www.france24.com/fr/tag/cybers%C3%A9curit%C3%A9/rss" htmlUrl="https://www.france24.com/fr/tag/cybers%C3%A9curit%C3%A9/" text="France 24" type="rss" />
@@ -26,13 +25,9 @@
 <outline title="cyberhoot" xmlUrl="https://cyberhoot.com/category/blog/feed/" htmlUrl="https://cyberhoot.com/" text="cyberhoot" type="rss" />
 <outline title="security magazine" xmlUrl="https://www.securitymagazine.com/rss/15" htmlUrl="https://www.securitymagazine.com/" text="security magazine" type="rss" />
 <outline title="databreaches" xmlUrl="https://databreaches.net/feed/" htmlUrl="https://www.databreaches.net/" text="databreaches" type="rss" />
-<outline title="cshub" xmlUrl="https://www.cshub.com/rss/articles" htmlUrl="https://cshub.com/" text="cshub" type="rss" />
 <outline title="heise" xmlUrl="https://www.heise.de/security/feed.xml" htmlUrl="https://www.heise.de/security/" text="heise" type="rss" />
 <outline title="cybersecurity360" xmlUrl="https://www.cybersecurity360.it/feed/" htmlUrl="https://cybersecurity360.com/" text="cybersecurity360" type="rss" />
-<outline title="freebuf" xmlUrl="https://www.freebuf.com/feed" htmlUrl="https://www.freebuf.com/" text="freebuf" type="rss" />
-<outline title="xakep" xmlUrl="https://xakep.ru/feed/" htmlUrl="https://xakep.ru/" text="xakep" type="rss" />
 <outline title="unaaldia hispasec" xmlUrl="https://unaaldia.hispasec.com/feed" htmlUrl="https://unaaldia.hispasec.com/hispasec/" text="unaaldia hispasec" type="rss" />
-<outline title="cyber arabs" xmlUrl="https://cyber-arabs.com/feed/" htmlUrl="https://cyber-arabs.com/" text="cyber arabs" type="rss" />
 <outline title="NYT" xmlUrl="https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" htmlUrl="https://www.nytimes.com/section/technology" text="NYT" type="rss" />
 <outline title="DarknetDiaries" xmlUrl="https://podcast.darknetdiaries.com/" htmlUrl="https://podcast.darknetdiaries.com/" text="DarknetDiaries" type="rss" />
 <outline title="TLDR" xmlUrl="https://tldr.tech/api/rss/infosec" htmlUrl="https://tldr.tech/infosec" text="TLDR" type="rss" />
@@ -42,5 +37,14 @@
 <outline title="Snyk" xmlUrl="https://snyk.io/fr/blog/feed/" htmlUrl="https://snyk.io/fr/blog/" text="Snyk" type="rss" />
 <outline title="Hackread" xmlUrl="https://hackread.com/feed/" htmlUrl="https://hackread.com/" text="Hackread" type="rss" />
 <outline title="OopsSec Store" xmlUrl="https://koadt.github.io/oss-oopssec-store/rss.xml" htmlUrl="https://koadt.github.io/oss-oopssec-store/" text="OopsSec Store" type="rss" />
+<outline title="CERT-FR" xmlUrl="https://www.cert.ssi.gouv.fr/feed/" htmlUrl="https://www.cert.ssi.gouv.fr/" text="CERT-FR" type="rss" />
+<outline title="Help Net Security" xmlUrl="https://www.helpnetsecurity.com/feed/" htmlUrl="https://www.helpnetsecurity.com/" text="Help Net Security" type="rss" />
+<outline title="Infosecurity Magazine" xmlUrl="https://www.infosecurity-magazine.com/rss/news/" htmlUrl="https://www.infosecurity-magazine.com/" text="Infosecurity Magazine" type="rss" />
+<outline title="Sophos News" xmlUrl="https://news.sophos.com/en-us/feed/" htmlUrl="https://news.sophos.com/en-us/" text="Sophos News" type="rss" />
+<outline title="Tripwire" xmlUrl="https://www.tripwire.com/state-of-security/feed/" htmlUrl="https://www.tripwire.com/state-of-security/" text="Tripwire" type="rss" />
+<outline title="SentinelOne Labs" xmlUrl="https://www.sentinelone.com/feed/" htmlUrl="https://www.sentinelone.com/labs/" text="SentinelOne Labs" type="rss" />
+<outline title="Google Project Zero" xmlUrl="http://googleprojectzero.blogspot.com/feeds/posts/default" htmlUrl="https://projectzero.google/" text="Google Project Zero" type="rss" />
+<outline title="IT-Connect" xmlUrl="https://www.it-connect.fr/feed/" htmlUrl="https://www.it-connect.fr/" text="IT-Connect" type="rss" />
+<outline title="Le Monde Informatique" xmlUrl="https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml" htmlUrl="https://www.lemondeinformatique.fr/" text="Le Monde Informatique" type="rss" />
 </body>
 </opml>

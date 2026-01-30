@@ -46,6 +46,10 @@ Instructions:
 5. Generate the response in ${lang}
 
 6. IMPORTANT - Use Telegram HTML formatting:
+   - ONLY these HTML tags are allowed: <b>, <i>, <u>, <s>, <code>, <pre>, <a>
+   - Do NOT use any other HTML tags (no <table>, <div>, <span>, <p>, <h1>, <br>, <ul>, <li>, etc.)
+   - Never nest <b> inside <i> or <i> inside <b> — use them separately
+   - Every opened tag must be properly closed
    - Use <b>text</b> for bold (section headers)
    - Use <i>text</i> for italic (emphasis)
    - Use <code>text</code> for inline code or technical terms

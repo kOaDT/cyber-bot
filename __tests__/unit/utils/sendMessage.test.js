@@ -18,7 +18,7 @@ TelegramBot.mockImplementation(() => ({
   sendMessage: mockSendMessage,
 }));
 
-const { sendMessage } = require('../../../crons/utils/sendMessage');
+const { sendMessage, sanitizeTelegramHtml } = require('../../../crons/utils/sendMessage');
 
 describe('sendMessage', () => {
   const originalEnv = process.env;
@@ -64,5 +64,45 @@ describe('sendMessage', () => {
     await sendMessage(longMessage);
 
     expect(mockSendMessage).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('sanitizeTelegramHtml', () => {
+  it('should keep allowed tags', () => {
+    const input = '<b>bold</b> <i>italic</i> <code>code</code> <pre>block</pre> <u>underline</u> <s>strike</s>';
+    expect(sanitizeTelegramHtml(input)).toBe(input);
+  });
+
+  it('should keep <a> tags with attributes', () => {
+    const input = '<a href="https://example.com">link</a>';
+    expect(sanitizeTelegramHtml(input)).toBe(input);
+  });
+
+  it('should strip unsupported tags', () => {
+    const input = '<table><tr><td>cell</td></tr></table>';
+    expect(sanitizeTelegramHtml(input)).toBe('cell');
+  });
+
+  it('should strip div, span, p, h1, br, ul, li tags', () => {
+    const input = '<div><h1>Title</h1><p>Text</p><ul><li>item</li></ul></div>';
+    expect(sanitizeTelegramHtml(input)).toBe('TitleTextitem');
+  });
+
+  it('should handle mixed allowed and disallowed tags', () => {
+    const input = '<div><b>bold</b> and <table><tr><td><i>italic</i></td></tr></table></div>';
+    expect(sanitizeTelegramHtml(input)).toBe('<b>bold</b> and <i>italic</i>');
+  });
+
+  it('should return empty string for null or undefined', () => {
+    expect(sanitizeTelegramHtml(null)).toBe('');
+    expect(sanitizeTelegramHtml(undefined)).toBe('');
+  });
+
+  it('should return empty string for non-string input', () => {
+    expect(sanitizeTelegramHtml(123)).toBe('');
+  });
+
+  it('should leave plain text unchanged', () => {
+    expect(sanitizeTelegramHtml('no tags here')).toBe('no tags here');
   });
 });

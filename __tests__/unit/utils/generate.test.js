@@ -72,6 +72,29 @@ describe('generate utility', () => {
     expect(result).toBeNull();
   });
 
+  test('should skip validation when skipValidation is true', async () => {
+    mockProvider.generate.mockResolvedValue('Content with Bearer token123');
+    validateLLMOutput.mockReturnValue({
+      valid: false,
+      output: 'Content with Bearer token123',
+      warnings: ['Suspicious pattern detected'],
+    });
+
+    const result = await generate('Test prompt', { skipValidation: true });
+
+    expect(mockProvider.generate).toHaveBeenCalledWith('Test prompt', {});
+    expect(validateLLMOutput).not.toHaveBeenCalled();
+    expect(result).toBe('Content with Bearer token123');
+  });
+
+  test('should not pass skipValidation to provider', async () => {
+    mockProvider.generate.mockResolvedValue('Generated content');
+
+    await generate('Test prompt', { skipValidation: true, temperature: 0.8 });
+
+    expect(mockProvider.generate).toHaveBeenCalledWith('Test prompt', { temperature: 0.8 });
+  });
+
   test('should handle API errors gracefully', async () => {
     mockProvider.generate.mockRejectedValue(new Error('API error'));
 

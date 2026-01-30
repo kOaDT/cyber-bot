@@ -7,6 +7,18 @@ const db = pool.promise();
 const MAX_MESSAGE_LENGTH = 4096;
 const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
 
+const ALLOWED_TAGS = ['b', 'i', 'u', 's', 'code', 'pre', 'a', 'tg-spoiler', 'blockquote'];
+
+const sanitizeTelegramHtml = (html) => {
+  if (!html || typeof html !== 'string') return '';
+
+  return html.replace(/<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^>]*)?)\s*>/g, (match, tag) => {
+    const tagLower = tag.toLowerCase();
+    if (ALLOWED_TAGS.includes(tagLower)) return match;
+    return '';
+  });
+};
+
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 
 /**
@@ -72,4 +84,4 @@ const saveMessageInDb = async (message, topicId = null, categories = null) => {
   return result;
 };
 
-module.exports = { sendMessage };
+module.exports = { sendMessage, sanitizeTelegramHtml };

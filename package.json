@@ -21,7 +21,7 @@
   "repository": "https://github.com/kOaDT/cyber-bot",
   "license": "CC-BY-NC-4.0",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.71.2",
+    "@anthropic-ai/sdk": "^0.72.1",
     "@mistralai/mistralai": "^1.13.0",
     "@supadata/js": "^1.3.2",
     "assemblyai": "^4.22.1",
