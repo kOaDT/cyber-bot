@@ -105,4 +105,24 @@ describe('sanitizeTelegramHtml', () => {
   it('should leave plain text unchanged', () => {
     expect(sanitizeTelegramHtml('no tags here')).toBe('no tags here');
   });
+
+  it('should fix misnested tags like <b>...<code>...</b>...</code>', () => {
+    const input = '<b>bold<code>mixed</b>rest</code>';
+    expect(sanitizeTelegramHtml(input)).toBe('<b>bold<code>mixed</code></b>rest');
+  });
+
+  it('should fix misnested <b> inside <i>', () => {
+    const input = '<i>italic<b>bold</i>rest</b>';
+    expect(sanitizeTelegramHtml(input)).toBe('<i>italic<b>bold</b></i>rest');
+  });
+
+  it('should close unclosed tags', () => {
+    const input = '<b>bold text';
+    expect(sanitizeTelegramHtml(input)).toBe('<b>bold text</b>');
+  });
+
+  it('should ignore orphan closing tags', () => {
+    const input = 'text</b>';
+    expect(sanitizeTelegramHtml(input)).toBe('text');
+  });
 });

@@ -7,16 +7,50 @@ const db = pool.promise();
 const MAX_MESSAGE_LENGTH = 4096;
 const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
 
-const ALLOWED_TAGS = ['b', 'i', 'u', 's', 'code', 'pre', 'a', 'tg-spoiler', 'blockquote'];
+const ALLOWED_TAGS = new Set(['b', 'i', 'u', 's', 'code', 'pre', 'a', 'tg-spoiler', 'blockquote']);
+const TAG_REGEX = /<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^>]*)?)\s*>/g;
 
 const sanitizeTelegramHtml = (html) => {
   if (!html || typeof html !== 'string') return '';
 
-  return html.replace(/<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^>]*)?)\s*>/g, (match, tag) => {
-    const tagLower = tag.toLowerCase();
-    if (ALLOWED_TAGS.includes(tagLower)) return match;
-    return '';
+  let result = html.replace(TAG_REGEX, (match, tag) => {
+    return ALLOWED_TAGS.has(tag.toLowerCase()) ? match : '';
   });
+
+  const stack = [];
+  const output = [];
+  const tokens = result.split(/(<\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^>]*)?\s*>)/g);
+
+  for (const token of tokens) {
+    const openMatch = token.match(/^<([a-zA-Z][a-zA-Z0-9-]*)(\s+[^>]*)?\s*>$/);
+    const closeMatch = token.match(/^<\/([a-zA-Z][a-zA-Z0-9-]*)\s*>$/);
+
+    if (openMatch) {
+      const tag = openMatch[1].toLowerCase();
+      if (ALLOWED_TAGS.has(tag)) {
+        stack.push(tag);
+        output.push(token);
+      }
+    } else if (closeMatch) {
+      const tag = closeMatch[1].toLowerCase();
+      const idx = stack.lastIndexOf(tag);
+      if (idx !== -1) {
+        for (let i = stack.length - 1; i > idx; i--) {
+          output.push(`</${stack[i]}>`);
+        }
+        output.push(`</${tag}>`);
+        stack.splice(idx);
+      }
+    } else {
+      output.push(token);
+    }
+  }
+
+  for (let i = stack.length - 1; i >= 0; i--) {
+    output.push(`</${stack[i]}>`);
+  }
+
+  return output.join('');
 };
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
