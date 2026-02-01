@@ -68,7 +68,8 @@ const run = async ({ dryMode, lang }) => {
     } else {
       logger.info(`Generating a new revision card for "${title}"`);
       const prompt = createRevisionCardPrompt(title, content, lang);
-      revisionCard = await generate(prompt, { skipValidation: true });
+      const rawCard = await generate(prompt, { skipValidation: true });
+      revisionCard = sanitizeTelegramHtml(rawCard);
       await saveProcessedNote(title, revisionCard);
     }
 
