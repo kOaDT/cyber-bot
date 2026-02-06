@@ -40,7 +40,6 @@
 <outline title="CERT-FR" xmlUrl="https://www.cert.ssi.gouv.fr/feed/" htmlUrl="https://www.cert.ssi.gouv.fr/" text="CERT-FR" type="rss" />
 <outline title="Help Net Security" xmlUrl="https://www.helpnetsecurity.com/feed/" htmlUrl="https://www.helpnetsecurity.com/" text="Help Net Security" type="rss" />
 <outline title="Infosecurity Magazine" xmlUrl="https://www.infosecurity-magazine.com/rss/news/" htmlUrl="https://www.infosecurity-magazine.com/" text="Infosecurity Magazine" type="rss" />
-<outline title="Sophos News" xmlUrl="https://news.sophos.com/en-us/feed/" htmlUrl="https://news.sophos.com/en-us/" text="Sophos News" type="rss" />
 <outline title="Tripwire" xmlUrl="https://www.tripwire.com/state-of-security/feed/" htmlUrl="https://www.tripwire.com/state-of-security/" text="Tripwire" type="rss" />
 <outline title="SentinelOne Labs" xmlUrl="https://www.sentinelone.com/feed/" htmlUrl="https://www.sentinelone.com/labs/" text="SentinelOne Labs" type="rss" />
 <outline title="Google Project Zero" xmlUrl="http://googleprojectzero.blogspot.com/feeds/posts/default" htmlUrl="https://projectzero.google/" text="Google Project Zero" type="rss" />
