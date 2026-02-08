@@ -3,6 +3,7 @@ const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
 const { generate } = require('./utils/generate');
 const { createNewsResumePrompt } = require('./utils/prompts');
+const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
 const xml2js = require('xml2js');
 const RSSParser = require('rss-parser');
@@ -12,6 +13,7 @@ const { cleanProcessedData } = require('./utils/cleanJsonFile');
 const NB_DAYS_TO_FETCH = 3;
 const NB_ARTICLES_TO_SEND = 1;
 const DELAY_BETWEEN_ARTICLES = 10000;
+const MAX_RELEVANCE_CHECKS = 5;
 
 /**
  * Parses the OPML file to extract RSS feed URLs.
@@ -95,16 +97,18 @@ const filterRecentArticles = async (articles) => {
 };
 
 /**
- * Selects random articles from the provided list
+ * Shuffles an array in place using Fisher-Yates algorithm.
  *
- * @param {Object[]} articles - Array of articles.
- * @returns {Object[]} - The selected articles.
+ * @param {Object[]} array - Array to shuffle.
+ * @returns {Object[]} - The shuffled array.
  */
-const selectRandomArticles = (articles) => {
-  if (articles.length === 0) return null;
-
-  const randomIndexes = Array.from({ length: NB_ARTICLES_TO_SEND }, () => randomInt(articles.length));
-  return randomIndexes.map((index) => articles[index]);
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = randomInt(i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 };
 
 /**
@@ -151,16 +155,29 @@ const run = async ({ dryMode, lang }) => {
       return;
     }
 
-    const selectedArticles = selectRandomArticles(recentArticles);
+    const shuffledArticles = shuffleArray(recentArticles);
+    let articlesSent = 0;
+    let relevanceChecks = 0;
 
-    if (!selectedArticles) {
-      logger.info('No recent articles found to display.');
-      return;
-    }
+    for (const article of shuffledArticles) {
+      if (articlesSent >= NB_ARTICLES_TO_SEND) break;
+      if (relevanceChecks >= MAX_RELEVANCE_CHECKS) {
+        logger.info('Max relevance checks reached, stopping');
+        break;
+      }
 
-    logger.info(`Preparing news resume for ${selectedArticles.length} articles...`);
+      const { relevant } = await evaluateRelevance({
+        title: article.title,
+        content: article.content,
+        source: 'news article',
+      });
+      relevanceChecks++;
 
-    for (const article of selectedArticles) {
+      if (!relevant) {
+        await saveProcessedArticle(article.link);
+        continue;
+      }
+
       const categories =
         article.categories && Array.isArray(article.categories)
           ? article.categories.map((cat) => cat?.toString?.() || '').filter(Boolean)
@@ -171,11 +188,19 @@ const run = async ({ dryMode, lang }) => {
 
       if (dryMode) {
         logger.info(`Would send Telegram message`, { newsResume });
-        continue;
+      } else {
+        await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS, categories);
       }
-      await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS, categories);
       await saveProcessedArticle(article.link);
-      await delay(DELAY_BETWEEN_ARTICLES);
+      articlesSent++;
+
+      if (articlesSent < NB_ARTICLES_TO_SEND) {
+        await delay(DELAY_BETWEEN_ARTICLES);
+      }
+    }
+
+    if (articlesSent === 0) {
+      return logger.info('No relevant articles found after relevance checks.');
     }
     return logger.info('News resume sent successfully.');
   } catch (error) {

@@ -4,6 +4,7 @@ const { Supadata } = require('@supadata/js');
 const { createYoutubeResumePrompt } = require('./utils/prompts');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
+const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
 
 /**
@@ -95,12 +96,12 @@ function extractVideoId(url) {
 }
 
 /**
- * Fetches the latest video URL from a YouTube channel
+ * Fetches the latest video metadata from a YouTube channel
  * @param {string} channelUrl - The YouTube channel URL
- * @returns {Promise<string>} The URL of the latest video
+ * @returns {Promise<{url: string, title: string}>} The URL and title of the latest video
  * @throws {Error} If the channel or video cannot be fetched
  */
-async function getLatestVideoUrl(channelUrl) {
+async function getLatestVideo(channelUrl) {
   try {
     const output = await youtubedl(channelUrl + '/videos', {
       dumpSingleJson: true,
@@ -112,7 +113,11 @@ async function getLatestVideoUrl(channelUrl) {
       throw new Error('No videos found in channel');
     }
 
-    return `https://www.youtube.com/watch?v=${output.entries[0].id}`;
+    const entry = output.entries[0];
+    return {
+      url: `https://www.youtube.com/watch?v=${entry.id}`,
+      title: entry.title || '',
+    };
   } catch (error) {
     throw new Error(`Failed to fetch latest video from channel: ${error.message}`);
   }
@@ -175,14 +180,24 @@ async function saveLastProcessedEpisode(channel, episodeData) {
 async function run({ dryMode, lang, youtube }) {
   try {
     const channelName = youtube.split('/').pop();
-    const latestVideoUrl = await getLatestVideoUrl(youtube);
-    logger.info(`Processing latest video`, { latestVideoUrl });
+    const latestVideo = await getLatestVideo(youtube);
+    logger.info(`Processing latest video`, { latestVideoUrl: latestVideo.url });
 
-    const videoId = extractVideoId(latestVideoUrl);
+    const videoId = extractVideoId(latestVideo.url);
     const lastProcessedEpisode = await getLastProcessedEpisode(channelName);
 
     if (lastProcessedEpisode.videoId === videoId) {
       logger.info(`Latest video already processed, skipping`);
+      return;
+    }
+
+    const { relevant } = await evaluateRelevance({
+      title: latestVideo.title,
+      source: 'YouTube video',
+    });
+
+    if (!relevant) {
+      await saveLastProcessedEpisode(channelName, videoId);
       return;
     }
 

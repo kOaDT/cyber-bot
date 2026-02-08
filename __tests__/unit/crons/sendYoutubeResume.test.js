@@ -2,7 +2,7 @@ process.env.TELEGRAM_TOPIC_YOUTUBE = 'mock-youtube-topic';
 
 jest.mock('youtube-dl-exec', () =>
   jest.fn().mockResolvedValue({
-    entries: [{ id: 'test-video-id' }],
+    entries: [{ id: 'test-video-id', title: 'Test Video Title' }],
   })
 );
 
@@ -21,6 +21,10 @@ jest.mock('../../../crons/utils/generate', () => ({
 
 jest.mock('../../../crons/utils/prompts', () => ({
   createYoutubeResumePrompt: jest.fn().mockReturnValue('Test prompt'),
+}));
+
+jest.mock('../../../crons/utils/relevance', () => ({
+  evaluateRelevance: jest.fn().mockResolvedValue({ relevant: true, score: 8 }),
 }));
 
 const mockSendMessage = jest.fn().mockResolvedValue();

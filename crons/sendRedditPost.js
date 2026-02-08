@@ -2,11 +2,13 @@ const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
 const { createRedditPrompt } = require('./utils/prompts');
+const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
 const PROCESSED_FILE = './assets/processedReddit.json';
 const DAYS = process.env.REDDIT_DAYS_LOOKBACK || 3;
+const MAX_RELEVANCE_CHECKS = 5;
 const SUBREDDITS = process.env.REDDIT_SUBREDDITS.split(',') || [
   'netsec',
   'cybersecurity',
@@ -157,20 +159,41 @@ const run = async ({ dryMode, lang } = {}) => {
       return logger.info('No new posts to process');
     }
 
-    const bestPost = unprocessedPosts[0];
-    const prompt = createRedditPrompt(bestPost.title, bestPost.content, bestPost.url, lang);
+    const candidates = unprocessedPosts.slice(0, MAX_RELEVANCE_CHECKS);
+    let selectedPost = null;
+
+    for (const post of candidates) {
+      const { relevant } = await evaluateRelevance({
+        title: post.title,
+        content: post.content,
+        source: 'Reddit post',
+      });
+
+      if (relevant) {
+        selectedPost = post;
+        break;
+      }
+
+      await saveProcessedPost(post.id);
+    }
+
+    if (!selectedPost) {
+      return logger.info('No relevant Reddit posts found after relevance checks');
+    }
+
+    const prompt = createRedditPrompt(selectedPost.title, selectedPost.content, selectedPost.url, lang);
     const summary = await generate(prompt);
 
     if (dryMode) {
       logger.info(`Would send Telegram message`, { summary });
-      await saveProcessedPost(bestPost.id);
+      await saveProcessedPost(selectedPost.id);
       return;
     }
 
     await sendMessage(summary, process.env.TELEGRAM_TOPIC_REDDIT);
-    await saveProcessedPost(bestPost.id);
+    await saveProcessedPost(selectedPost.id);
 
-    logger.info(`Successfully sent Reddit post`, { id: bestPost.id });
+    logger.info(`Successfully sent Reddit post`, { id: selectedPost.id });
   } catch (error) {
     logger.error('Error sending Reddit post', { error: error.message });
   }

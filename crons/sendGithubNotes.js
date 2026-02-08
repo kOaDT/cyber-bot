@@ -3,6 +3,7 @@ const { sendMessage, sanitizeTelegramHtml } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
 const { createRevisionCardPrompt } = require('./utils/prompts');
 const { generate } = require('./utils/generate');
+const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
 
 const GITHUB_TOKEN = process.env.GITHUB_SECRET;
@@ -66,6 +67,16 @@ const run = async ({ dryMode, lang }) => {
       logger.info(`Note already processed, using existing content`, { title });
       revisionCard = existingNote.content;
     } else {
+      const { relevant } = await evaluateRelevance({
+        title,
+        content,
+        source: 'GitHub note',
+      });
+
+      if (!relevant) {
+        return;
+      }
+
       logger.info(`Generating a new revision card for "${title}"`);
       const prompt = createRevisionCardPrompt(title, content, lang);
       const rawCard = await generate(prompt, { skipValidation: true });

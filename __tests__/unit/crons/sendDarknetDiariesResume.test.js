@@ -44,6 +44,9 @@ const cheerio = require('cheerio');
 jest.mock('../../../crons/utils/sendMessage');
 jest.mock('../../../crons/utils/generate');
 jest.mock('../../../crons/utils/prompts');
+jest.mock('../../../crons/utils/relevance', () => ({
+  evaluateRelevance: jest.fn().mockResolvedValue({ relevant: true, score: 8 }),
+}));
 
 // Mock fetch global
 global.fetch = jest.fn();

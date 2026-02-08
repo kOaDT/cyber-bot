@@ -67,6 +67,10 @@ jest.mock('../../../crons/utils/prompts', () => ({
   createPodcastResumePrompt: jest.fn().mockReturnValue('Test prompt'),
 }));
 
+jest.mock('../../../crons/utils/relevance', () => ({
+  evaluateRelevance: jest.fn().mockResolvedValue({ relevant: true, score: 8 }),
+}));
+
 jest.mock('../../../crons/sendSnykResume', () => {
   const originalModule = jest.requireActual('../../../crons/sendSnykResume');
 

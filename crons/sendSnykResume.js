@@ -2,6 +2,7 @@ const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
 const { createPodcastResumePrompt } = require('./utils/prompts');
+const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
 const { BrowserManager } = require('./utils/puppeteerUtils');
 
@@ -68,6 +69,17 @@ const run = async ({ dryMode, lang }) => {
 
     if (lastEpisode.episodeNumber > lastProcessed.episodeNumber) {
       logger.info(`New episode found`, { episodeNumber: lastEpisode.episodeNumber });
+
+      const { relevant } = await evaluateRelevance({
+        title: lastEpisode.title,
+        content: lastEpisode.transcript,
+        source: 'podcast episode',
+      });
+
+      if (!relevant) {
+        await saveLastProcessedEpisode(lastEpisode);
+        return;
+      }
 
       const prompt = createPodcastResumePrompt(
         'Snyk',

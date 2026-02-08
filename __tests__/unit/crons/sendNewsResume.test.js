@@ -21,6 +21,10 @@ jest.mock('../../../crons/config/logger', () => ({
   error: jest.fn(),
 }));
 
+jest.mock('../../../crons/utils/relevance', () => ({
+  evaluateRelevance: jest.fn().mockResolvedValue({ relevant: true, score: 8 }),
+}));
+
 jest.mock('fs', () => ({
   promises: {
     readFile: jest.fn().mockResolvedValue('[]'),

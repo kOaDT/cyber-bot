@@ -18,6 +18,9 @@ jest.mock('../../../crons/utils/generate', () => ({
 jest.mock('../../../crons/utils/prompts', () => ({
   createPodcastResumePrompt: jest.fn(),
 }));
+jest.mock('../../../crons/utils/relevance', () => ({
+  evaluateRelevance: jest.fn().mockResolvedValue({ relevant: true, score: 8 }),
+}));
 jest.mock('assemblyai', () => ({}));
 jest.mock('fs', () => ({}));
 jest.mock('cheerio', () => ({}));

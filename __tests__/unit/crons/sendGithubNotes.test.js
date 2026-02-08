@@ -1,4 +1,3 @@
- 
 const { run } = require('../../../crons/sendGithubNotes');
 const logger = require('../../../crons/config/logger');
 const { sendMessage } = require('../../../crons/utils/sendMessage');
@@ -51,6 +50,10 @@ jest.mock('../../../crons/utils/sendMessage', () => ({
 
 jest.mock('../../../crons/utils/generate', () => ({
   generate: jest.fn(),
+}));
+
+jest.mock('../../../crons/utils/relevance', () => ({
+  evaluateRelevance: jest.fn().mockResolvedValue({ relevant: true, score: 8 }),
 }));
 
 jest.mock('fs', () => ({

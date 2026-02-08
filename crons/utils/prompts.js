@@ -273,6 +273,31 @@ Requirements:
 The summary should be concise and factual, focusing solely on describing what is discussed in the post.`;
 };
 
+/**
+ * Create a lightweight relevance evaluation prompt
+ * @param {string} title - The content title
+ * @param {string} excerpt - Short excerpt of the content (first ~500 chars)
+ * @param {string} source - The source type (e.g., 'news article', 'podcast', 'YouTube video')
+ * @returns {string} The relevance evaluation prompt
+ */
+const createRelevancePrompt = (title, excerpt, source) => {
+  const sanitizedTitle = sanitizeForPrompt(title, { maxLength: 300 });
+  const sanitizedExcerpt = excerpt ? sanitizeForPrompt(excerpt, { maxLength: 500 }) : '';
+
+  return `Rate the cybersecurity educational relevance of this ${source} on a scale of 1 to 10.
+
+Title: ${sanitizedTitle}
+${sanitizedExcerpt ? `Excerpt: ${sanitizedExcerpt}` : ''}
+
+Scoring criteria:
+• 1-3: Not related to cybersecurity, purely commercial, or clickbait
+• 4-5: Tangentially related but low educational value
+• 6-7: Relevant cybersecurity content with moderate educational value
+• 8-10: Highly relevant, technical, or educational cybersecurity content
+
+Respond with ONLY a single number from 1 to 10.`;
+};
+
 module.exports = {
   createRevisionCardPrompt,
   translatePrompt,
@@ -280,4 +305,5 @@ module.exports = {
   createPodcastResumePrompt,
   createYoutubeResumePrompt,
   createRedditPrompt,
+  createRelevancePrompt,
 };
