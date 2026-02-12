@@ -104,3 +104,77 @@ describe('Provider factory', () => {
     expect(provider1).not.toBe(provider2);
   });
 });
+
+describe('Fallback provider factory', () => {
+  let originalEnv;
+
+  beforeEach(() => {
+    originalEnv = { ...process.env };
+    process.env.MISTRAL_API_KEY = 'test-mistral-key';
+    process.env.CLAUDE_API_KEY = 'test-claude-key';
+    jest.resetModules();
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+  });
+
+  test('should return ClaudeProvider when primary is mistral', () => {
+    process.env.AI_PROVIDER = 'mistral';
+
+    const { getFallbackProvider, resetFallbackProvider } = require('../../../../crons/config/providers');
+    resetFallbackProvider();
+
+    const fallback = getFallbackProvider();
+
+    expect(fallback.name).toBe('Claude');
+  });
+
+  test('should return MistralProvider when primary is claude', () => {
+    process.env.AI_PROVIDER = 'claude';
+
+    const { getFallbackProvider, resetFallbackProvider } = require('../../../../crons/config/providers');
+    resetFallbackProvider();
+
+    const fallback = getFallbackProvider();
+
+    expect(fallback.name).toBe('Mistral');
+  });
+
+  test('should return null when fallback API key is not configured', () => {
+    process.env.AI_PROVIDER = 'mistral';
+    delete process.env.CLAUDE_API_KEY;
+
+    const { getFallbackProvider, resetFallbackProvider } = require('../../../../crons/config/providers');
+    resetFallbackProvider();
+
+    const fallback = getFallbackProvider();
+
+    expect(fallback).toBeNull();
+  });
+
+  test('should return singleton instance', () => {
+    process.env.AI_PROVIDER = 'mistral';
+
+    const { getFallbackProvider, resetFallbackProvider } = require('../../../../crons/config/providers');
+    resetFallbackProvider();
+
+    const fallback1 = getFallbackProvider();
+    const fallback2 = getFallbackProvider();
+
+    expect(fallback1).toBe(fallback2);
+  });
+
+  test('should reset fallback provider instance', () => {
+    process.env.AI_PROVIDER = 'mistral';
+
+    const { getFallbackProvider, resetFallbackProvider } = require('../../../../crons/config/providers');
+    resetFallbackProvider();
+
+    const fallback1 = getFallbackProvider();
+    resetFallbackProvider();
+    const fallback2 = getFallbackProvider();
+
+    expect(fallback1).not.toBe(fallback2);
+  });
+});

@@ -83,7 +83,7 @@ class Provider {
 
 ### Error Handling
 
-- Rate limits (429) cause process exit
+- Rate limits (429) trigger automatic failover to the alternate provider if both API keys are configured; if both providers are rate-limited, the process exits
 - Other API errors return `null` from `generate()`
 - All sensitive operations are logged via Winston
 
