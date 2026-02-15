@@ -125,4 +125,17 @@ describe('sanitizeTelegramHtml', () => {
     const input = 'text</b>';
     expect(sanitizeTelegramHtml(input)).toBe('text');
   });
+
+  it('should escape bare < and > in text for Telegram parser', () => {
+    expect(sanitizeTelegramHtml('x < 5 and y > 0')).toBe('x &lt; 5 and y &gt; 0');
+  });
+
+  it('should escape & in text', () => {
+    expect(sanitizeTelegramHtml('a & b')).toBe('a &amp; b');
+  });
+
+  it('should escape < > & in text while keeping allowed tags', () => {
+    const input = 'compare: <b>a < 1</b> & <i>b > 2</i>';
+    expect(sanitizeTelegramHtml(input)).toBe('compare: <b>a &lt; 1</b> &amp; <i>b &gt; 2</i>');
+  });
 });

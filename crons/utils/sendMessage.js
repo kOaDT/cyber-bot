@@ -10,6 +10,11 @@ const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
 const ALLOWED_TAGS = new Set(['b', 'i', 'u', 's', 'code', 'pre', 'a', 'tg-spoiler', 'blockquote']);
 const TAG_REGEX = /<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^>]*)?)\s*>/g;
 
+const escapeTextForTelegram = (text) => {
+  if (!text) return '';
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+};
+
 const sanitizeTelegramHtml = (html) => {
   if (!html || typeof html !== 'string') return '';
 
@@ -42,7 +47,7 @@ const sanitizeTelegramHtml = (html) => {
         stack.splice(idx);
       }
     } else {
-      output.push(token);
+      output.push(escapeTextForTelegram(token));
     }
   }
 
