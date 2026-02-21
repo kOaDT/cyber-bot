@@ -8,7 +8,6 @@ const {
 } = require('../../../crons/utils/prompts');
 
 describe('Prompt utils', () => {
-  // Tests for createRevisionCardPrompt
   describe('createRevisionCardPrompt', () => {
     test('should generate proper revision card prompt with english language', () => {
       const title = 'XSS Attacks';
@@ -17,7 +16,6 @@ describe('Prompt utils', () => {
 
       const result = createRevisionCardPrompt(title, content, lang);
 
-      // Check if all required parts are included (no sanitization for trusted GitHub source)
       expect(result).toContain(`Title: ${title}`);
       expect(result).toContain(`Content: ${content}`);
       expect(result).toContain(`Content Structure in ${lang}`);
@@ -40,9 +38,27 @@ describe('Prompt utils', () => {
       expect(result).toContain(`Content Structure in ${lang}`);
       expect(result).toContain('Generate the response in french');
     });
+
+    test('should include Telegram formatting rules', () => {
+      const result = createRevisionCardPrompt('Test', 'Content', 'english');
+
+      expect(result).toContain('<formatting>');
+      expect(result).toContain('Allowed tags: <b>, <i>, <u>, <s>, <code>, <pre>, <a>');
+      expect(result).toContain('Escape < and > in code examples');
+    });
+
+    test('should use XML tags for structure', () => {
+      const result = createRevisionCardPrompt('Test', 'Content', 'english');
+
+      expect(result).toContain('<source>');
+      expect(result).toContain('</source>');
+      expect(result).toContain('<instructions>');
+      expect(result).toContain('</instructions>');
+      expect(result).toContain('<output_format>');
+      expect(result).toContain('</output_format>');
+    });
   });
 
-  // Tests for translatePrompt
   describe('translatePrompt', () => {
     test('should generate proper translation prompt', () => {
       const prompt = 'This is a test prompt for translation';
@@ -65,7 +81,6 @@ describe('Prompt utils', () => {
     });
   });
 
-  // Tests for createNewsResumePrompt
   describe('createNewsResumePrompt', () => {
     test('should generate proper news resume prompt with english language', () => {
       const title = 'New Vulnerability Found in OpenSSL';
@@ -102,31 +117,39 @@ describe('Prompt utils', () => {
     });
 
     test('should handle empty tags array', () => {
-      const title = 'Test Title';
-      const tags = [];
-      const url = 'https://example.com';
-      const content = 'Test content';
-      const lang = 'english';
-
-      const result = createNewsResumePrompt(title, tags, url, content, lang);
-
+      const result = createNewsResumePrompt('Test Title', [], 'https://example.com', 'Test content', 'english');
       expect(result).toContain('Tags: ');
     });
 
     test('should handle null tags', () => {
-      const title = 'Test Title';
-      const tags = null;
-      const url = 'https://example.com';
-      const content = 'Test content';
-      const lang = 'english';
-
-      const result = createNewsResumePrompt(title, tags, url, content, lang);
-
+      const result = createNewsResumePrompt('Test Title', null, 'https://example.com', 'Test content', 'english');
       expect(result).toContain('Tags: ');
+    });
+
+    test('should use extractive framing', () => {
+      const result = createNewsResumePrompt('Test', ['tag'], 'https://example.com', 'Content', 'english');
+      expect(result).toContain('Extract only facts explicitly stated');
+      expect(result).toContain('Do not add analysis, opinions, speculation');
+    });
+
+    test('should include few-shot example', () => {
+      const result = createNewsResumePrompt('Test', ['tag'], 'https://example.com', 'Content', 'english');
+      expect(result).toContain('<example>');
+      expect(result).toContain('</example>');
+      expect(result).toContain('📌');
+    });
+
+    test('should use XML tags for structure', () => {
+      const result = createNewsResumePrompt('Test', ['tag'], 'https://example.com', 'Content', 'english');
+      expect(result).toContain('<metadata>');
+      expect(result).toContain('</metadata>');
+      expect(result).toContain('<instructions>');
+      expect(result).toContain('</instructions>');
+      expect(result).toContain('<constraints>');
+      expect(result).toContain('</constraints>');
     });
   });
 
-  // Tests for createPodcastResumePrompt
   describe('createPodcastResumePrompt', () => {
     test('should generate proper podcast resume prompt with english language', () => {
       const podcast = 'Security Now';
@@ -160,9 +183,14 @@ describe('Prompt utils', () => {
       expect(result).toContain(`The summary should be in ${lang}`);
       expect(result).toContain('Do not translate technical terms, keep them in english');
     });
+
+    test('should use topic-first approach for long content', () => {
+      const result = createPodcastResumePrompt('Test Pod', 'Ep 1', 'transcript...', 'https://example.com', 'english');
+      expect(result).toContain('identify the 3-5 main topics');
+      expect(result).toContain('for each topic, write a paragraph');
+    });
   });
 
-  // Tests for createYoutubeResumePrompt
   describe('createYoutubeResumePrompt', () => {
     test('should generate proper youtube resume prompt with english language', () => {
       const channel = 'SecurityTube';
@@ -179,7 +207,7 @@ describe('Prompt utils', () => {
       expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`produce a concise, fact-based summary of the following YouTube video in ${lang}`);
       expect(result).toContain('1. Start with "🎬"');
-      expect(result).toContain(`3. End with the video URL: https://www.youtube.com/watch?v=${videoId}`);
+      expect(result).toContain(`End with the video URL: https://www.youtube.com/watch?v=${videoId}`);
       expect(result).not.toContain('Keep technical terms, tool names, CVE numbers, and security standards in English');
     });
 
@@ -194,9 +222,13 @@ describe('Prompt utils', () => {
       expect(result).toContain(`produce a concise, fact-based summary of the following YouTube video in ${lang}`);
       expect(result).toContain('Keep technical terms, tool names, CVE numbers, and security standards in English');
     });
+
+    test('should use extractive framing', () => {
+      const result = createYoutubeResumePrompt('Channel', 'vid1', 'transcript', 'english');
+      expect(result).toContain('Extract only information explicitly present');
+    });
   });
 
-  // Tests for createRedditPrompt
   describe('createRedditPrompt', () => {
     test('should generate proper reddit prompt with english language', () => {
       const title = 'How to secure my home network?';

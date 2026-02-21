@@ -1,6 +1,18 @@
 /* eslint-disable max-len */
 const { sanitizeForPrompt, wrapUntrustedContent, getSecurityReminder } = require('./sanitize');
 
+const TELEGRAM_FORMAT_RULES = `<formatting>
+Use Telegram HTML formatting only:
+• Allowed tags: <b>, <i>, <u>, <s>, <code>, <pre>, <a>
+• No other HTML tags (no <table>, <div>, <span>, <p>, <h1>, <br>, <ul>, <li>)
+• Never nest <b> inside <i> or <i> inside <b>
+• Every opened tag must be properly closed
+• Use • for bullet points (not - or *)
+• Use blank lines to separate sections
+• No markdown syntax (no **, no #, no ___)
+• Escape < and > in code examples using &lt; and &gt;
+</formatting>`;
+
 /**
  * Create a revision card prompt (trusted source - no sanitization needed)
  * @param {string} title - The title of the revision card
@@ -9,57 +21,36 @@ const { sanitizeForPrompt, wrapUntrustedContent, getSecurityReminder } = require
  * @returns {string} The prompt
  */
 const createRevisionCardPrompt = (title, content, lang) =>
-  `Analyze and enhance the following cybersecurity topic card for Telegram display, creating an optimal blend of the original content with expert knowledge.
+  `You are a cybersecurity educator creating a topic card for Telegram.
 
-Input Format:
+<source>
 Title: ${title}
 Content: ${content}
+</source>
 
-Instructions:
-1. Create a balanced synthesis between:
-   - The core information from the provided content
-   - Your expert cybersecurity knowledge
+<instructions>
+1. Synthesize the source content with your expert knowledge:
+   • Preserve all essential concepts from the original
+   • Add accurate technical details and real-world context
+   • Correct any outdated information
+   • Include practical examples when relevant
 
-2. Enhancement Guidelines:
-   - Preserve the essential concepts from the original content
-   - Supplement with accurate technical details and context
-   - Update any outdated information
-   - Add practical applications or real-world examples
-   - Include recent developments or emerging trends when relevant
+2. Content Structure in ${lang}:
+   • Concise title
+   • Clear introduction (2-3 sentences)
+   • Logical sections with headings
+   • Bullet points for key concepts
+   • A "Technical Details" section with precise information
+   • A "Security Implications" section when applicable
+   • A "Learn More" section with additional key points
+   • Keep technical terms in English
 
-3. Content Structure in ${lang}:
-   - Begin with a concise, compelling title
-   - Provide a clear introduction (2-3 sentences)
-   - Organize information in logical sections with clear headings
-   - Use bullet points for key concepts and takeaways
-   - Include a "Technical Details" section with precise information
-   - Add a brief "Security Implications" section when applicable
-   - Conclude with a "Learn More" section containing additional key points
-   - Keep technical terms in English
+3. Generate the response in ${lang}
+</instructions>
 
-4. Tone and Style:
-   - Prioritize clarity and readability
-   - Use technical language appropriately, explaining complex concepts
-   - Maintain an informative, authoritative voice
-   - Keep content concise but comprehensive
+${TELEGRAM_FORMAT_RULES}
 
-5. Generate the response in ${lang}
-
-6. IMPORTANT - Use Telegram HTML formatting:
-   - ONLY these HTML tags are allowed: <b>, <i>, <u>, <s>, <code>, <pre>, <a>
-   - Do NOT use any other HTML tags (no <table>, <div>, <span>, <p>, <h1>, <br>, <ul>, <li>, etc.)
-   - Never nest <b> inside <i> or <i> inside <b> — use them separately
-   - Every opened tag must be properly closed
-   - Use <b>text</b> for bold (section headers)
-   - Use <i>text</i> for italic (emphasis)
-   - Use <code>text</code> for inline code or technical terms
-   - Use <pre>code</pre> for code blocks
-   - Use • for bullet points (not - or *)
-   - Use blank lines to separate sections
-   - Do NOT use markdown syntax (no **, no #, no ___)
-   - CRITICAL: Escape < and > characters in code examples using &lt; and &gt; (e.g., &lt;?php instead of <?php)
-
-Format the response exactly as:
+<output_format>
 <b>[Title]</b>
 
 [Introduction with core concept explanation]
@@ -79,7 +70,8 @@ Format the response exactly as:
 
 <b>Learn More</b>
 • [Additional important point]
-• [Relevant context or advanced concept]`;
+• [Relevant context or advanced concept]
+</output_format>`;
 
 /**
  * Translate a prompt to a specific language
@@ -113,37 +105,40 @@ const createNewsResumePrompt = (title, tags, url, content, lang) => {
   const sanitizedTags = (tags || []).map((t) => sanitizeForPrompt(t, { maxLength: 100 })).join(', ');
   const wrappedContent = wrapUntrustedContent(content, 'ARTICLE');
 
-  return `You are a cybersecurity analyst. Your goal is to produce a concise, fact-based summary of the following security news in ${lang}.
-Do not include opinions, speculations, or marketing language.
+  return `You are a cybersecurity analyst. Extract and report only the key facts from the following security news in ${lang}.
 
 ${getSecurityReminder('ARTICLE')}
 
+<metadata>
 Title: ${sanitizedTitle}
 Tags: ${sanitizedTags}
 Source URL: ${url}
+</metadata>
 
 ${wrappedContent}
 
-Requirements:
-1. Start with "📌"
-2. Focus strictly on summarizing the key facts from the article:
-   - The essential information (what, who, when, where)
-   - The technical details mentioned
-   - The actual impacts described
-3. End with the source URL: ${url}
+<instructions>
+Extract only facts explicitly stated in the article:
+• The essential information (what, who, when, where)
+• Specific technical details, numbers, dates, CVE IDs mentioned
+• The actual impacts described
 
-Style requirements:
-1. Use clear, direct language
-2. ${lang === 'english' ? '' : 'Keep technical terms, CVE numbers, tool names, and security standards in English'}
-3. Write in an analytical tone, not alarmist or marketing-style
-4. Use precise and neutral language
-5. Avoid unnecessary introductions like 'This article discusses...'
-6. Keep the total length between 50-150 words. If too short, you may miss key details. If too long, you are including unnecessary information.
-7. Do not use bullet points or markdown formatting
-8. Include only information explicitly stated in the article
-9. Include specific numbers, dates, and technical details when mentioned
+Do not add analysis, opinions, speculation, recommendations, or information not present in the article.
+</instructions>
 
-Important: Do not add analysis, recommendations, or information not present in the original article.`;
+<constraints>
+• Start with "📌"
+• Write 3-6 sentences of continuous prose (no bullet points, no markdown)
+• ${lang === 'english' ? 'Use clear, direct, analytical language' : 'Keep technical terms, CVE numbers, tool names, and security standards in English'}
+• No introductions like "This article discusses..."
+• End with the source URL: ${url}
+</constraints>
+
+<example>
+📌 A critical vulnerability (CVE-2024-6387) dubbed "regreSSHion" was discovered in OpenSSH servers running glibc-based Linux systems, affecting versions 8.5p1 through 9.7p1. The flaw, found by Qualys Threat Research Unit, is a signal handler race condition enabling unauthenticated remote code execution as root. Approximately 14 million potentially vulnerable OpenSSH instances were identified via Shodan and Censys. The vulnerability is a regression of CVE-2006-5051, previously patched in 2006. OpenSSH 9.8p1 was released with a fix, and administrators are urged to apply patches and limit SSH access via network controls.
+
+https://example.com/openssh-vulnerability
+</example>`;
 };
 
 /**
@@ -164,32 +159,34 @@ const createPodcastResumePrompt = (podcast, title, transcription, url, lang) => 
 
 ${getSecurityReminder('TRANSCRIPT')}
 
+<metadata>
 Podcast: ${sanitizedPodcast}
 Episode Title: ${sanitizedTitle}
 Episode URL: ${url}
+</metadata>
 
 ${wrappedTranscription}
 
-Instructions:
-Create a detailed summary that captures all the key points, insights, and discussions presented in the podcast. Focus on the following aspects:
+<instructions>
+First, identify the 3-5 main topics discussed in the episode. Then, for each topic, write a paragraph covering:
+• The key facts and arguments presented
+• Technical concepts explained in accessible terms
+• Practical implications or real-world applications
 
-1. Key Topics: Identify and summarize the main topics discussed in the podcast.
-2. Important Insights: Highlight any significant insights, revelations, or expert opinions shared during the conversation.
-3. Technical Details: Explain any technical terms or concepts in a clear and understandable manner. Use analogies or examples where necessary to clarify complex ideas.
-4. Practical Implications: Discuss the practical implications of the information presented. How can this information be applied in real-world scenarios?
-5. Engaging Style: Write the summary in an engaging and informative style, suitable for someone eager to learn about cybersecurity and hacking.
-6. Do not use markdown formatting
-7. Do not include sponsors or ads
-${lang === 'english' ? '' : '8. Do not translate technical terms, keep them in english'}
+Additional rules:
+• Exclude sponsors, ads, and promotional content
+• Do not use markdown formatting
+• The summary should be in ${lang}
+${lang === 'english' ? '' : '• Do not translate technical terms, keep them in english'}
+</instructions>
 
-Requirements:
-- The summary should be several paragraphs long, providing an in-depth overview of the podcast content.
-- The summary should be in ${lang}
-- Ensure the summary is coherent and flows logically from one point to the next.
-- Avoid using overly technical jargon without explanation.
-- Maintain a clear and concise writing style while covering all important details.
-- Start with: 🎙️ NEW EPISODE OF ${sanitizedPodcast.toUpperCase()}: ${sanitizedTitle}
-- Finish with the podcast url: ${url}`;
+<constraints>
+• Start with: 🎙️ NEW EPISODE OF ${sanitizedPodcast.toUpperCase()}: ${sanitizedTitle}
+• Write several paragraphs providing an in-depth, coherent overview
+• Flow logically from one topic to the next
+• Explain technical jargon when used
+• Finish with the podcast url: ${url}
+</constraints>`;
 };
 
 /**
@@ -205,38 +202,35 @@ const createYoutubeResumePrompt = (channel, videoId, transcription, lang) => {
   const wrappedTranscription = wrapUntrustedContent(transcription, 'TRANSCRIPT');
   const videoUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
 
-  return `You are a cybersecurity analyst. Your goal is to produce a concise, fact-based summary of the following YouTube video in ${lang}.
-Do not include opinions, speculations, or marketing language.
+  return `You are a cybersecurity analyst. Extract and produce a concise, fact-based summary of the following YouTube video in ${lang}.
 
 ${getSecurityReminder('TRANSCRIPT')}
 
+<metadata>
 Channel: ${sanitizedChannel}
 Video URL: ${videoUrl}
+</metadata>
 
 ${wrappedTranscription}
 
-Requirements:
+<instructions>
+Extract only information explicitly present in the transcription:
+• The main topic and essential information (what, who, when, where)
+• Technical details, tools, or techniques demonstrated
+• Key takeaways or conclusions presented
+
+Do not add analysis, opinions, recommendations, or information not in the transcription.
+Exclude sponsors, ads, and promotional content.
+</instructions>
+
+<constraints>
 1. Start with "🎬"
-2. Focus strictly on summarizing the key facts from the video:
-   - The main topic and essential information (what, who, when, where)
-   - The technical details and concepts discussed
-   - The actual demonstrations, tools, or techniques shown
-   - Key takeaways or conclusions presented
-3. End with the video URL: ${videoUrl}
-
-Style requirements:
-1. Use clear, direct language
-2. ${lang === 'english' ? '' : 'Keep technical terms, tool names, CVE numbers, and security standards in English'}
-3. Write in an analytical tone, not alarmist or marketing-style
-4. Use precise and neutral language
-5. Avoid unnecessary introductions like 'This video discusses...'
-6. Keep the total length between 100-200 words. If too short, you may miss key details. If too long, you are including unnecessary information.
-7. Do not use bullet points or markdown formatting
-8. Include only information explicitly stated in the transcription
-9. Include specific numbers, dates, and technical details when mentioned
-10. Do not include sponsors, ads, or promotional content
-
-Important: Do not add analysis, recommendations, or information not present in the original transcription.`;
+2. Write 4-8 sentences of continuous prose (no bullet points, no markdown)
+3. ${lang === 'english' ? 'Use clear, direct, analytical language' : 'Keep technical terms, tool names, CVE numbers, and security standards in English'}
+4. No introductions like "This video discusses..."
+5. Include specific numbers, dates, and technical details when mentioned
+6. End with the video URL: ${videoUrl}
+</constraints>`;
 };
 
 /**
@@ -252,25 +246,25 @@ const createRedditPrompt = (title, content, url, lang) => {
   const sanitizedTitle = sanitizeForPrompt(title, { maxLength: 500 });
   const wrappedContent = wrapUntrustedContent(content, 'POST');
 
-  return `You are a cybersecurity analyst. Create a factual summary of the Reddit post below in ${lang}.
+  return `You are a cybersecurity analyst. Extract the key facts from the Reddit post below in ${lang}.
 
 ${getSecurityReminder('POST')}
 
+<metadata>
 Post Title: ${sanitizedTitle}
 Post URL: ${url}
+</metadata>
 
 ${wrappedContent}
 
-Requirements:
-1. Provide a purely descriptive summary of 2-4 sentences
-2. Focus only on information explicitly stated in the post
+<constraints>
+1. Write a purely descriptive summary of 2-4 sentences
+2. Include only information explicitly stated in the post
 3. Do not add analysis, recommendations, or external information
-4. ${lang === 'english' ? '' : 'Keep technical terms in English'}
-5. Use clear, direct language
-6. Start with "💬 ${sanitizedTitle}" and an empty line
-7. End with the source URL: ${url}
-
-The summary should be concise and factual, focusing solely on describing what is discussed in the post.`;
+4. ${lang === 'english' ? 'Use clear, direct language' : 'Keep technical terms in English'}
+5. Start with "💬 ${sanitizedTitle}" and an empty line
+6. End with the source URL: ${url}
+</constraints>`;
 };
 
 /**
