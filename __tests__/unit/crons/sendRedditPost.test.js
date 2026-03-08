@@ -1,9 +1,6 @@
-process.env.REDDIT_CLIENT_ID = 'client_id';
-process.env.REDDIT_CLIENT_SECRET = 'client_secret';
 process.env.REDDIT_DAYS_LOOKBACK = '3';
 process.env.REDDIT_SUBREDDITS = 'netsec,cybersecurity';
 process.env.TELEGRAM_TOPIC_REDDIT = '123';
-process.env.REDDIT_USERNAME = 'test_user';
 
 jest.mock('../../../crons/utils/sendMessage', () => ({
   sendMessage: jest.fn().mockResolvedValue(true),
@@ -51,11 +48,11 @@ const logger = require('../../../crons/config/logger');
 describe('sendRedditPost cron job', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn());
+  });
 
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: jest.fn().mockResolvedValue({ access_token: 'mocked_token' }),
-    });
+  afterEach(() => {
+    global.setTimeout.mockRestore();
   });
 
   describe('run function', () => {
@@ -64,11 +61,7 @@ describe('sendRedditPost cron job', () => {
 
       fetch.mockReset();
 
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValue({ access_token: 'mocked_token' }),
-      });
-
+      // Mock netsec subreddit response
       fetch.mockResolvedValueOnce({
         ok: true,
         json: jest.fn().mockResolvedValue({
@@ -81,7 +74,7 @@ describe('sendRedditPost cron job', () => {
                   permalink: '/r/netsec/comments/post1/netsec_post',
                   score: 100,
                   selftext: 'This is a netsec post',
-                  created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60, // 1 day ago
+                  created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
                 },
               },
             ],
@@ -89,11 +82,7 @@ describe('sendRedditPost cron job', () => {
         }),
       });
 
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValue({ access_token: 'mocked_token' }),
-      });
-
+      // Mock cybersecurity subreddit response
       fetch.mockResolvedValueOnce({
         ok: true,
         json: jest.fn().mockResolvedValue({
@@ -106,7 +95,7 @@ describe('sendRedditPost cron job', () => {
                   permalink: '/r/cybersecurity/comments/post2/cybersecurity_post',
                   score: 200,
                   selftext: 'This is a cybersecurity post',
-                  created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60, // 1 day ago
+                  created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
                 },
               },
             ],
@@ -127,7 +116,7 @@ describe('sendRedditPost cron job', () => {
       );
       expect(generate).toHaveBeenCalledWith('Reddit prompt');
       expect(sendMessage).not.toHaveBeenCalled();
-      expect(fs.writeFile).toHaveBeenCalled(); // For saving the processed post
+      expect(fs.writeFile).toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith('Would send Telegram message', { summary: 'Generated summary' });
     });
 
@@ -135,7 +124,7 @@ describe('sendRedditPost cron job', () => {
       await run({ dryMode: false, lang: 'english' });
 
       expect(sendMessage).toHaveBeenCalledWith('Generated summary', '123');
-      expect(fs.writeFile).toHaveBeenCalled(); // For saving the processed post
+      expect(fs.writeFile).toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith('Successfully sent Reddit post', { id: 'post2' });
     });
 

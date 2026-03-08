@@ -9,44 +9,8 @@ const { cleanProcessedData } = require('./utils/cleanJsonFile');
 const PROCESSED_FILE = './assets/processedReddit.json';
 const DAYS = process.env.REDDIT_DAYS_LOOKBACK || 3;
 const MAX_RELEVANCE_CHECKS = 5;
-const SUBREDDITS = process.env.REDDIT_SUBREDDITS.split(',') || [
-  'netsec',
-  'cybersecurity',
-  'securityCTF',
-  'blackhat',
-  'HowToHack',
-];
-
-const REDDIT_CLIENT_ID = process.env.REDDIT_CLIENT_ID;
-const REDDIT_CLIENT_SECRET = process.env.REDDIT_CLIENT_SECRET;
-
-/**
- * Get a Reddit token using client credentials
- * @returns {Promise<string>} The Reddit token
- */
-const getRedditToken = async () => {
-  try {
-    const auth = Buffer.from(`${REDDIT_CLIENT_ID}:${REDDIT_CLIENT_SECRET}`).toString('base64');
-    const response = await fetch('https://www.reddit.com/api/v1/access_token', {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${auth}`,
-        'User-Agent': 'CyberHubBot/1.0',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: 'grant_type=client_credentials',
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.access_token;
-  } catch (error) {
-    throw new Error(`Failed to get Reddit token: ${error.message}`);
-  }
-};
+const DEFAULT_SUBREDDITS = ['netsec', 'cybersecurity', 'securityCTF', 'blackhat', 'HowToHack'];
+const SUBREDDITS = process.env.REDDIT_SUBREDDITS ? process.env.REDDIT_SUBREDDITS.split(',') : DEFAULT_SUBREDDITS;
 
 /**
  * Loads the list of processed Reddit posts from the JSON file.
@@ -98,12 +62,11 @@ const saveProcessedPost = async (postId) => {
  */
 const fetchSubredditPosts = async (subreddit, daysLookBack) => {
   try {
-    const token = await getRedditToken();
-    const response = await fetch(`https://oauth.reddit.com/r/${subreddit}/top.json?t=week&limit=100`, {
-      method: 'GET',
+    const response = await fetch(`https://www.reddit.com/r/${subreddit}/top.json?t=week&limit=100`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        'User-Agent': 'CyberHubBot/1.0 (by /u/${REDDIT_USERNAME})',
+        'User-Agent': 'linux:cyber-hub-bot:v2.2.1 (by /u/CyberHubBot)',
+        Accept: 'application/json',
+        'Accept-Language': 'en-US,en;q=0.9',
       },
     });
 
@@ -142,9 +105,12 @@ const run = async ({ dryMode, lang } = {}) => {
     await cleanProcessedData(DAYS, PROCESSED_FILE);
 
     let allPosts = [];
-    for (const subreddit of SUBREDDITS) {
-      const posts = await fetchSubredditPosts(subreddit, DAYS);
+    for (let i = 0; i < SUBREDDITS.length; i++) {
+      const posts = await fetchSubredditPosts(SUBREDDITS[i], DAYS);
       allPosts = allPosts.concat(posts);
+      if (i < SUBREDDITS.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
     }
 
     logger.info(`Fetched ${allPosts.length} total posts`);
