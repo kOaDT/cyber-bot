@@ -2,25 +2,6 @@ process.env.REDDIT_DAYS_LOOKBACK = '3';
 process.env.REDDIT_SUBREDDITS = 'netsec,cybersecurity';
 process.env.TELEGRAM_TOPIC_REDDIT = '123';
 
-const mockPage = {
-  goto: jest.fn().mockResolvedValue(),
-  evaluate: jest.fn(),
-};
-
-const mockBrowser = {
-  init: jest.fn().mockReturnThis(),
-  page: mockPage,
-  close: jest.fn().mockResolvedValue(),
-};
-
-jest.mock('../../../crons/utils/puppeteerUtils', () => ({
-  BrowserManager: jest.fn().mockImplementation(() => mockBrowser),
-}));
-
-jest.mock('puppeteer', () => ({
-  launch: jest.fn(),
-}));
-
 jest.mock('../../../crons/utils/sendMessage', () => ({
   sendMessage: jest.fn().mockResolvedValue(true),
 }));
@@ -54,6 +35,8 @@ jest.mock('fs', () => ({
   },
 }));
 
+global.fetch = jest.fn();
+
 const fs = require('fs').promises;
 const { run } = require('../../../crons/sendRedditPost');
 const { sendMessage } = require('../../../crons/utils/sendMessage');
@@ -62,24 +45,22 @@ const { createRedditPrompt } = require('../../../crons/utils/prompts');
 const { cleanProcessedData } = require('../../../crons/utils/cleanJsonFile');
 const logger = require('../../../crons/config/logger');
 
-const makeRedditJson = (id, title, subreddit, score, selftext = '') => ({
-  data: {
-    data: {
-      children: [
-        {
-          data: {
-            id,
-            title,
-            permalink: `/r/${subreddit}/comments/${id}/${title.toLowerCase().replace(/\s/g, '_')}/`,
-            score,
-            selftext,
-            url: selftext ? `https://reddit.com/r/${subreddit}/comments/${id}/` : `https://example.com/${id}`,
-            created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
-          },
-        },
-      ],
-    },
-  },
+const makeArcticShiftResponse = (id, title, subreddit, score, selftext = '') => ({
+  ok: true,
+  json: jest.fn().mockResolvedValue({
+    data: [
+      {
+        id,
+        title,
+        permalink: `/r/${subreddit}/comments/${id}/${title.toLowerCase().replace(/\s/g, '_')}/`,
+        score,
+        selftext,
+        url: selftext ? `https://reddit.com/r/${subreddit}/comments/${id}/` : `https://example.com/${id}`,
+        created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
+        removed_by_category: null,
+      },
+    ],
+  }),
 });
 
 describe('sendRedditPost cron job', () => {
@@ -91,18 +72,20 @@ describe('sendRedditPost cron job', () => {
     beforeEach(() => {
       fs.readFile.mockResolvedValueOnce(JSON.stringify([{ id: 'oldpost', processedAt: '2023-01-01T00:00:00.000Z' }]));
 
-      mockPage.evaluate
-        .mockResolvedValueOnce(makeRedditJson('post1', 'Netsec Post', 'netsec', 100))
-        .mockResolvedValueOnce(makeRedditJson('post2', 'Cybersecurity Post', 'cybersecurity', 200));
+      fetch.mockReset();
+      fetch
+        .mockResolvedValueOnce(makeArcticShiftResponse('post1', 'Netsec Post', 'netsec', 100))
+        .mockResolvedValueOnce(makeArcticShiftResponse('post2', 'Cybersecurity Post', 'cybersecurity', 200));
     });
 
     test('should run in dry mode', async () => {
       await run({ dryMode: true, lang: 'french' });
 
       expect(cleanProcessedData).toHaveBeenCalledWith('3', './assets/processedReddit.json');
-      expect(mockBrowser.init).toHaveBeenCalled();
-      expect(mockPage.goto).toHaveBeenCalledWith('https://www.reddit.com', { waitUntil: 'domcontentloaded' });
-      expect(mockPage.evaluate).toHaveBeenCalledTimes(2);
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('arctic-shift.photon-reddit.com/api/posts/search?subreddit=netsec')
+      );
       expect(createRedditPrompt).toHaveBeenCalledWith(
         'Cybersecurity Post',
         'https://example.com/post2',
@@ -113,7 +96,6 @@ describe('sendRedditPost cron job', () => {
       expect(sendMessage).not.toHaveBeenCalled();
       expect(fs.writeFile).toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith('Would send Telegram message', { summary: 'Generated summary' });
-      expect(mockBrowser.close).toHaveBeenCalled();
     });
 
     test('should send message when not in dry mode', async () => {
@@ -122,7 +104,48 @@ describe('sendRedditPost cron job', () => {
       expect(sendMessage).toHaveBeenCalledWith('Generated summary', '123');
       expect(fs.writeFile).toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith('Successfully sent Reddit post', { id: 'post2' });
-      expect(mockBrowser.close).toHaveBeenCalled();
+    });
+
+    test('should filter out removed posts', async () => {
+      fetch.mockReset();
+      fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue({
+            data: [
+              {
+                id: 'removed1',
+                title: 'Removed Post',
+                permalink: '/r/netsec/comments/removed1/removed_post/',
+                score: 500,
+                selftext: '[removed]',
+                url: 'https://example.com/removed',
+                created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
+                removed_by_category: null,
+              },
+              {
+                id: 'valid1',
+                title: 'Valid Post',
+                permalink: '/r/netsec/comments/valid1/valid_post/',
+                score: 50,
+                selftext: '',
+                url: 'https://example.com/valid',
+                created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
+                removed_by_category: null,
+              },
+            ],
+          }),
+        })
+        .mockResolvedValueOnce({ ok: true, json: jest.fn().mockResolvedValue({ data: [] }) });
+
+      await run({ dryMode: true, lang: 'english' });
+
+      expect(createRedditPrompt).toHaveBeenCalledWith(
+        'Valid Post',
+        'https://example.com/valid',
+        'https://reddit.com/r/netsec/comments/valid1/valid_post/',
+        'english'
+      );
     });
 
     test('should handle no new posts', async () => {
@@ -138,7 +161,6 @@ describe('sendRedditPost cron job', () => {
 
       expect(sendMessage).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith('No new posts to process');
-      expect(mockBrowser.close).toHaveBeenCalled();
     });
 
     test('should handle errors', async () => {
@@ -147,7 +169,6 @@ describe('sendRedditPost cron job', () => {
       await run({ dryMode: false });
 
       expect(logger.error).toHaveBeenCalledWith('Error sending Reddit post', { error: 'Clean error' });
-      expect(mockBrowser.close).toHaveBeenCalled();
     });
   });
 });

@@ -5,13 +5,13 @@ const { createRedditPrompt } = require('./utils/prompts');
 const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
-const { BrowserManager } = require('./utils/puppeteerUtils');
 
 const PROCESSED_FILE = './assets/processedReddit.json';
 const DAYS = process.env.REDDIT_DAYS_LOOKBACK || 3;
 const MAX_RELEVANCE_CHECKS = 5;
 const DEFAULT_SUBREDDITS = ['netsec', 'cybersecurity', 'securityCTF', 'blackhat', 'HowToHack'];
 const SUBREDDITS = process.env.REDDIT_SUBREDDITS ? process.env.REDDIT_SUBREDDITS.split(',') : DEFAULT_SUBREDDITS;
+const ARCTIC_SHIFT_BASE = 'https://arctic-shift.photon-reddit.com/api/posts/search';
 
 /**
  * Loads the list of processed Reddit posts from the JSON file.
@@ -55,36 +55,32 @@ const saveProcessedPost = async (postId) => {
 };
 
 /**
- * Fetches posts from a subreddit using in-browser fetch via Puppeteer.
+ * Fetches posts from a subreddit via the Arctic Shift API.
  *
- * @param {import('puppeteer').Page} page - Puppeteer page instance (on reddit.com origin)
  * @param {string} subreddit - The subreddit name to fetch from
  * @param {number} daysLookBack - Number of days to look back
- * @returns {Promise<Array>} Array of filtered posts
+ * @returns {Promise<Array>} Array of posts
  */
-const fetchSubredditPosts = async (page, subreddit, daysLookBack) => {
+const fetchSubredditPosts = async (subreddit, daysLookBack) => {
   try {
-    const result = await page.evaluate(async (sub) => {
-      const resp = await fetch(`/r/${sub}/top.json?t=week&limit=100`);
-      if (!resp.ok) return { error: resp.status };
-      return { data: await resp.json() };
-    }, subreddit);
+    const url = `${ARCTIC_SHIFT_BASE}?subreddit=${subreddit}&after=${daysLookBack}d&limit=100&sort=desc`;
+    const response = await fetch(url);
 
-    if (result.error) {
-      throw new Error(`HTTP error! status: ${result.error}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const cutoffTime = Date.now() / 1000 - daysLookBack * 24 * 60 * 60;
+    const { data } = await response.json();
 
-    return result.data.data.children
-      .filter((post) => post.data.created_utc > cutoffTime)
+    return data
+      .filter((post) => !post.removed_by_category && post.selftext !== '[removed]')
       .map((post) => ({
-        id: post.data.id,
-        title: post.data.title,
-        url: `https://reddit.com${post.data.permalink}`,
-        score: post.data.score,
-        content: post.data.selftext || post.data.url,
-        created: post.data.created_utc,
+        id: post.id,
+        title: post.title,
+        url: `https://reddit.com${post.permalink}`,
+        score: post.score,
+        content: post.selftext || post.url,
+        created: post.created_utc,
       }));
   } catch (error) {
     logger.error(`Error fetching r/${subreddit}`, { error: error.message });
@@ -100,17 +96,12 @@ const fetchSubredditPosts = async (page, subreddit, daysLookBack) => {
  * @param {string} options.lang - Language for the summary
  */
 const run = async ({ dryMode, lang } = {}) => {
-  const browser = new BrowserManager();
   try {
     await cleanProcessedData(DAYS, PROCESSED_FILE);
-    await browser.init();
-
-    // Navigate to reddit.com to establish origin and cookies for same-origin fetches
-    await browser.page.goto('https://www.reddit.com', { waitUntil: 'domcontentloaded' });
 
     let allPosts = [];
     for (const subreddit of SUBREDDITS) {
-      const posts = await fetchSubredditPosts(browser.page, subreddit, DAYS);
+      const posts = await fetchSubredditPosts(subreddit, DAYS);
       allPosts = allPosts.concat(posts);
     }
 
@@ -163,8 +154,6 @@ const run = async ({ dryMode, lang } = {}) => {
     logger.info(`Successfully sent Reddit post`, { id: selectedPost.id });
   } catch (error) {
     logger.error('Error sending Reddit post', { error: error.message });
-  } finally {
-    await browser.close();
   }
 };
 
