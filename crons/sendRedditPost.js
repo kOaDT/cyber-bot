@@ -4,7 +4,9 @@ const { generate } = require('./utils/generate');
 const { createRedditPrompt } = require('./utils/prompts');
 const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
+const cheerio = require('cheerio');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
+const { BrowserManager } = require('./utils/puppeteerUtils');
 
 const PROCESSED_FILE = './assets/processedReddit.json';
 const DAYS = process.env.REDDIT_DAYS_LOOKBACK || 3;
@@ -54,41 +56,50 @@ const saveProcessedPost = async (postId) => {
 };
 
 /**
- * Fetches posts from a subreddit within the specified timeframe.
+ * Fetches posts from a subreddit by scraping old.reddit.com.
  *
+ * @param {import('puppeteer').Page} page - Puppeteer page instance
  * @param {string} subreddit - The subreddit name to fetch from
  * @param {number} daysLookBack - Number of days to look back
  * @returns {Promise<Array>} Array of filtered posts
  */
-const fetchSubredditPosts = async (subreddit, daysLookBack) => {
+const fetchSubredditPosts = async (page, subreddit, daysLookBack) => {
   try {
-    const response = await fetch(`https://www.reddit.com/r/${subreddit}/top.json?t=week&limit=100`, {
-      headers: {
-        'User-Agent': 'linux:cyber-hub-bot:v2.2.1 (by /u/CyberHubBot)',
-        Accept: 'application/json',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
+    await page.goto(`https://old.reddit.com/r/${subreddit}/top/?t=week&limit=100`, {
+      waitUntil: 'domcontentloaded',
+    });
+    const html = await page.content();
+    const $ = cheerio.load(html);
+    const cutoffTime = Date.now() - daysLookBack * 24 * 60 * 60 * 1000;
+
+    const posts = [];
+    $('#siteTable .thing.link').each((_, el) => {
+      const $el = $(el);
+      const timestamp = parseInt($el.attr('data-timestamp'), 10);
+      if (!timestamp || timestamp < cutoffTime) return;
+
+      const fullname = $el.attr('data-fullname') || '';
+      const id = fullname.replace('t3_', '');
+      const title = $el.find('a.title').first().text().trim();
+      const commentLink = $el.find('a.comments').attr('href') || '';
+      const scoreText = $el.find('.score.unvoted').text().trim();
+      const score = parseInt(scoreText, 10) || 0;
+      const dataUrl = $el.attr('data-url') || '';
+      const domain = $el.attr('data-domain') || '';
+
+      posts.push({
+        id,
+        title,
+        url: commentLink.startsWith('http') ? commentLink : `https://reddit.com${commentLink}`,
+        score,
+        content: domain.startsWith('self.') ? title : dataUrl || title,
+        created: timestamp / 1000,
+      });
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const cutoffTime = Date.now() / 1000 - daysLookBack * 24 * 60 * 60;
-
-    return data.data.children
-      .filter((post) => post.data.created_utc > cutoffTime)
-      .map((post) => ({
-        id: post.data.id,
-        title: post.data.title,
-        url: `https://reddit.com${post.data.permalink}`,
-        score: post.data.score,
-        content: post.data.selftext || post.data.url,
-        created: post.data.created_utc,
-      }));
+    return posts;
   } catch (error) {
-    logger.error('Error fetching posts', { error: error.message });
+    logger.error(`Error fetching r/${subreddit}`, { error: error.message });
     return [];
   }
 };
@@ -101,16 +112,15 @@ const fetchSubredditPosts = async (subreddit, daysLookBack) => {
  * @param {string} options.lang - Language for the summary
  */
 const run = async ({ dryMode, lang } = {}) => {
+  const browser = new BrowserManager();
   try {
     await cleanProcessedData(DAYS, PROCESSED_FILE);
+    await browser.init();
 
     let allPosts = [];
-    for (let i = 0; i < SUBREDDITS.length; i++) {
-      const posts = await fetchSubredditPosts(SUBREDDITS[i], DAYS);
+    for (const subreddit of SUBREDDITS) {
+      const posts = await fetchSubredditPosts(browser.page, subreddit, DAYS);
       allPosts = allPosts.concat(posts);
-      if (i < SUBREDDITS.length - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-      }
     }
 
     logger.info(`Fetched ${allPosts.length} total posts`);
@@ -162,6 +172,8 @@ const run = async ({ dryMode, lang } = {}) => {
     logger.info(`Successfully sent Reddit post`, { id: selectedPost.id });
   } catch (error) {
     logger.error('Error sending Reddit post', { error: error.message });
+  } finally {
+    await browser.close();
   }
 };
 
