@@ -4,7 +4,7 @@ process.env.TELEGRAM_TOPIC_REDDIT = '123';
 
 const mockPage = {
   goto: jest.fn().mockResolvedValue(),
-  content: jest.fn(),
+  evaluate: jest.fn(),
 };
 
 const mockBrowser = {
@@ -62,25 +62,25 @@ const { createRedditPrompt } = require('../../../crons/utils/prompts');
 const { cleanProcessedData } = require('../../../crons/utils/cleanJsonFile');
 const logger = require('../../../crons/config/logger');
 
-const timestamp = Date.now() - 1 * 24 * 60 * 60 * 1000; // 1 day ago in ms
-
-const netsecHtml = `<div id="siteTable">
-  <div class="thing link" data-fullname="t3_post1" data-timestamp="${timestamp}"
-       data-url="https://example.com/netsec-article" data-domain="example.com">
-    <div class="score unvoted">100</div>
-    <a class="title">Netsec Post</a>
-    <a class="comments" href="/r/netsec/comments/post1/netsec_post/">5 comments</a>
-  </div>
-</div>`;
-
-const cybersecHtml = `<div id="siteTable">
-  <div class="thing link" data-fullname="t3_post2" data-timestamp="${timestamp}"
-       data-url="https://example.com/cybersec-article" data-domain="example.com">
-    <div class="score unvoted">200</div>
-    <a class="title">Cybersecurity Post</a>
-    <a class="comments" href="/r/cybersecurity/comments/post2/cybersecurity_post/">10 comments</a>
-  </div>
-</div>`;
+const makeRedditJson = (id, title, subreddit, score, selftext = '') => ({
+  data: {
+    data: {
+      children: [
+        {
+          data: {
+            id,
+            title,
+            permalink: `/r/${subreddit}/comments/${id}/${title.toLowerCase().replace(/\s/g, '_')}/`,
+            score,
+            selftext,
+            url: selftext ? `https://reddit.com/r/${subreddit}/comments/${id}/` : `https://example.com/${id}`,
+            created_utc: Date.now() / 1000 - 1 * 24 * 60 * 60,
+          },
+        },
+      ],
+    },
+  },
+});
 
 describe('sendRedditPost cron job', () => {
   beforeEach(() => {
@@ -91,7 +91,9 @@ describe('sendRedditPost cron job', () => {
     beforeEach(() => {
       fs.readFile.mockResolvedValueOnce(JSON.stringify([{ id: 'oldpost', processedAt: '2023-01-01T00:00:00.000Z' }]));
 
-      mockPage.content.mockResolvedValueOnce(netsecHtml).mockResolvedValueOnce(cybersecHtml);
+      mockPage.evaluate
+        .mockResolvedValueOnce(makeRedditJson('post1', 'Netsec Post', 'netsec', 100))
+        .mockResolvedValueOnce(makeRedditJson('post2', 'Cybersecurity Post', 'cybersecurity', 200));
     });
 
     test('should run in dry mode', async () => {
@@ -99,10 +101,11 @@ describe('sendRedditPost cron job', () => {
 
       expect(cleanProcessedData).toHaveBeenCalledWith('3', './assets/processedReddit.json');
       expect(mockBrowser.init).toHaveBeenCalled();
-      expect(mockPage.goto).toHaveBeenCalledTimes(2);
+      expect(mockPage.goto).toHaveBeenCalledWith('https://www.reddit.com', { waitUntil: 'domcontentloaded' });
+      expect(mockPage.evaluate).toHaveBeenCalledTimes(2);
       expect(createRedditPrompt).toHaveBeenCalledWith(
         'Cybersecurity Post',
-        'https://example.com/cybersec-article',
+        'https://example.com/post2',
         'https://reddit.com/r/cybersecurity/comments/post2/cybersecurity_post/',
         'french'
       );

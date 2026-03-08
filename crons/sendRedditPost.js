@@ -4,7 +4,6 @@ const { generate } = require('./utils/generate');
 const { createRedditPrompt } = require('./utils/prompts');
 const { evaluateRelevance } = require('./utils/relevance');
 const fs = require('fs').promises;
-const cheerio = require('cheerio');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
 const { BrowserManager } = require('./utils/puppeteerUtils');
 
@@ -56,48 +55,37 @@ const saveProcessedPost = async (postId) => {
 };
 
 /**
- * Fetches posts from a subreddit by scraping old.reddit.com.
+ * Fetches posts from a subreddit using in-browser fetch via Puppeteer.
  *
- * @param {import('puppeteer').Page} page - Puppeteer page instance
+ * @param {import('puppeteer').Page} page - Puppeteer page instance (on reddit.com origin)
  * @param {string} subreddit - The subreddit name to fetch from
  * @param {number} daysLookBack - Number of days to look back
  * @returns {Promise<Array>} Array of filtered posts
  */
 const fetchSubredditPosts = async (page, subreddit, daysLookBack) => {
   try {
-    await page.goto(`https://old.reddit.com/r/${subreddit}/top/?t=week&limit=100`, {
-      waitUntil: 'domcontentloaded',
-    });
-    const html = await page.content();
-    const $ = cheerio.load(html);
-    const cutoffTime = Date.now() - daysLookBack * 24 * 60 * 60 * 1000;
+    const result = await page.evaluate(async (sub) => {
+      const resp = await fetch(`/r/${sub}/top.json?t=week&limit=100`);
+      if (!resp.ok) return { error: resp.status };
+      return { data: await resp.json() };
+    }, subreddit);
 
-    const posts = [];
-    $('#siteTable .thing.link').each((_, el) => {
-      const $el = $(el);
-      const timestamp = parseInt($el.attr('data-timestamp'), 10);
-      if (!timestamp || timestamp < cutoffTime) return;
+    if (result.error) {
+      throw new Error(`HTTP error! status: ${result.error}`);
+    }
 
-      const fullname = $el.attr('data-fullname') || '';
-      const id = fullname.replace('t3_', '');
-      const title = $el.find('a.title').first().text().trim();
-      const commentLink = $el.find('a.comments').attr('href') || '';
-      const scoreText = $el.find('.score.unvoted').text().trim();
-      const score = parseInt(scoreText, 10) || 0;
-      const dataUrl = $el.attr('data-url') || '';
-      const domain = $el.attr('data-domain') || '';
+    const cutoffTime = Date.now() / 1000 - daysLookBack * 24 * 60 * 60;
 
-      posts.push({
-        id,
-        title,
-        url: commentLink.startsWith('http') ? commentLink : `https://reddit.com${commentLink}`,
-        score,
-        content: domain.startsWith('self.') ? title : dataUrl || title,
-        created: timestamp / 1000,
-      });
-    });
-
-    return posts;
+    return result.data.data.children
+      .filter((post) => post.data.created_utc > cutoffTime)
+      .map((post) => ({
+        id: post.data.id,
+        title: post.data.title,
+        url: `https://reddit.com${post.data.permalink}`,
+        score: post.data.score,
+        content: post.data.selftext || post.data.url,
+        created: post.data.created_utc,
+      }));
   } catch (error) {
     logger.error(`Error fetching r/${subreddit}`, { error: error.message });
     return [];
@@ -116,6 +104,9 @@ const run = async ({ dryMode, lang } = {}) => {
   try {
     await cleanProcessedData(DAYS, PROCESSED_FILE);
     await browser.init();
+
+    // Navigate to reddit.com to establish origin and cookies for same-origin fetches
+    await browser.page.goto('https://www.reddit.com', { waitUntil: 'domcontentloaded' });
 
     let allPosts = [];
     for (const subreddit of SUBREDDITS) {
