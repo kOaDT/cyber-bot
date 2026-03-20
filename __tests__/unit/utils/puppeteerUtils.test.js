@@ -48,31 +48,52 @@ describe('BrowserManager', () => {
   });
 
   test('should initialize with default options', () => {
-    expect(browserManager.options).toEqual({
-      headless: 'new',
-      timeout: 30000,
-    });
+    expect(browserManager.timeout).toBe(30000);
+    expect(browserManager.launchOptions.headless).toBe('new');
+    expect(browserManager.launchOptions.args).toEqual(
+      expect.arrayContaining([
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-extensions',
+        '--no-first-run',
+        '--disable-setuid-sandbox',
+      ])
+    );
   });
 
   test('should initialize with custom options', () => {
-    const customOptions = {
+    browserManager = new BrowserManager({
       headless: false,
       timeout: 60000,
       slowMo: 100,
-    };
+    });
 
-    browserManager = new BrowserManager(customOptions);
+    expect(browserManager.timeout).toBe(60000);
+    expect(browserManager.launchOptions.headless).toBe(false);
+    expect(browserManager.launchOptions.slowMo).toBe(100);
+    expect(browserManager.launchOptions).not.toHaveProperty('timeout');
+  });
 
-    expect(browserManager.options).toEqual(customOptions);
+  test('should merge custom args with hardened args', () => {
+    browserManager = new BrowserManager({
+      args: ['--custom-flag'],
+    });
+
+    expect(browserManager.launchOptions.args).toEqual(
+      expect.arrayContaining(['--disable-dev-shm-usage', '--custom-flag'])
+    );
   });
 
   test('should launch browser and create page on init', async () => {
     await browserManager.init();
 
-    expect(puppeteer.launch).toHaveBeenCalledWith({
-      headless: 'new',
-      timeout: 30000,
-    });
+    expect(puppeteer.launch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headless: 'new',
+        args: expect.arrayContaining(['--disable-dev-shm-usage']),
+      })
+    );
+    expect(puppeteer.launch).toHaveBeenCalledWith(expect.not.objectContaining({ timeout: expect.anything() }));
 
     expect(mockBrowser.newPage).toHaveBeenCalled();
     expect(mockPage.setDefaultTimeout).toHaveBeenCalledWith(30000);

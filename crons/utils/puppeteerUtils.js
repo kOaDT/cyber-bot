@@ -5,35 +5,39 @@ const logger = require('../config/logger');
  * BrowserManager class
  * Manages the browser instance and provides methods for navigation and interaction
  */
+const HARDENED_ARGS = [
+  '--disable-dev-shm-usage',
+  '--disable-gpu',
+  '--disable-extensions',
+  '--no-first-run',
+  '--disable-setuid-sandbox',
+  '--disable-background-networking',
+  '--disable-sync',
+];
+
 class BrowserManager {
-  /**
-   * Constructor for the BrowserManager class
-   * @param {Object} options - Configuration options for the browser
-   */
   constructor(options = {}) {
-    this.options = {
+    const { timeout, args = [], ...launchOptions } = options;
+    this.timeout = timeout ?? 30000;
+    this.launchOptions = {
       headless: 'new',
-      timeout: 30000,
-      ...options,
+      args: [...HARDENED_ARGS, ...args],
+      ...launchOptions,
     };
     this.browser = null;
     this.page = null;
   }
 
-  /**
-   * Initialize the browser instance
-   * @returns {Promise<BrowserManager>} The initialized BrowserManager instance
-   */
   async init() {
     try {
-      this.browser = await puppeteer.launch(this.options);
+      this.browser = await puppeteer.launch(this.launchOptions);
       this.page = await this.browser.newPage();
       await this.page.setUserAgent(
         // eslint-disable-next-line max-len
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
       );
-      await this.page.setDefaultTimeout(this.options.timeout);
-      await this.page.setDefaultNavigationTimeout(this.options.timeout);
+      await this.page.setDefaultTimeout(this.timeout);
+      await this.page.setDefaultNavigationTimeout(this.timeout);
 
       this.page.on('console', (msg) => {
         if (msg.type() === 'error') {
