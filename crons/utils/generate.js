@@ -2,6 +2,13 @@ const { getProvider, getFallbackProvider } = require('../config/providers');
 const logger = require('../config/logger');
 const { validateLLMOutput } = require('./sanitize');
 
+class AllProvidersRateLimitedError extends Error {
+  constructor() {
+    super('All AI providers are rate limited');
+    this.name = 'AllProvidersRateLimitedError';
+  }
+}
+
 const generate = async (prompt, overrideParams = {}) => {
   const { skipValidation = false, ...providerParams } = overrideParams;
   const providers = [getProvider()];
@@ -33,8 +40,7 @@ const generate = async (prompt, overrideParams = {}) => {
       }
 
       if (isRateLimit) {
-        logger.error('All providers rate limited - exiting');
-        process.exit(1);
+        throw new AllProvidersRateLimitedError();
       }
 
       logger.error(`${provider.name} API error: ${err.message}`);
@@ -43,4 +49,4 @@ const generate = async (prompt, overrideParams = {}) => {
   }
 };
 
-module.exports = { generate };
+module.exports = { generate, AllProvidersRateLimitedError };

@@ -111,38 +111,28 @@ describe('generate utility', () => {
     expect(result).toBeNull();
   });
 
-  test('should exit on rate limit when no fallback available (statusCode 429)', async () => {
+  test('should throw AllProvidersRateLimitedError when no fallback available (statusCode 429)', async () => {
     const { getFallbackProvider } = require('../../../crons/config/providers');
+    const { AllProvidersRateLimitedError } = require('../../../crons/utils/generate');
     getFallbackProvider.mockReturnValue(null);
 
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
     const error = new Error('Rate limit');
     error.statusCode = 429;
     mockProvider.generate.mockRejectedValue(error);
 
-    await generate('Test prompt');
-
-    expect(logger.error).toHaveBeenCalledWith('All providers rate limited - exiting');
-    expect(mockExit).toHaveBeenCalledWith(1);
-
-    mockExit.mockRestore();
+    await expect(generate('Test prompt')).rejects.toThrow(AllProvidersRateLimitedError);
   });
 
-  test('should exit on rate limit when no fallback available (status 429)', async () => {
+  test('should throw AllProvidersRateLimitedError when no fallback available (status 429)', async () => {
     const { getFallbackProvider } = require('../../../crons/config/providers');
+    const { AllProvidersRateLimitedError } = require('../../../crons/utils/generate');
     getFallbackProvider.mockReturnValue(null);
 
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
     const error = new Error('Rate limit');
     error.status = 429;
     mockProvider.generate.mockRejectedValue(error);
 
-    await generate('Test prompt');
-
-    expect(logger.error).toHaveBeenCalledWith('All providers rate limited - exiting');
-    expect(mockExit).toHaveBeenCalledWith(1);
-
-    mockExit.mockRestore();
+    await expect(generate('Test prompt')).rejects.toThrow(AllProvidersRateLimitedError);
   });
 
   test('should fall back to secondary provider on primary 429', async () => {
@@ -161,11 +151,11 @@ describe('generate utility', () => {
     expect(result).toBe('Fallback content');
   });
 
-  test('should exit when both providers hit rate limit', async () => {
+  test('should throw AllProvidersRateLimitedError when both providers hit rate limit', async () => {
     const { getFallbackProvider } = require('../../../crons/config/providers');
+    const { AllProvidersRateLimitedError } = require('../../../crons/utils/generate');
     getFallbackProvider.mockReturnValue(mockFallbackProvider);
 
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
     const primaryError = new Error('Rate limit');
     primaryError.statusCode = 429;
     const fallbackError = new Error('Rate limit');
@@ -174,13 +164,8 @@ describe('generate utility', () => {
     mockProvider.generate.mockRejectedValue(primaryError);
     mockFallbackProvider.generate.mockRejectedValue(fallbackError);
 
-    await generate('Test prompt');
-
+    await expect(generate('Test prompt')).rejects.toThrow(AllProvidersRateLimitedError);
     expect(logger.warn).toHaveBeenCalledWith('MockProvider API rate limit exceeded - falling back to MockFallback');
-    expect(logger.error).toHaveBeenCalledWith('All providers rate limited - exiting');
-    expect(mockExit).toHaveBeenCalledWith(1);
-
-    mockExit.mockRestore();
   });
 
   test('should return null when fallback provider has generic error', async () => {
