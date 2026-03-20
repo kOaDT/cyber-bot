@@ -7,7 +7,7 @@ jest.mock('../../../crons/config/logger', () => ({
 jest.mock('node-telegram-bot-api');
 
 jest.mock('../../../crons/utils/database', () => ({
-  promise: jest.fn(),
+  getPool: jest.fn(() => null),
 }));
 
 const logger = require('../../../crons/config/logger');

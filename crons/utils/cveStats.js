@@ -1,7 +1,5 @@
-const pool = require('./database');
+const { getPool } = require('./database');
 const logger = require('../config/logger');
-
-const db = pool.promise();
 
 const getStartOfDay = (date = new Date()) => {
   const d = new Date(date);
@@ -33,8 +31,14 @@ const getStartOfYear = (date = new Date()) => {
 
 const formatDate = (date) => date.toISOString().slice(0, 19).replace('T', ' ');
 
+const getDb = () => {
+  const pool = getPool();
+  if (!pool) throw new Error('Database not available');
+  return pool.promise();
+};
+
 const countCvesBetween = async (startDate, endDate) => {
-  const [rows] = await db.execute('SELECT COUNT(*) as count FROM Cve WHERE published >= ? AND published < ?', [
+  const [rows] = await getDb().execute('SELECT COUNT(*) as count FROM Cve WHERE published >= ? AND published < ?', [
     formatDate(startDate),
     formatDate(endDate),
   ]);
@@ -42,7 +46,7 @@ const countCvesBetween = async (startDate, endDate) => {
 };
 
 const countCvesBySeverityBetween = async (startDate, endDate, minCvss = 0, maxCvss = 10) => {
-  const [rows] = await db.execute(
+  const [rows] = await getDb().execute(
     'SELECT COUNT(*) as count FROM Cve WHERE published >= ? AND published < ? AND cvss >= ? AND cvss <= ?',
     [formatDate(startDate), formatDate(endDate), minCvss, maxCvss]
   );
@@ -50,7 +54,7 @@ const countCvesBySeverityBetween = async (startDate, endDate, minCvss = 0, maxCv
 };
 
 const getDailyCountsForPeriod = async (days = 7) => {
-  const [rows] = await db.execute(
+  const [rows] = await getDb().execute(
     `SELECT DATE(published) as date, COUNT(*) as count
      FROM Cve
      WHERE published >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
@@ -62,7 +66,7 @@ const getDailyCountsForPeriod = async (days = 7) => {
 };
 
 const getMonthlyCountsForYear = async (year) => {
-  const [rows] = await db.execute(
+  const [rows] = await getDb().execute(
     `SELECT MONTH(published) as month, COUNT(*) as count
      FROM Cve
      WHERE YEAR(published) = ?

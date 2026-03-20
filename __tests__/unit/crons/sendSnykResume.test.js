@@ -13,8 +13,7 @@ jest.mock('../../../crons/config/mistral', () => ({
 }));
 
 jest.mock('../../../crons/utils/database', () => ({
-  query: jest.fn().mockResolvedValue([]),
-  close: jest.fn().mockResolvedValue(undefined),
+  getPool: jest.fn(() => null),
 }));
 
 const mockBrowser = {
