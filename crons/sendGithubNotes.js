@@ -17,8 +17,8 @@ const store = createArrayStore(PROCESSED_NOTES_PATH);
 const getGithubFile = async () => {
   try {
     const query = `
-      query {
-        repository(owner: "${GITHUB_USERNAME}", name: "${GITHUB_REPO}") {
+      query($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
           object(expression: "HEAD:") {
             ... on Tree {
               entries {
@@ -37,13 +37,15 @@ const getGithubFile = async () => {
       }
     `;
 
+    const variables = { owner: GITHUB_USERNAME, name: GITHUB_REPO };
+
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${GITHUB_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }),
     });
 
     const { data } = await response.json();
@@ -108,4 +110,4 @@ const run = async ({ dryMode, lang }) => {
   }
 };
 
-module.exports = { run };
+module.exports = { run, _getGithubFile: getGithubFile };
