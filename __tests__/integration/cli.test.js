@@ -19,4 +19,19 @@ describe('CLI integration', () => {
       expect(error.message).toContain('Command failed:');
     }
   });
+
+  test.each([
+    '../../../etc/passwd',
+    '../../malicious',
+    '../index',
+    'sendNewsResume/../../../etc/passwd',
+    'nonExistentCron',
+  ])('should reject path traversal or unknown cron: %s', (cron) => {
+    expect(() => {
+      execSync(`node index.js --cron "${cron}"`, {
+        stdio: 'pipe',
+        env: { ...process.env, NODE_ENV: 'test' },
+      });
+    }).toThrow();
+  });
 });

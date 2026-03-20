@@ -6,6 +6,21 @@ const program = new Command();
 const logger = require('./crons/config/logger');
 const { AUTHORIZED_LANGUAGES } = require('./crons/utils/langs');
 
+const ALLOWED_CRONS = [
+  'sendNewsResume',
+  'sendCve',
+  'sendShort',
+  'sendTHM',
+  'sendTHMCTF',
+  'sendRedditPost',
+  'sendYoutubeResume',
+  'sendGithubNotes',
+  'sendDarknetDiariesResume',
+  'sendSnykResume',
+  'sendSecurityNowResume',
+  'sendCyberShowResume',
+];
+
 program
   .version('1.1.0', '-v, --version')
   .description('A script help you to launch CRON Job')
@@ -23,6 +38,11 @@ const dryMode = options.dryMode ? options.dryMode : false;
 const param = options.param;
 const lang = options.lang || 'english';
 const youtube = options.youtube;
+
+if (!ALLOWED_CRONS.includes(cron)) {
+  logger.error('Invalid cron name', { cron, allowed: ALLOWED_CRONS });
+  process.exit(1);
+}
 
 if (lang && !AUTHORIZED_LANGUAGES.includes(lang)) {
   logger.error('Invalid language', { lang_used: lang, available_languages: AUTHORIZED_LANGUAGES });
