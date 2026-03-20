@@ -4,6 +4,37 @@ const https = require('https');
 const { URL } = require('url');
 const { combine, timestamp, colorize, printf, errors } = format;
 
+const SECRET_PATTERNS = [
+  /key=[A-Za-z0-9_-]{20,}/gi,
+  /token=[A-Za-z0-9_-]{20,}/gi,
+  /Bearer\s+[A-Za-z0-9\-_.~+/]{20,}=*/gi,
+];
+
+const redactSecrets = (str) => {
+  if (typeof str !== 'string') return str;
+  let result = str;
+  for (const pattern of SECRET_PATTERNS) {
+    result = result.replace(pattern, (match) => {
+      const eqIndex = match.indexOf('=');
+      const spaceIndex = match.indexOf(' ');
+      if (eqIndex !== -1) return match.slice(0, eqIndex + 1) + '[REDACTED]';
+      if (spaceIndex !== -1) return match.slice(0, spaceIndex + 1) + '[REDACTED]';
+      return '[REDACTED]';
+    });
+  }
+  return result;
+};
+
+const sanitizeSecrets = format((info) => {
+  if (typeof info.message === 'string') {
+    info.message = redactSecrets(info.message);
+  }
+  if (info.stack && typeof info.stack === 'string') {
+    info.stack = redactSecrets(info.stack);
+  }
+  return info;
+});
+
 // Custom format for log messages
 const myFormat = printf(({ level, message, timestamp, ...metadata }) => {
   let formattedMessage = message;
@@ -130,6 +161,7 @@ const loggerOptions = {
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
     errors({ stack: true }),
+    sanitizeSecrets(),
     myFormat
   ),
   transports: [
@@ -158,6 +190,7 @@ if (process.env.NODE_ENV !== 'production') {
           format: 'YYYY-MM-DD HH:mm:ss',
         }),
         colorize(),
+        sanitizeSecrets(),
         myFormat
       ),
     })
@@ -184,6 +217,7 @@ if (process.env.SLACK_LOGGING_ENABLED === 'true') {
               format: 'YYYY-MM-DD HH:mm:ss',
             }),
             errors({ stack: true }),
+            sanitizeSecrets(),
             myFormat
           ),
         })
@@ -214,3 +248,4 @@ logger.logWithMeta = (level, message, metadata = {}) => {
 };
 
 module.exports = logger;
+module.exports.redactSecrets = redactSecrets;

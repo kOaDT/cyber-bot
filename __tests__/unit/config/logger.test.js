@@ -1,5 +1,45 @@
 const https = require('https');
 
+describe('redactSecrets', () => {
+  let redactSecrets;
+
+  beforeEach(() => {
+    jest.resetModules();
+    redactSecrets = require('../../../crons/config/logger').redactSecrets;
+  });
+
+  test('should redact YouTube API key from URL', () => {
+    const url = 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyD1234567890abcdefg';
+    expect(redactSecrets(url)).toBe('https://www.googleapis.com/youtube/v3/search?key=[REDACTED]');
+  });
+
+  test('should redact token parameters', () => {
+    const url = 'https://example.com/api?token=abcdefghijklmnopqrstuvwxyz';
+    expect(redactSecrets(url)).toBe('https://example.com/api?token=[REDACTED]');
+  });
+
+  test('should redact Bearer tokens', () => {
+    const msg = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+    expect(redactSecrets(msg)).toBe('Authorization: Bearer [REDACTED]');
+  });
+
+  test('should not redact short key values', () => {
+    const url = 'https://example.com?key=short';
+    expect(redactSecrets(url)).toBe('https://example.com?key=short');
+  });
+
+  test('should return non-string values unchanged', () => {
+    expect(redactSecrets(null)).toBeNull();
+    expect(redactSecrets(42)).toBe(42);
+    expect(redactSecrets(undefined)).toBeUndefined();
+  });
+
+  test('should redact multiple secrets in the same string', () => {
+    const msg = 'key=AIzaSyD1234567890abcdefg and token=abcdefghijklmnopqrstuvwxyz';
+    expect(redactSecrets(msg)).toBe('key=[REDACTED] and token=[REDACTED]');
+  });
+});
+
 describe('logger configuration', () => {
   let originalEnv;
   let logger;

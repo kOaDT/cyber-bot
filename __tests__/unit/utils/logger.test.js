@@ -1,9 +1,17 @@
-const winston = require('winston');
 const logger = require('../../../crons/config/logger');
 
 // Mock winston
 jest.mock('winston', () => {
   const originalModule = jest.requireActual('winston');
+
+  const formatFn = Object.assign((...args) => originalModule.format(...args), {
+    ...originalModule.format,
+    combine: jest.fn(),
+    timestamp: jest.fn(),
+    errors: jest.fn(),
+    printf: jest.fn(),
+    colorize: jest.fn(),
+  });
 
   return {
     ...originalModule,
@@ -12,14 +20,7 @@ jest.mock('winston', () => {
       add: jest.fn(),
       error: jest.fn(),
     }),
-    format: {
-      ...originalModule.format,
-      combine: jest.fn(),
-      timestamp: jest.fn(),
-      errors: jest.fn(),
-      printf: jest.fn(),
-      colorize: jest.fn(),
-    },
+    format: formatFn,
     transports: {
       Console: jest.fn(),
       File: jest.fn(),

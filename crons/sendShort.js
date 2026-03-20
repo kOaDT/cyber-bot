@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
@@ -9,9 +8,14 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const DAYS_AGO = 30;
 const PROCESSED_FILE = './assets/processedShorts.json';
 
-const QUERY =
-  'cybersecurity OR "information security" OR "network security" OR "web security" OR "application security" OR "security research"';
-const RELEVANCE_PARAMS = `&relevanceLanguage=en&order=rating&maxResults=50`;
+const QUERY = [
+  'cybersecurity',
+  '"information security"',
+  '"network security"',
+  '"web security"',
+  '"application security"',
+  '"security research"',
+].join(' OR ');
 
 const DO_YOU_WANT_EMOJI = false;
 const BLACKLISTED_TERMS = [
@@ -61,9 +65,25 @@ const run = async ({ dryMode }) => {
     const now = new Date();
     const publishedAfter = new Date(now.getTime() - DAYS_AGO * 24 * 60 * 60 * 1000).toISOString();
 
-    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&q=${encodeURIComponent(QUERY)}${RELEVANCE_PARAMS}&publishedAfter=${publishedAfter}&key=${YOUTUBE_API_KEY}`;
+    const url = new URL('https://www.googleapis.com/youtube/v3/search');
+    url.searchParams.set('part', 'snippet');
+    url.searchParams.set('type', 'video');
+    url.searchParams.set('videoDuration', 'short');
+    url.searchParams.set('q', QUERY);
+    url.searchParams.set('relevanceLanguage', 'en');
+    url.searchParams.set('order', 'rating');
+    url.searchParams.set('maxResults', '50');
+    url.searchParams.set('publishedAfter', publishedAfter);
+    url.searchParams.set('key', YOUTUBE_API_KEY);
 
-    let response = await fetch(url);
+    let response;
+    try {
+      response = await fetch(url);
+    } catch (fetchError) {
+      logger.error('Failed to fetch YouTube API', { error: fetchError.message });
+      return;
+    }
+
     let data = await response.json();
 
     if (!data || !data.items) {
