@@ -2,19 +2,17 @@
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
-const fs = require('fs').promises;
+const { createArrayStore } = require('./utils/processedItems');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
-// CONFIG
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const DAYS_AGO = 30;
+const PROCESSED_FILE = './assets/processedShorts.json';
 
-// API QUERIES PARAMS
 const QUERY =
   'cybersecurity OR "information security" OR "network security" OR "web security" OR "application security" OR "security research"';
 const RELEVANCE_PARAMS = `&relevanceLanguage=en&order=rating&maxResults=50`;
 
-// FILTERS BULLSHIT
 const DO_YOU_WANT_EMOJI = false;
 const BLACKLISTED_TERMS = [
   'hack fortnite',
@@ -54,37 +52,11 @@ const TECHNICAL_TERMS = [
   'RCE',
 ];
 
-/**
- * Saves the processed short to a JSON file.
- *
- * @param {string} id - The ID of the processed short.
- */
-const saveProcessedShorts = async (id) => {
-  const filePath = './assets/processedShorts.json';
-  try {
-    let processedShorts = [];
-    try {
-      const fileContent = await fs.readFile(filePath, 'utf8');
-      processedShorts = JSON.parse(fileContent);
-    } catch (error) {
-      // If the file doesn't exist or is empty, continue with an empty array
-      logger.warn('Could not read existing data, starting fresh', { error: error.message });
-    }
-
-    processedShorts.push({
-      id,
-      processedAt: new Date().toISOString(),
-    });
-
-    await fs.writeFile(filePath, JSON.stringify(processedShorts, null, 2));
-  } catch (error) {
-    logger.error('Error saving processed short', { error: error.message });
-  }
-};
+const store = createArrayStore(PROCESSED_FILE);
 
 const run = async ({ dryMode }) => {
   try {
-    await cleanProcessedData(DAYS_AGO, './assets/processedShorts.json');
+    await cleanProcessedData(DAYS_AGO, PROCESSED_FILE);
 
     const now = new Date();
     const publishedAfter = new Date(now.getTime() - DAYS_AGO * 24 * 60 * 60 * 1000).toISOString();
@@ -99,14 +71,7 @@ const run = async ({ dryMode }) => {
       return;
     }
 
-    let processedShorts = [];
-    try {
-      const fileContent = await fs.readFile('./assets/processedShorts.json', 'utf8');
-      processedShorts = JSON.parse(fileContent);
-    } catch (error) {
-      logger.warn('Could not read processed shorts file', { error: error.message });
-    }
-
+    const processedShorts = await store.load();
     const processedIds = new Set(processedShorts.map((short) => short.id));
 
     const filteredShorts = data.items.filter((video) => {
@@ -138,15 +103,15 @@ const run = async ({ dryMode }) => {
     const message = `https://www.youtube.com/watch?v=${videoId}\n\n${title}\n\n${description}`;
 
     if (dryMode) {
-      logger.info(`Would send Telegram message`, { message });
+      logger.info('Dry mode: No message sent', { message });
       return;
     }
 
     await sendMessage(message, process.env.TELEGRAM_TOPIC_YOUTUBE);
-    await saveProcessedShorts(videoId);
+    await store.save({ id: videoId });
     logger.info('Message sent successfully');
-  } catch (err) {
-    logger.error('Error sending short', { error: err.message });
+  } catch (error) {
+    logger.error('Error sending short', { error: error.message });
   }
 };
 

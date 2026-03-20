@@ -207,14 +207,14 @@ const run = async ({ dryMode }) => {
     const message = createCVEMessage(processedCVEs, stats);
 
     if (dryMode) {
-      logger.info(`Would send Telegram message`, { message });
+      logger.info('Dry mode: No message sent', { message });
       return;
     }
 
     await sendMessage(message, process.env.TELEGRAM_TOPIC_CVE, null, { parse_mode: 'HTML' });
     logger.info('CVE message sent successfully');
-  } catch (err) {
-    logger.error('Error sending CVE message', { error: err.message });
+  } catch (error) {
+    logger.error('Error sending CVE message', { error: error.message });
   }
 };
 

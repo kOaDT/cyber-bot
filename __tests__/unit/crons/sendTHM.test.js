@@ -33,7 +33,7 @@ describe('sendTHM cron job', () => {
     await run({ dryMode: true, lang: 'french' });
 
     expect(sendMessage).not.toHaveBeenCalled();
-    expect(logger.info).toHaveBeenCalledWith('Would send Telegram message', {
+    expect(logger.info).toHaveBeenCalledWith('Dry mode: No message sent', {
       message: "🎯 Hey ! Il est temps de s'entraîner sur TryHackMe !",
     });
   });

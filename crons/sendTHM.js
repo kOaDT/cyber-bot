@@ -13,14 +13,14 @@ const run = async ({ dryMode, lang }) => {
     }
 
     if (dryMode) {
-      logger.info(`Would send Telegram message`, { message });
+      logger.info('Dry mode: No message sent', { message });
       return;
     }
 
     await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
     logger.info('Message sent successfully');
-  } catch (err) {
-    logger.error('Error sending THM', { error: err.message });
+  } catch (error) {
+    logger.error('Error sending THM', { error: error.message });
   }
 };
 

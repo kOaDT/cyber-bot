@@ -5,14 +5,10 @@ const { createYoutubeResumePrompt } = require('./utils/prompts');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
 const { evaluateRelevance } = require('./utils/relevance');
-const fs = require('fs').promises;
+const { createKeyedStore } = require('./utils/processedItems');
 
-/**
- * Fetches the transcript of a YouTube video using Supadata
- * @param {string} videoId - The YouTube video ID
- * @returns {Promise<string>} The transcript text
- * @throws {Error} If the transcript cannot be fetched
- */
+const store = createKeyedStore('assets/processedYT.json');
+
 async function getVideoTranscript(videoId) {
   if (!process.env.SUPADATA_KEY) {
     throw new Error('SUPADATA_KEY environment variable is not set');
@@ -78,12 +74,6 @@ async function getVideoTranscript(videoId) {
   return transcriptResult.content;
 }
 
-/**
- * Extracts video ID from a YouTube URL
- * @param {string} url - The full YouTube video URL
- * @returns {string} The video ID
- * @throws {Error} If the URL is invalid
- */
 function extractVideoId(url) {
   const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const match = url.match(regex);
@@ -95,12 +85,6 @@ function extractVideoId(url) {
   return match[1];
 }
 
-/**
- * Fetches the latest video metadata from a YouTube channel
- * @param {string} channelUrl - The YouTube channel URL
- * @returns {Promise<{url: string, title: string}>} The URL and title of the latest video
- * @throws {Error} If the channel or video cannot be fetched
- */
 async function getLatestVideo(channelUrl) {
   try {
     const output = await youtubedl(channelUrl + '/videos', {
@@ -123,71 +107,17 @@ async function getLatestVideo(channelUrl) {
   }
 }
 
-/**
- * Get the last processed episode
- * @param {string} channel - The channel name
- * @returns {Promise<Object>} The last processed episode
- */
-async function getLastProcessedEpisode(channel) {
-  try {
-    const data = await fs.readFile('assets/processedYT.json', 'utf8');
-    const content = JSON.parse(data);
-    return content[channel] || { videoId: null };
-  } catch (error) {
-    logger.warn('No last processed episode found, creating a new one', {
-      error: error.message,
-    });
-    return { [channel]: { videoId: null } };
-  }
-}
-
-/**
- * Save the last processed episode
- * @param {string} channel - The channel name
- * @param {Object} episodeData - The episode data
- */
-async function saveLastProcessedEpisode(channel, episodeData) {
-  try {
-    let content = {};
-    try {
-      const data = await fs.readFile('assets/processedYT.json', 'utf8');
-      content = JSON.parse(data);
-    } catch (error) {
-      logger.warn('Could not read existing data, starting fresh', {
-        error: error.message,
-      });
-    }
-
-    content[channel] = {
-      videoId: episodeData,
-      processedAt: new Date().toISOString(),
-    };
-
-    await fs.writeFile('assets/processedYT.json', JSON.stringify(content, null, 2));
-  } catch (error) {
-    throw new Error(`Failed to save last processed episode: ${error.message}`);
-  }
-}
-
-/**
- * Main function to process YouTube videos and generate transcripts
- * @param {Object} options - The options object
- * @param {boolean} options.dryMode - Whether to run in dry mode
- * @param {string} options.lang - The language code
- * @param {string} options.youtube - The YouTube channel URL
- * @returns {Promise<void>}
- */
 async function run({ dryMode, lang, youtube }) {
   try {
     const channelName = youtube.split('/').pop();
     const latestVideo = await getLatestVideo(youtube);
-    logger.info(`Processing latest video`, { latestVideoUrl: latestVideo.url });
+    logger.info('Processing latest video', { latestVideoUrl: latestVideo.url });
 
     const videoId = extractVideoId(latestVideo.url);
-    const lastProcessedEpisode = await getLastProcessedEpisode(channelName);
+    const lastProcessed = await store.load(channelName);
 
-    if (lastProcessedEpisode.videoId === videoId) {
-      logger.info(`Latest video already processed, skipping`);
+    if (lastProcessed.videoId === videoId) {
+      logger.info('Latest video already processed, skipping');
       return;
     }
 
@@ -197,23 +127,21 @@ async function run({ dryMode, lang, youtube }) {
     });
 
     if (!relevant) {
-      await saveLastProcessedEpisode(channelName, videoId);
+      await store.save(channelName, { videoId });
       return;
     }
 
-    await saveLastProcessedEpisode(channelName, videoId);
+    await store.save(channelName, { videoId });
 
     const transcriptText = await getVideoTranscript(videoId);
-
-    logger.info(`Transcript fetched successfully`);
+    logger.info('Transcript fetched successfully');
 
     const prompt = createYoutubeResumePrompt(channelName, videoId, transcriptText, lang);
-
     const summary = await generate(prompt);
-    logger.info(`Summary created successfully`);
+    logger.info('Summary created successfully');
 
     if (dryMode) {
-      logger.info(`Dry mode enabled, skipping summary sending`, { summary });
+      logger.info('Dry mode: No message sent', { summary });
       return;
     }
 

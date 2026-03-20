@@ -4,23 +4,21 @@ const { randomInt } = require('node:crypto');
 const { generate } = require('./utils/generate');
 const { createNewsResumePrompt } = require('./utils/prompts');
 const { evaluateRelevance } = require('./utils/relevance');
+const { createArrayStore } = require('./utils/processedItems');
+const { cleanProcessedData } = require('./utils/cleanJsonFile');
 const fs = require('fs').promises;
 const xml2js = require('xml2js');
 const RSSParser = require('rss-parser');
 const { delay } = require('./utils/delay');
-const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
 const NB_DAYS_TO_FETCH = 3;
 const NB_ARTICLES_TO_SEND = 1;
 const DELAY_BETWEEN_ARTICLES = 10000;
 const MAX_RELEVANCE_CHECKS = 5;
+const PROCESSED_FILE = './assets/processedArticles.json';
 
-/**
- * Parses the OPML file to extract RSS feed URLs.
- *
- * @param {string} filePath - Path to the OPML file.
- * @returns {Promise<string[]>} - A promise that resolves to an array of RSS feed URLs.
- */
+const store = createArrayStore(PROCESSED_FILE);
+
 const parseOPML = async (filePath) => {
   try {
     const data = await fs.readFile(filePath, 'utf8');
@@ -47,12 +45,6 @@ const parseOPML = async (filePath) => {
   }
 };
 
-/**
- * Fetches articles from the provided RSS feed URLs.
- *
- * @param {string[]} feeds - Array of RSS feed URLs.
- * @returns {Promise<Object[]>} - A promise that resolves to an array of articles.
- */
 const fetchArticles = async (feeds) => {
   const parser = new RSSParser();
   const allArticles = [];
@@ -69,25 +61,11 @@ const fetchArticles = async (feeds) => {
   return allArticles;
 };
 
-/**
- * Filters articles to include only those published within the last NB_DAYS_TO_FETCH days
- * and excludes already processed articles.
- *
- * @param {Object[]} articles - Array of articles.
- * @returns {Object[]} - Array of filtered articles.
- */
 const filterRecentArticles = async (articles) => {
   const daysAgo = new Date();
   daysAgo.setDate(daysAgo.getDate() - NB_DAYS_TO_FETCH);
 
-  let processedArticles = [];
-  try {
-    const fileContent = await fs.readFile('./assets/processedArticles.json', 'utf8');
-    processedArticles = JSON.parse(fileContent);
-  } catch (error) {
-    logger.warn('Could not read processed articles file', { error: error.message });
-  }
-
+  const processedArticles = await store.load();
   const processedUrls = new Set(processedArticles.map((article) => article.url));
 
   return articles.filter((article) => {
@@ -96,12 +74,6 @@ const filterRecentArticles = async (articles) => {
   });
 };
 
-/**
- * Shuffles an array in place using Fisher-Yates algorithm.
- *
- * @param {Object[]} array - Array to shuffle.
- * @returns {Object[]} - The shuffled array.
- */
 const shuffleArray = (array) => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -111,37 +83,9 @@ const shuffleArray = (array) => {
   return shuffled;
 };
 
-/**
- * Saves the processed article to a JSON file.
- *
- * @param {string} articleUrl - The URL of the processed article.
- */
-const saveProcessedArticle = async (articleUrl) => {
-  const filePath = './assets/processedArticles.json';
-  try {
-    let processedArticles = [];
-    try {
-      const fileContent = await fs.readFile(filePath, 'utf8');
-      processedArticles = JSON.parse(fileContent);
-    } catch (error) {
-      // If the file doesn't exist or is empty, continue with an empty array
-      logger.warn('Could not read existing data, starting fresh:', error.message);
-    }
-
-    processedArticles.push({
-      url: articleUrl,
-      processedAt: new Date().toISOString(),
-    });
-
-    await fs.writeFile(filePath, JSON.stringify(processedArticles, null, 2));
-  } catch (error) {
-    logger.error('Error saving processed article', { error: error.message });
-  }
-};
-
 const run = async ({ dryMode, lang }) => {
   try {
-    await cleanProcessedData(NB_DAYS_TO_FETCH, './assets/processedArticles.json');
+    await cleanProcessedData(NB_DAYS_TO_FETCH, PROCESSED_FILE);
 
     const feeds = await parseOPML('./assets/CyberSecurityRSS.opml');
     const articles = await fetchArticles(feeds);
@@ -174,7 +118,7 @@ const run = async ({ dryMode, lang }) => {
       relevanceChecks++;
 
       if (!relevant) {
-        await saveProcessedArticle(article.link);
+        await store.save({ url: article.link });
         continue;
       }
 
@@ -186,12 +130,13 @@ const run = async ({ dryMode, lang }) => {
       const prompt = createNewsResumePrompt(article.title, categories, article.link, article.content, lang);
       const newsResume = await generate(prompt);
 
+      await store.save({ url: article.link });
+
       if (dryMode) {
-        logger.info(`Would send Telegram message`, { newsResume });
+        logger.info('Dry mode: No message sent', { newsResume });
       } else {
         await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS, categories);
       }
-      await saveProcessedArticle(article.link);
       articlesSent++;
 
       if (articlesSent < NB_ARTICLES_TO_SEND) {

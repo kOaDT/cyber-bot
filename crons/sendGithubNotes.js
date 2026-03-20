@@ -4,7 +4,7 @@ const { randomInt } = require('node:crypto');
 const { createRevisionCardPrompt } = require('./utils/prompts');
 const { generate } = require('./utils/generate');
 const { evaluateRelevance } = require('./utils/relevance');
-const fs = require('fs').promises;
+const { createArrayStore } = require('./utils/processedItems');
 
 const GITHUB_TOKEN = process.env.GITHUB_SECRET;
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
@@ -12,87 +12,7 @@ const GITHUB_REPO = process.env.GITHUB_REPO;
 const EXCLUDED_GITHUB_FILES = process.env.EXCLUDED_GITHUB_FILES?.split(',') || [];
 const PROCESSED_NOTES_PATH = 'assets/processedNotes.json';
 
-/**
- * Get the processed notes
- * @returns {Array} The processed notes
- */
-const getProcessedNotes = async () => {
-  try {
-    const data = await fs.readFile(PROCESSED_NOTES_PATH, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    if (err.code === 'ENOENT' || err instanceof SyntaxError) {
-      return [];
-    }
-    throw err;
-  }
-};
-
-/**
- * Save the processed note
- * @param {string} title - The title of the note
- * @param {string} content - The content of the note
- */
-const saveProcessedNote = async (title, content) => {
-  try {
-    const processedNotes = await getProcessedNotes();
-
-    processedNotes.push({
-      title,
-      content,
-      processedAt: new Date().toISOString(),
-    });
-
-    await fs.writeFile(PROCESSED_NOTES_PATH, JSON.stringify(processedNotes, null, 2), 'utf8');
-  } catch (err) {
-    logger.error('Error saving processed note', { error: err.message });
-  }
-};
-
-const run = async ({ dryMode, lang }) => {
-  try {
-    if (!GITHUB_TOKEN || !GITHUB_USERNAME || !GITHUB_REPO) {
-      logger.error('GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_REPO is not set');
-      return;
-    }
-
-    const { title, content } = await getGithubFile();
-
-    const processedNotes = await getProcessedNotes();
-    let revisionCard;
-
-    const existingNote = processedNotes.find((note) => note.title === title);
-
-    if (existingNote) {
-      logger.info(`Note already processed, using existing content`, { title });
-      revisionCard = existingNote.content;
-    } else {
-      const { relevant } = await evaluateRelevance({
-        title,
-        content,
-        source: 'GitHub note',
-      });
-
-      if (!relevant) {
-        return;
-      }
-
-      logger.info(`Generating a new revision card for "${title}"`);
-      const prompt = createRevisionCardPrompt(title, content, lang);
-      const rawCard = await generate(prompt, { skipValidation: true });
-      revisionCard = sanitizeTelegramHtml(rawCard);
-      await saveProcessedNote(title, revisionCard);
-    }
-
-    if (!dryMode) {
-      const sanitized = sanitizeTelegramHtml(revisionCard);
-      return await sendMessage(sanitized, process.env.TELEGRAM_TOPIC_GITHUB, null, { parse_mode: 'HTML' });
-    }
-    return logger.info(`Revision card generated`, { revisionCard });
-  } catch (err) {
-    logger.error('Error sending Github notes', { error: err.message });
-  }
-};
+const store = createArrayStore(PROCESSED_NOTES_PATH);
 
 const getGithubFile = async () => {
   try {
@@ -136,8 +56,55 @@ const getGithubFile = async () => {
     const randomFile = markdownFiles[randomIndex];
 
     return { title: randomFile.name, content: randomFile.object.text };
-  } catch (err) {
-    logger.error('Error getting Github file', { error: err.message });
+  } catch (error) {
+    logger.error('Error getting Github file', { error: error.message });
+  }
+};
+
+const run = async ({ dryMode, lang }) => {
+  try {
+    if (!GITHUB_TOKEN || !GITHUB_USERNAME || !GITHUB_REPO) {
+      logger.error('GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_REPO is not set');
+      return;
+    }
+
+    const { title, content } = await getGithubFile();
+
+    const processedNotes = await store.load();
+    let revisionCard;
+
+    const existingNote = processedNotes.find((note) => note.title === title);
+
+    if (existingNote) {
+      logger.info('Note already processed, using existing content', { title });
+      revisionCard = existingNote.content;
+    } else {
+      const { relevant } = await evaluateRelevance({
+        title,
+        content,
+        source: 'GitHub note',
+      });
+
+      if (!relevant) {
+        return;
+      }
+
+      logger.info(`Generating a new revision card for "${title}"`);
+      const prompt = createRevisionCardPrompt(title, content, lang);
+      const rawCard = await generate(prompt, { skipValidation: true });
+      revisionCard = sanitizeTelegramHtml(rawCard);
+      await store.save({ title, content: revisionCard });
+    }
+
+    if (dryMode) {
+      logger.info('Dry mode: No message sent', { revisionCard });
+      return;
+    }
+
+    const sanitized = sanitizeTelegramHtml(revisionCard);
+    await sendMessage(sanitized, process.env.TELEGRAM_TOPIC_GITHUB, null, { parse_mode: 'HTML' });
+  } catch (error) {
+    logger.error('Error sending Github notes', { error: error.message });
   }
 };
 

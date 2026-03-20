@@ -121,7 +121,7 @@ describe('sendSnykResume', () => {
       await run({ dryMode: false, lang: 'english' });
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'No last processed episode found, creating a new one',
+        expect.stringContaining('Could not read'),
         expect.objectContaining({ error: expect.any(String) })
       );
       expect(mockSendMessage).toHaveBeenCalled();

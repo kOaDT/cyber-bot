@@ -76,7 +76,7 @@ describe('sendNewsResume cron job', () => {
     await run({ dryMode: true, lang: 'english' });
 
     expect(sendMessage).not.toHaveBeenCalled();
-    expect(logger.info).toHaveBeenCalledWith('Would send Telegram message', expect.any(Object));
+    expect(logger.info).toHaveBeenCalledWith('Dry mode: No message sent', expect.any(Object));
   });
 
   test('should handle errors appropriately', async () => {

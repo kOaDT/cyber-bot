@@ -95,7 +95,7 @@ describe('sendRedditPost cron job', () => {
       expect(generate).toHaveBeenCalledWith('Reddit prompt');
       expect(sendMessage).not.toHaveBeenCalled();
       expect(fs.writeFile).toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith('Would send Telegram message', { summary: 'Generated summary' });
+      expect(logger.info).toHaveBeenCalledWith('Dry mode: No message sent', { summary: 'Generated summary' });
     });
 
     test('should send message when not in dry mode', async () => {

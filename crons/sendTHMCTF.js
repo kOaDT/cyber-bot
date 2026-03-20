@@ -2,41 +2,15 @@
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
-const fs = require('fs').promises;
+const { createArrayStore } = require('./utils/processedItems');
 const { translatePrompt } = require('./utils/prompts');
 
-/**
- * Get the last processed CTFs
- * @returns {Array} Array of processed CTF codes
- */
-const getProcessedCTFs = async () => {
-  try {
-    const data = await fs.readFile('assets/processedCTF.json', 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    logger.warn('No processed CTFs found, creating new file', { error: error.message });
-    await fs.writeFile('assets/processedCTF.json', JSON.stringify([]));
-    return [];
-  }
-};
+const store = createArrayStore('assets/processedCTF.json');
 
-/**
- * Save processed CTF
- * @param {string} ctfCode - The CTF code to save
- */
-const saveProcessedCTF = async (ctfCode) => {
-  const processed = await getProcessedCTFs();
-  processed.push(ctfCode);
-  await fs.writeFile('assets/processedCTF.json', JSON.stringify(processed));
-};
-
-/**
- * Get the first unprocessed CTF from TryHackMe
- * @returns {Object} The first unprocessed CTF or null if none found
- */
 const getLastCTF = async () => {
   try {
-    const processedCTFs = await getProcessedCTFs();
+    const processedCTFs = await store.load();
+    const processedCodes = new Set(processedCTFs.map((item) => item.code || item));
     let page = 1;
 
     while (true) {
@@ -50,10 +24,10 @@ const getLastCTF = async () => {
         return null;
       }
 
-      const newChallenge = data.data.docs.find((room) => !processedCTFs.includes(room.code));
+      const newChallenge = data.data.docs.find((room) => !processedCodes.has(room.code));
 
       if (newChallenge) {
-        await saveProcessedCTF(newChallenge.code);
+        await store.save({ code: newChallenge.code });
         return {
           title: newChallenge.title,
           description: newChallenge.description,
@@ -81,7 +55,7 @@ const run = async ({ dryMode, lang }) => {
       return;
     }
 
-    logger.info(`New challenge found`, { title: newChallenge.title });
+    logger.info('New challenge found', { title: newChallenge.title });
 
     const difficultyEmoji = {
       easy: '🟢',
@@ -97,16 +71,17 @@ const run = async ({ dryMode, lang }) => {
       `🏷️ Tags\n${newChallenge.tags || 'Aucun tag'}\n\n` +
       `🔗 Commencer le challenge : ${newChallenge.url}`;
 
-    if (!dryMode) {
-      if (lang !== 'french') {
-        const translatedMessage = translatePrompt(message, lang);
-        message = await generate(translatedMessage);
-      }
-
-      await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
-    } else {
-      logger.info('Dry mode: No message sent', { message });
+    if (lang !== 'french') {
+      const translatedMessage = translatePrompt(message, lang);
+      message = await generate(translatedMessage);
     }
+
+    if (dryMode) {
+      logger.info('Dry mode: No message sent', { message });
+      return;
+    }
+
+    await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
   } catch (error) {
     logger.error('Error sending THM CTF', { error: error.message });
   }

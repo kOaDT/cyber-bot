@@ -3,7 +3,7 @@ const { sendMessage } = require('./utils/sendMessage');
 const { generate } = require('./utils/generate');
 const { createRedditPrompt } = require('./utils/prompts');
 const { evaluateRelevance } = require('./utils/relevance');
-const fs = require('fs').promises;
+const { createArrayStore } = require('./utils/processedItems');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
 const PROCESSED_FILE = './assets/processedReddit.json';
@@ -13,54 +13,8 @@ const DEFAULT_SUBREDDITS = ['netsec', 'cybersecurity', 'securityCTF', 'blackhat'
 const SUBREDDITS = process.env.REDDIT_SUBREDDITS ? process.env.REDDIT_SUBREDDITS.split(',') : DEFAULT_SUBREDDITS;
 const ARCTIC_SHIFT_BASE = 'https://arctic-shift.photon-reddit.com/api/posts/search';
 
-/**
- * Loads the list of processed Reddit posts from the JSON file.
- *
- * @returns {Promise<string[]>} Array of processed post IDs
- */
-const loadProcessedPosts = async () => {
-  try {
-    const data = await fs.readFile(PROCESSED_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    logger.warn('Could not read processed posts file', { error: error.message });
-    return [];
-  }
-};
+const store = createArrayStore(PROCESSED_FILE);
 
-/**
- * Saves a processed post ID to the JSON file.
- *
- * @param {string} postId - The Reddit post ID to save
- */
-const saveProcessedPost = async (postId) => {
-  try {
-    let processedPosts = [];
-    try {
-      const fileContent = await fs.readFile(PROCESSED_FILE, 'utf8');
-      processedPosts = JSON.parse(fileContent);
-    } catch (error) {
-      logger.warn('Could not read existing data, starting fresh', { error: error.message });
-    }
-
-    processedPosts.push({
-      id: postId,
-      processedAt: new Date().toISOString(),
-    });
-
-    await fs.writeFile(PROCESSED_FILE, JSON.stringify(processedPosts, null, 2));
-  } catch (error) {
-    logger.error('Error saving processed post', { error: error.message });
-  }
-};
-
-/**
- * Fetches posts from a subreddit via the Arctic Shift API.
- *
- * @param {string} subreddit - The subreddit name to fetch from
- * @param {number} daysLookBack - Number of days to look back
- * @returns {Promise<Array>} Array of posts
- */
 const fetchSubredditPosts = async (subreddit, daysLookBack) => {
   try {
     const url = `${ARCTIC_SHIFT_BASE}?subreddit=${subreddit}&after=${daysLookBack}d&limit=100&sort=desc`;
@@ -88,13 +42,6 @@ const fetchSubredditPosts = async (subreddit, daysLookBack) => {
   }
 };
 
-/**
- * Main execution function for the Reddit post cron job.
- *
- * @param {Object} options - Configuration options
- * @param {boolean} options.dryMode - Whether to run in dry mode
- * @param {string} options.lang - Language for the summary
- */
 const run = async ({ dryMode, lang } = {}) => {
   try {
     await cleanProcessedData(DAYS, PROCESSED_FILE);
@@ -107,10 +54,9 @@ const run = async ({ dryMode, lang } = {}) => {
 
     logger.info(`Fetched ${allPosts.length} total posts`);
 
-    const processedPosts = await loadProcessedPosts();
+    const processedPosts = await store.load();
     const processedIds = new Set(processedPosts.map((post) => post.id));
 
-    // Filter out processed posts and sort by score
     const unprocessedPosts = allPosts.filter((post) => !processedIds.has(post.id)).sort((a, b) => b.score - a.score);
 
     if (unprocessedPosts.length === 0) {
@@ -132,7 +78,7 @@ const run = async ({ dryMode, lang } = {}) => {
         break;
       }
 
-      await saveProcessedPost(post.id);
+      await store.save({ id: post.id });
     }
 
     if (!selectedPost) {
@@ -142,16 +88,15 @@ const run = async ({ dryMode, lang } = {}) => {
     const prompt = createRedditPrompt(selectedPost.title, selectedPost.content, selectedPost.url, lang);
     const summary = await generate(prompt);
 
+    await store.save({ id: selectedPost.id });
+
     if (dryMode) {
-      logger.info(`Would send Telegram message`, { summary });
-      await saveProcessedPost(selectedPost.id);
+      logger.info('Dry mode: No message sent', { summary });
       return;
     }
 
     await sendMessage(summary, process.env.TELEGRAM_TOPIC_REDDIT);
-    await saveProcessedPost(selectedPost.id);
-
-    logger.info(`Successfully sent Reddit post`, { id: selectedPost.id });
+    logger.info('Successfully sent Reddit post', { id: selectedPost.id });
   } catch (error) {
     logger.error('Error sending Reddit post', { error: error.message });
   }
