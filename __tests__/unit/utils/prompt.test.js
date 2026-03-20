@@ -93,9 +93,9 @@ describe('Prompt utils', () => {
 
       expect(result).toContain(`Title: ${title}`);
       expect(result).toContain(`Tags: ${tags.join(', ')}`);
-      expect(result).toContain('<ARTICLE_START>');
+      expect(result).toMatch(/<ARTICLE_[a-f0-9]{32}>/);
       expect(result).toContain(content);
-      expect(result).toContain('<ARTICLE_END>');
+      expect(result).toMatch(/<\/ARTICLE_[a-f0-9]{32}>/);
       expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`security news in ${lang}`);
       expect(result).toContain(`End with the source URL: ${url}`);
@@ -161,9 +161,9 @@ describe('Prompt utils', () => {
       const result = createPodcastResumePrompt(podcast, title, transcription, url, lang);
 
       expect(result).toContain(`Episode Title: ${title}`);
-      expect(result).toContain('<TRANSCRIPT_START>');
+      expect(result).toMatch(/<TRANSCRIPT_[a-f0-9]{32}>/);
       expect(result).toContain(transcription);
-      expect(result).toContain('<TRANSCRIPT_END>');
+      expect(result).toMatch(/<\/TRANSCRIPT_[a-f0-9]{32}>/);
       expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`The summary should be in ${lang}`);
       expect(result).toContain(`Start with: 🎙️ NEW EPISODE OF ${podcast.toUpperCase()}: ${title}`);
@@ -201,9 +201,9 @@ describe('Prompt utils', () => {
       const result = createYoutubeResumePrompt(channel, videoId, transcription, lang);
 
       expect(result).toContain(`Channel: ${channel}`);
-      expect(result).toContain('<TRANSCRIPT_START>');
+      expect(result).toMatch(/<TRANSCRIPT_[a-f0-9]{32}>/);
       expect(result).toContain(transcription);
-      expect(result).toContain('<TRANSCRIPT_END>');
+      expect(result).toMatch(/<\/TRANSCRIPT_[a-f0-9]{32}>/);
       expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`produce a concise, fact-based summary of the following YouTube video in ${lang}`);
       expect(result).toContain('1. Start with "🎬"');
@@ -239,9 +239,9 @@ describe('Prompt utils', () => {
       const result = createRedditPrompt(title, content, url, lang);
 
       expect(result).toContain(`Post Title: ${title}`);
-      expect(result).toContain('<POST_START>');
+      expect(result).toMatch(/<POST_[a-f0-9]{32}>/);
       expect(result).toContain(content);
-      expect(result).toContain('<POST_END>');
+      expect(result).toMatch(/<\/POST_[a-f0-9]{32}>/);
       expect(result).toContain('SECURITY NOTICE');
       expect(result).toContain(`Reddit post below in ${lang}`);
       expect(result).toContain(`End with the source URL: ${url}`);
