@@ -30,10 +30,25 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Executing remote SSH command
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Copy deploy script to VPS
+        uses: appleboy/scp-action@a29ef0e64b8decbba8c3c9840b6e3a37e8a3f498 # v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: scripts/deploy.sh
+          target: /tmp/cyber-bot-deploy
+          overwrite: true
+
+      - name: Execute deploy script
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script: /home/ubuntu/dev/deploy-cyber-bot.sh
+          script: |
+            chmod +x /tmp/cyber-bot-deploy/scripts/deploy.sh
+            /tmp/cyber-bot-deploy/scripts/deploy.sh
+            rm -rf /tmp/cyber-bot-deploy

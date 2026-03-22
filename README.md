@@ -270,9 +270,21 @@ npm run cron -- -c <CRON_NAME> -l <language>
 
 > **Note:** Content language is restricted by the `AUTHORIZED_LANGUAGES` environment variable to avoid prompt injection. Default is English.
 
-## Documentation
+## Deployment
 
-For VPS deployment guidance, check our [deployment guide](https://koadt.vercel.app/blog/deploy-your-own-cron-jobs-server-on-a-vps-in-9-simple-steps/).
+The project includes a versioned deployment script at `scripts/deploy.sh`. On push to `main`, the CI pipeline:
+
+1. Runs tests and checks coverage
+2. Copies `scripts/deploy.sh` to the VPS via SCP
+3. Executes the script remotely via SSH
+
+The deploy script performs:
+
+- Branch validation (ensures `main` is checked out)
+- Fast-forward-only `git pull origin main`
+- Production dependency install (`npm ci --omit=dev`)
+
+Required GitHub secrets: `VPS_HOST`, `VPS_USERNAME`, `VPS_SSH_KEY`.
 
 ## Contributing
 
