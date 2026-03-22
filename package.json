@@ -53,5 +53,10 @@
   "lint-staged": {
     "*.{ts,js}": "eslint --cache --fix",
     "*.{ts,js,css,md}": "prettier --write"
+  },
+  "overrides": {
+    "form-data": "^4.0.1",
+    "qs": "^6.14.1",
+    "tough-cookie": "^5.1.2"
   }
 }
