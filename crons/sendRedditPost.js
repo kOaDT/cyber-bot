@@ -1,10 +1,8 @@
 const logger = require('./config/logger');
-const { sendMessage } = require('./utils/sendMessage');
-const { generate } = require('./utils/generate');
 const { createRedditPrompt } = require('./utils/prompts');
-const { evaluateRelevance } = require('./utils/relevance');
 const { createArrayStore } = require('./utils/processedItems');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
+const { runContentJob } = require('./utils/contentRunner');
 
 const PROCESSED_FILE = './assets/processedReddit.json';
 const DAYS = process.env.REDDIT_DAYS_LOOKBACK || 3;
@@ -43,63 +41,42 @@ const fetchSubredditPosts = async (subreddit, daysLookBack) => {
 };
 
 const run = async ({ dryMode, lang } = {}) => {
-  try {
-    await cleanProcessedData(DAYS, PROCESSED_FILE);
+  await runContentJob(
+    {
+      name: 'Reddit post',
+      source: 'Reddit post',
+      topicId: process.env.TELEGRAM_TOPIC_REDDIT,
+      maxItems: 1,
+      maxCandidates: MAX_RELEVANCE_CHECKS,
 
-    let allPosts = [];
-    for (const subreddit of SUBREDDITS) {
-      const posts = await fetchSubredditPosts(subreddit, DAYS);
-      allPosts = allPosts.concat(posts);
-    }
+      cleanup: () => cleanProcessedData(DAYS, PROCESSED_FILE),
 
-    logger.info(`Fetched ${allPosts.length} total posts`);
+      async fetchItems() {
+        let allPosts = [];
+        for (const subreddit of SUBREDDITS) {
+          const posts = await fetchSubredditPosts(subreddit, DAYS);
+          allPosts = allPosts.concat(posts);
+        }
+        logger.info(`Fetched ${allPosts.length} total posts`);
+        return allPosts;
+      },
 
-    const processedPosts = await store.load();
-    const processedIds = new Set(processedPosts.map((post) => post.id));
+      async filterNew(items) {
+        const processedPosts = await store.load();
+        const processedIds = new Set(processedPosts.map((post) => post.id));
+        return items.filter((post) => !processedIds.has(post.id)).sort((a, b) => b.score - a.score);
+      },
 
-    const unprocessedPosts = allPosts.filter((post) => !processedIds.has(post.id)).sort((a, b) => b.score - a.score);
+      createPrompt(item, lng) {
+        return createRedditPrompt(item.title, item.content, item.url, lng);
+      },
 
-    if (unprocessedPosts.length === 0) {
-      return logger.info('No new posts to process');
-    }
-
-    const candidates = unprocessedPosts.slice(0, MAX_RELEVANCE_CHECKS);
-    let selectedPost = null;
-
-    for (const post of candidates) {
-      const { relevant } = await evaluateRelevance({
-        title: post.title,
-        content: post.content,
-        source: 'Reddit post',
-      });
-
-      if (relevant) {
-        selectedPost = post;
-        break;
-      }
-
-      await store.save({ id: post.id });
-    }
-
-    if (!selectedPost) {
-      return logger.info('No relevant Reddit posts found after relevance checks');
-    }
-
-    const prompt = createRedditPrompt(selectedPost.title, selectedPost.content, selectedPost.url, lang);
-    const summary = await generate(prompt);
-
-    await store.save({ id: selectedPost.id });
-
-    if (dryMode) {
-      logger.info('Dry mode: No message sent', { summary });
-      return;
-    }
-
-    await sendMessage(summary, process.env.TELEGRAM_TOPIC_REDDIT);
-    logger.info('Successfully sent Reddit post', { id: selectedPost.id });
-  } catch (error) {
-    logger.error('Error sending Reddit post', { error: error.message });
-  }
+      async saveProcessed(item) {
+        await store.save({ id: item.id });
+      },
+    },
+    { dryMode, lang }
+  );
 };
 
 module.exports = { run };

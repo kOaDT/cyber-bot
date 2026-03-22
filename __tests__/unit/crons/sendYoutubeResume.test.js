@@ -88,7 +88,7 @@ describe('sendYoutubeResume', () => {
       await run({ dryMode: false, lang: 'english', youtube: 'https://youtube.com/c/test-channel' });
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Error sending Youtube resume',
+        'Error processing YouTube video',
         expect.objectContaining({ error: expect.any(String) })
       );
     });

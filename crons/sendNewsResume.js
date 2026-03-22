@@ -1,15 +1,13 @@
 const logger = require('./config/logger');
 const { sendMessage } = require('./utils/sendMessage');
 const { randomInt } = require('node:crypto');
-const { generate } = require('./utils/generate');
 const { createNewsResumePrompt } = require('./utils/prompts');
-const { evaluateRelevance } = require('./utils/relevance');
 const { createArrayStore } = require('./utils/processedItems');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
+const { runContentJob } = require('./utils/contentRunner');
 const fs = require('fs').promises;
 const xml2js = require('xml2js');
 const RSSParser = require('rss-parser');
-const { delay } = require('./utils/delay');
 
 const NB_DAYS_TO_FETCH = 3;
 const NB_ARTICLES_TO_SEND = 1;
@@ -61,19 +59,6 @@ const fetchArticles = async (feeds) => {
   return allArticles;
 };
 
-const filterRecentArticles = async (articles) => {
-  const daysAgo = new Date();
-  daysAgo.setDate(daysAgo.getDate() - NB_DAYS_TO_FETCH);
-
-  const processedArticles = await store.load();
-  const processedUrls = new Set(processedArticles.map((article) => article.url));
-
-  return articles.filter((article) => {
-    const pubDate = new Date(article.pubDate);
-    return pubDate >= daysAgo && !processedUrls.has(article.link);
-  });
-};
-
 const shuffleArray = (array) => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -84,73 +69,65 @@ const shuffleArray = (array) => {
 };
 
 const run = async ({ dryMode, lang }) => {
-  try {
-    await cleanProcessedData(NB_DAYS_TO_FETCH, PROCESSED_FILE);
+  await runContentJob(
+    {
+      name: 'news article',
+      source: 'news article',
+      topicId: process.env.TELEGRAM_TOPIC_NEWS,
+      maxItems: NB_ARTICLES_TO_SEND,
+      maxCandidates: MAX_RELEVANCE_CHECKS,
+      delayBetweenItems: DELAY_BETWEEN_ARTICLES,
 
-    const feeds = await parseOPML('./assets/CyberSecurityRSS.opml');
-    const articles = await fetchArticles(feeds);
-    logger.info(`Fetched a total of ${articles.length} articles.`);
+      cleanup: () => cleanProcessedData(NB_DAYS_TO_FETCH, PROCESSED_FILE),
 
-    const recentArticles = await filterRecentArticles(articles);
-    logger.info(`Found ${recentArticles.length} recent articles from the past ${NB_DAYS_TO_FETCH} days.`);
+      async fetchItems() {
+        const feeds = await parseOPML('./assets/CyberSecurityRSS.opml');
+        const articles = await fetchArticles(feeds);
+        logger.info(`Fetched a total of ${articles.length} articles.`);
 
-    if (recentArticles.length === 0) {
-      logger.info('No recent articles found to display.');
-      return;
-    }
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - NB_DAYS_TO_FETCH);
 
-    const shuffledArticles = shuffleArray(recentArticles);
-    let articlesSent = 0;
-    let relevanceChecks = 0;
+        return articles
+          .filter((article) => new Date(article.pubDate) >= daysAgo)
+          .map((article) => ({
+            title: article.title,
+            content: article.content,
+            link: article.link,
+            categories: article.categories,
+          }));
+      },
 
-    for (const article of shuffledArticles) {
-      if (articlesSent >= NB_ARTICLES_TO_SEND) break;
-      if (relevanceChecks >= MAX_RELEVANCE_CHECKS) {
-        logger.info('Max relevance checks reached, stopping');
-        break;
-      }
+      async filterNew(items) {
+        const processedArticles = await store.load();
+        const processedUrls = new Set(processedArticles.map((a) => a.url));
+        const unprocessed = items.filter((item) => !processedUrls.has(item.link));
+        logger.info(`Found ${unprocessed.length} recent articles from the past ${NB_DAYS_TO_FETCH} days.`);
+        return shuffleArray(unprocessed);
+      },
 
-      const { relevant } = await evaluateRelevance({
-        title: article.title,
-        content: article.content,
-        source: 'news article',
-      });
-      relevanceChecks++;
+      createPrompt(item, lng) {
+        const categories =
+          item.categories && Array.isArray(item.categories)
+            ? item.categories.map((cat) => cat?.toString?.() || '').filter(Boolean)
+            : [];
+        return createNewsResumePrompt(item.title, categories, item.link, item.content, lng);
+      },
 
-      if (!relevant) {
-        await store.save({ url: article.link });
-        continue;
-      }
+      async saveProcessed(item) {
+        await store.save({ url: item.link });
+      },
 
-      const categories =
-        article.categories && Array.isArray(article.categories)
-          ? article.categories.map((cat) => cat?.toString?.() || '').filter(Boolean)
-          : [];
-
-      const prompt = createNewsResumePrompt(article.title, categories, article.link, article.content, lang);
-      const newsResume = await generate(prompt);
-
-      await store.save({ url: article.link });
-
-      if (dryMode) {
-        logger.info('Dry mode: No message sent', { newsResume });
-      } else {
-        await sendMessage(newsResume, process.env.TELEGRAM_TOPIC_NEWS, categories);
-      }
-      articlesSent++;
-
-      if (articlesSent < NB_ARTICLES_TO_SEND) {
-        await delay(DELAY_BETWEEN_ARTICLES);
-      }
-    }
-
-    if (articlesSent === 0) {
-      return logger.info('No relevant articles found after relevance checks.');
-    }
-    return logger.info('News resume sent successfully.');
-  } catch (error) {
-    logger.error('Error sending news resume', { error: error.message });
-  }
+      async send(summary, item) {
+        const categories =
+          item.categories && Array.isArray(item.categories)
+            ? item.categories.map((cat) => cat?.toString?.() || '').filter(Boolean)
+            : [];
+        await sendMessage(summary, process.env.TELEGRAM_TOPIC_NEWS, categories);
+      },
+    },
+    { dryMode, lang }
+  );
 };
 
 module.exports = { run };

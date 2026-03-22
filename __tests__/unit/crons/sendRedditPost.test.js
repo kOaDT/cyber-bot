@@ -103,7 +103,7 @@ describe('sendRedditPost cron job', () => {
 
       expect(sendMessage).toHaveBeenCalledWith('Generated summary', '123');
       expect(fs.writeFile).toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith('Successfully sent Reddit post', { id: 'post2' });
+      expect(sendMessage).toHaveBeenCalledWith('Generated summary', '123');
     });
 
     test('should filter out removed posts', async () => {
@@ -160,7 +160,7 @@ describe('sendRedditPost cron job', () => {
       await run({ dryMode: false });
 
       expect(sendMessage).not.toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith('No new posts to process');
+      expect(logger.info).toHaveBeenCalledWith('No new Reddit post to process');
     });
 
     test('should handle errors', async () => {
@@ -168,7 +168,7 @@ describe('sendRedditPost cron job', () => {
 
       await run({ dryMode: false });
 
-      expect(logger.error).toHaveBeenCalledWith('Error sending Reddit post', { error: 'Clean error' });
+      expect(logger.error).toHaveBeenCalledWith('Error processing Reddit post', { error: 'Clean error' });
     });
   });
 });

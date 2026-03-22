@@ -86,6 +86,6 @@ describe('sendNewsResume cron job', () => {
 
     await run({ dryMode: false, lang: 'english' });
 
-    expect(logger.error).toHaveBeenCalledWith('Error sending news resume', { error: 'Clean data error' });
+    expect(logger.error).toHaveBeenCalledWith('Error processing news article', { error: 'Clean data error' });
   });
 });

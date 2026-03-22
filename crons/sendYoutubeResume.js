@@ -2,10 +2,8 @@ const logger = require('./config/logger');
 const youtubedl = require('youtube-dl-exec');
 const { Supadata } = require('@supadata/js');
 const { createYoutubeResumePrompt } = require('./utils/prompts');
-const { sendMessage } = require('./utils/sendMessage');
-const { generate } = require('./utils/generate');
-const { evaluateRelevance } = require('./utils/relevance');
 const { createKeyedStore } = require('./utils/processedItems');
+const { runContentJob } = require('./utils/contentRunner');
 
 const store = createKeyedStore('assets/processedYT.json');
 
@@ -108,47 +106,45 @@ async function getLatestVideo(channelUrl) {
 }
 
 async function run({ dryMode, lang, youtube }) {
-  try {
-    const channelName = youtube.split('/').pop();
-    const latestVideo = await getLatestVideo(youtube);
-    logger.info('Processing latest video', { latestVideoUrl: latestVideo.url });
+  const channelName = youtube.split('/').pop();
 
-    const videoId = extractVideoId(latestVideo.url);
-    const lastProcessed = await store.load(channelName);
-
-    if (lastProcessed.videoId === videoId) {
-      logger.info('Latest video already processed, skipping');
-      return;
-    }
-
-    const { relevant } = await evaluateRelevance({
-      title: latestVideo.title,
+  await runContentJob(
+    {
+      name: 'YouTube video',
       source: 'YouTube video',
-    });
+      topicId: process.env.TELEGRAM_TOPIC_YOUTUBE,
+      maxItems: 1,
+      maxCandidates: 1,
 
-    if (!relevant) {
-      await store.save(channelName, { videoId });
-      return;
-    }
+      async fetchItems() {
+        const latestVideo = await getLatestVideo(youtube);
+        logger.info('Processing latest video', { latestVideoUrl: latestVideo.url });
 
-    await store.save(channelName, { videoId });
+        const videoId = extractVideoId(latestVideo.url);
+        return [{ title: latestVideo.title, videoId, channelName }];
+      },
 
-    const transcriptText = await getVideoTranscript(videoId);
-    logger.info('Transcript fetched successfully');
+      async filterNew(items) {
+        const lastProcessed = await store.load(channelName);
+        return items.filter((item) => lastProcessed.videoId !== item.videoId);
+      },
 
-    const prompt = createYoutubeResumePrompt(channelName, videoId, transcriptText, lang);
-    const summary = await generate(prompt);
-    logger.info('Summary created successfully');
+      async enrichItem(item) {
+        const transcriptText = await getVideoTranscript(item.videoId);
+        logger.info('Transcript fetched successfully');
+        return { ...item, transcriptText };
+      },
 
-    if (dryMode) {
-      logger.info('Dry mode: No message sent', { summary });
-      return;
-    }
+      createPrompt(item, lng) {
+        return createYoutubeResumePrompt(item.channelName, item.videoId, item.transcriptText, lng);
+      },
 
-    await sendMessage(summary, process.env.TELEGRAM_TOPIC_YOUTUBE);
-  } catch (error) {
-    logger.error('Error sending Youtube resume', { error: error.message });
-  }
+      async saveProcessed(item) {
+        await store.save(channelName, { videoId: item.videoId });
+      },
+    },
+    { dryMode, lang }
+  );
 }
 
 module.exports = { run };
