@@ -1,4 +1,4 @@
-const { Mistral } = require('@mistralai/mistralai');
+const { getMistral } = require('./mistralClient');
 
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
 
@@ -17,12 +17,13 @@ class MistralProvider {
     if (!MISTRAL_API_KEY) {
       throw new Error('MISTRAL_API_KEY is not set');
     }
-    this.client = new Mistral({ apiKey: MISTRAL_API_KEY });
     this.name = 'Mistral';
+    this.clientPromise = getMistral().then((Mistral) => new Mistral({ apiKey: MISTRAL_API_KEY }));
   }
 
   async generate(prompt, overrideParams = {}) {
-    const response = await this.client.chat.complete({
+    const client = await this.clientPromise;
+    const response = await client.chat.complete({
       ...DEFAULT_PARAMS,
       ...overrideParams,
       messages: [{ role: 'user', content: prompt }],

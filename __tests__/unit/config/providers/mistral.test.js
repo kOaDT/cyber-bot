@@ -1,9 +1,8 @@
-jest.mock('@mistralai/mistralai', () => ({
-  Mistral: jest.fn(() => ({
-    chat: {
-      complete: jest.fn(),
-    },
-  })),
+const mockComplete = jest.fn();
+const MockMistral = jest.fn(() => ({ chat: { complete: mockComplete } }));
+
+jest.mock('../../../../crons/config/providers/mistralClient', () => ({
+  getMistral: () => Promise.resolve(MockMistral),
 }));
 
 describe('MistralProvider', () => {
@@ -13,19 +12,21 @@ describe('MistralProvider', () => {
     originalEnv = { ...process.env };
     process.env.MISTRAL_API_KEY = 'test-api-key';
     jest.resetModules();
+    MockMistral.mockClear();
+    mockComplete.mockClear();
   });
 
   afterEach(() => {
     process.env = originalEnv;
   });
 
-  test('should initialize with API key', () => {
-    const { Mistral } = require('@mistralai/mistralai');
+  test('should initialize with API key', async () => {
     const { MistralProvider } = require('../../../../crons/config/providers/mistral');
 
     const provider = new MistralProvider();
+    await provider.clientPromise;
 
-    expect(Mistral).toHaveBeenCalledWith({ apiKey: 'test-api-key' });
+    expect(MockMistral).toHaveBeenCalledWith({ apiKey: 'test-api-key' });
     expect(provider.name).toBe('Mistral');
   });
 
@@ -63,13 +64,9 @@ describe('MistralProvider', () => {
   });
 
   test('should generate content using Mistral API', async () => {
-    const { Mistral } = require('@mistralai/mistralai');
-    const mockComplete = jest.fn().mockResolvedValue({
+    mockComplete.mockResolvedValue({
       choices: [{ message: { content: 'Generated content' } }],
     });
-    Mistral.mockImplementation(() => ({
-      chat: { complete: mockComplete },
-    }));
 
     const { MistralProvider } = require('../../../../crons/config/providers/mistral');
     const provider = new MistralProvider();
@@ -85,13 +82,9 @@ describe('MistralProvider', () => {
   });
 
   test('should override default parameters', async () => {
-    const { Mistral } = require('@mistralai/mistralai');
-    const mockComplete = jest.fn().mockResolvedValue({
+    mockComplete.mockResolvedValue({
       choices: [{ message: { content: 'Custom content' } }],
     });
-    Mistral.mockImplementation(() => ({
-      chat: { complete: mockComplete },
-    }));
 
     const { MistralProvider } = require('../../../../crons/config/providers/mistral');
     const provider = new MistralProvider();

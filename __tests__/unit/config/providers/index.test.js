@@ -1,7 +1,5 @@
-jest.mock('@mistralai/mistralai', () => ({
-  Mistral: jest.fn(() => ({
-    chat: { complete: jest.fn() },
-  })),
+jest.mock('../../../../crons/config/providers/mistralClient', () => ({
+  getMistral: () => Promise.resolve(jest.fn(() => ({ chat: { complete: jest.fn() } }))),
 }));
 
 jest.mock('@anthropic-ai/sdk', () => {
