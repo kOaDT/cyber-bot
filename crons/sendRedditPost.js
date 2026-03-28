@@ -6,7 +6,7 @@ const { runContentJob } = require('./utils/contentRunner');
 
 const PROCESSED_FILE = './assets/processedReddit.json';
 const DAYS = process.env.REDDIT_DAYS_LOOKBACK || 3;
-const MAX_RELEVANCE_CHECKS = 5;
+const MAX_RELEVANCE_CHECKS = parseInt(process.env.MAX_RELEVANCE_CHECKS, 10) || 5;
 const DEFAULT_SUBREDDITS = ['netsec', 'cybersecurity', 'securityCTF', 'blackhat', 'HowToHack'];
 const SUBREDDITS = process.env.REDDIT_SUBREDDITS ? process.env.REDDIT_SUBREDDITS.split(',') : DEFAULT_SUBREDDITS;
 const ARCTIC_SHIFT_BASE = 'https://arctic-shift.photon-reddit.com/api/posts/search';

@@ -7,7 +7,7 @@ const RESULTS_PER_PAGE = 2000;
 const CVSS_SEVERITY_THRESHOLD = parseFloat(process.env.CVSS_SEVERITY_THRESHOLD || 7.0);
 const HOURS_DELAY = parseInt(process.env.HOURS_DELAY || 24);
 const ENABLE_CVE_STATS = process.env.ENABLE_CVE_STATS === 'true';
-const TOP_CVES_COUNT = 5;
+const TOP_CVES_COUNT = parseInt(process.env.TOP_CVES_COUNT, 10) || 5;
 
 const formatDateForNVD = (date) => {
   const pad = (num) => String(num).padStart(2, '0');

@@ -9,10 +9,10 @@ const fs = require('fs').promises;
 const xml2js = require('xml2js');
 const RSSParser = require('rss-parser');
 
-const NB_DAYS_TO_FETCH = 3;
-const NB_ARTICLES_TO_SEND = 1;
-const DELAY_BETWEEN_ARTICLES = 10000;
-const MAX_RELEVANCE_CHECKS = 5;
+const NB_DAYS_TO_FETCH = parseInt(process.env.NEWS_DAYS_TO_FETCH, 10) || 3;
+const NB_ARTICLES_TO_SEND = parseInt(process.env.NEWS_ARTICLES_TO_SEND, 10) || 1;
+const DELAY_BETWEEN_ARTICLES = parseInt(process.env.NEWS_DELAY_BETWEEN_ARTICLES, 10) || 10000;
+const MAX_RELEVANCE_CHECKS = parseInt(process.env.MAX_RELEVANCE_CHECKS, 10) || 5;
 const PROCESSED_FILE = './assets/processedArticles.json';
 
 const store = createArrayStore(PROCESSED_FILE);

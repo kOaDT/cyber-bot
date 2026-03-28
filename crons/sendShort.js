@@ -5,7 +5,7 @@ const { createArrayStore } = require('./utils/processedItems');
 const { cleanProcessedData } = require('./utils/cleanJsonFile');
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-const DAYS_AGO = 30;
+const DAYS_AGO = parseInt(process.env.SHORTS_DAYS_AGO, 10) || 30;
 const PROCESSED_FILE = './assets/processedShorts.json';
 
 const QUERY = [
