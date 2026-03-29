@@ -1,8 +1,3 @@
-jest.mock('../../../crons/config/mistral', () => ({
-  mistralClient: {},
-  DEFAULT_PARAMS: {},
-}));
-
 const mockLogger = {
   info: jest.fn(),
   warn: jest.fn(),

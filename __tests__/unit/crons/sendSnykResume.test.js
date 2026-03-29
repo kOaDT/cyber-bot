@@ -1,17 +1,6 @@
 process.env.MISTRAL_API_KEY = 'mock-api-key';
 process.env.TELEGRAM_TOPIC_PODCAST = 'mock-topic-id';
 
-jest.mock('../../../crons/config/mistral', () => ({
-  mistralClient: {
-    chat: {
-      complete: jest.fn().mockResolvedValue({
-        choices: [{ message: { content: 'Generated text' } }],
-      }),
-    },
-  },
-  DEFAULT_PARAMS: {},
-}));
-
 jest.mock('../../../crons/utils/database', () => ({
   getPool: jest.fn(() => null),
 }));

@@ -11,19 +11,6 @@ jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
 }));
 
-// Mock mistral config
-jest.mock('../../../crons/config/mistral', () => ({
-  mistralClient: {
-    chat: {
-      completions: {
-        create: jest.fn().mockResolvedValue({
-          choices: [{ message: { content: 'mocked response' } }],
-        }),
-      },
-    },
-  },
-}));
-
 // Mock logger entirely
 jest.mock('../../../crons/config/logger', () => ({
   info: jest.fn(),
