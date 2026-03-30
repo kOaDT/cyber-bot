@@ -6,6 +6,9 @@ jest.mock('fs', () => ({
   promises: {
     readFile: jest.fn(),
     writeFile: jest.fn(),
+    rename: jest.fn().mockResolvedValue(undefined),
+    mkdir: jest.fn().mockResolvedValue(undefined),
+    rmdir: jest.fn().mockResolvedValue(undefined),
   },
 }));
 
@@ -209,7 +212,11 @@ describe('sendTHMCTF', () => {
 
       expect(global.fetch).toHaveBeenCalledTimes(2);
       expect(sendMessage).toHaveBeenCalledTimes(1);
-      expect(fs.writeFile).toHaveBeenCalledWith('assets/processedCTF.json', expect.stringContaining('second-room'));
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('assets/processedCTF.json'),
+        expect.stringContaining('second-room')
+      );
+      expect(fs.rename).toHaveBeenCalledWith(expect.stringContaining('.tmp'), 'assets/processedCTF.json');
     });
   });
 });

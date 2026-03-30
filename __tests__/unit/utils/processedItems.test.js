@@ -4,6 +4,9 @@ jest.mock('fs', () => ({
   promises: {
     readFile: jest.fn(),
     writeFile: jest.fn().mockResolvedValue(undefined),
+    rename: jest.fn().mockResolvedValue(undefined),
+    mkdir: jest.fn().mockResolvedValue(undefined),
+    rmdir: jest.fn().mockResolvedValue(undefined),
   },
 }));
 
@@ -48,7 +51,7 @@ describe('processedItems', () => {
         fs.readFile.mockResolvedValue(JSON.stringify([{ id: '1', processedAt: '2025-01-01T00:00:00.000Z' }]));
         await store.save({ id: '2' });
         expect(fs.writeFile).toHaveBeenCalledWith(
-          'assets/test.json',
+          expect.stringContaining('assets/test.json'),
           JSON.stringify(
             [
               { id: '1', processedAt: '2025-01-01T00:00:00.000Z' },
@@ -58,15 +61,17 @@ describe('processedItems', () => {
             2
           )
         );
+        expect(fs.rename).toHaveBeenCalledWith(expect.stringContaining('.tmp'), 'assets/test.json');
       });
 
       it('should create new array when file does not exist', async () => {
         fs.readFile.mockRejectedValue(new Error('ENOENT'));
         await store.save({ url: 'https://example.com' });
         expect(fs.writeFile).toHaveBeenCalledWith(
-          'assets/test.json',
+          expect.stringContaining('assets/test.json'),
           JSON.stringify([{ url: 'https://example.com', processedAt: '2026-01-01T00:00:00.000Z' }], null, 2)
         );
+        expect(fs.rename).toHaveBeenCalled();
       });
 
       it('should log error when write fails', async () => {
@@ -78,6 +83,13 @@ describe('processedItems', () => {
           expect.stringContaining('Error saving'),
           expect.objectContaining({ error: 'write error' })
         );
+      });
+
+      it('should acquire and release file lock', async () => {
+        fs.readFile.mockResolvedValue('[]');
+        await store.save({ id: '1' });
+        expect(fs.mkdir).toHaveBeenCalledWith('assets/test.json.lock');
+        expect(fs.rmdir).toHaveBeenCalledWith('assets/test.json.lock');
       });
     });
   });
@@ -107,12 +119,15 @@ describe('processedItems', () => {
     });
 
     describe('save', () => {
-      it('should write data with processedAt', async () => {
+      it('should write data with processedAt using atomic write', async () => {
         await store.save({ episodeNumber: 43 });
         expect(fs.writeFile).toHaveBeenCalledWith(
-          'assets/test.json',
+          expect.stringContaining('assets/test.json'),
           JSON.stringify({ episodeNumber: 43, processedAt: '2026-01-01T00:00:00.000Z' })
         );
+        expect(fs.rename).toHaveBeenCalledWith(expect.stringContaining('.tmp'), 'assets/test.json');
+        expect(fs.mkdir).toHaveBeenCalledWith('assets/test.json.lock');
+        expect(fs.rmdir).toHaveBeenCalledWith('assets/test.json.lock');
       });
     });
   });
@@ -141,11 +156,11 @@ describe('processedItems', () => {
     });
 
     describe('save', () => {
-      it('should save data under the specified key', async () => {
+      it('should save data under the specified key with atomic write', async () => {
         fs.readFile.mockResolvedValue(JSON.stringify({ existing: { videoId: 'old' } }));
         await store.save('newChannel', { videoId: 'xyz' });
         expect(fs.writeFile).toHaveBeenCalledWith(
-          'assets/test.json',
+          expect.stringContaining('assets/test.json'),
           JSON.stringify(
             {
               existing: { videoId: 'old' },
@@ -155,6 +170,8 @@ describe('processedItems', () => {
             2
           )
         );
+        expect(fs.rename).toHaveBeenCalled();
+        expect(fs.mkdir).toHaveBeenCalledWith('assets/test.json.lock');
       });
 
       it('should throw when write fails', async () => {

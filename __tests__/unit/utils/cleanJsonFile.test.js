@@ -1,15 +1,16 @@
 const { cleanProcessedData } = require('../../../crons/utils/cleanJsonFile');
 const fs = require('fs').promises;
 
-// Mock the fs.promises module
 jest.mock('fs', () => ({
   promises: {
     readFile: jest.fn(),
     writeFile: jest.fn().mockResolvedValue(undefined),
+    rename: jest.fn().mockResolvedValue(undefined),
+    mkdir: jest.fn().mockResolvedValue(undefined),
+    rmdir: jest.fn().mockResolvedValue(undefined),
   },
 }));
 
-// Mock the logger
 jest.mock('../../../crons/config/logger', () => ({
   info: jest.fn(),
   error: jest.fn(),
@@ -20,8 +21,7 @@ describe('cleanJsonFile utility', () => {
     jest.clearAllMocks();
   });
 
-  test('should filter out old entries', async () => {
-    // Mock data with dates
+  test('should filter out old entries using atomic write', async () => {
     const now = new Date();
     const sixDaysAgo = new Date(now);
     sixDaysAgo.setDate(now.getDate() - 6);
@@ -36,16 +36,14 @@ describe('cleanJsonFile utility', () => {
 
     fs.readFile.mockResolvedValue(JSON.stringify(mockData));
 
-    // Execute function
     await cleanProcessedData(10, 'test.json');
 
-    // Verify file was written with filtered data
     expect(fs.writeFile).toHaveBeenCalled();
+    expect(fs.rename).toHaveBeenCalledWith(expect.stringContaining('.tmp'), 'test.json');
+    expect(fs.mkdir).toHaveBeenCalledWith('test.json.lock');
+    expect(fs.rmdir).toHaveBeenCalledWith('test.json.lock');
 
-    // Extract the second argument (data) from the first call
     const savedData = JSON.parse(fs.writeFile.mock.calls[0][1]);
-
-    // Should only contain entries newer than 10 days
     expect(savedData.length).toBe(2);
     expect(savedData.some((item) => item.id === 3)).toBe(false);
     expect(savedData.some((item) => item.id === 1)).toBe(true);

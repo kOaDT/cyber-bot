@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const logger = require('../config/logger');
+const { withFileLock, atomicWriteFile } = require('./fileUtils');
 
 function createArrayStore(filePath) {
   async function load() {
@@ -14,9 +15,11 @@ function createArrayStore(filePath) {
 
   async function save(entry) {
     try {
-      const items = await load();
-      items.push({ ...entry, processedAt: new Date().toISOString() });
-      await fs.writeFile(filePath, JSON.stringify(items, null, 2));
+      await withFileLock(filePath, async () => {
+        const items = await load();
+        items.push({ ...entry, processedAt: new Date().toISOString() });
+        await atomicWriteFile(filePath, JSON.stringify(items, null, 2));
+      });
     } catch (error) {
       logger.error(`Error saving to ${filePath}`, { error: error.message });
     }
@@ -37,7 +40,9 @@ function createObjectStore(filePath, defaults = { episodeNumber: 0 }) {
   }
 
   async function save(data) {
-    await fs.writeFile(filePath, JSON.stringify({ ...data, processedAt: new Date().toISOString() }));
+    await withFileLock(filePath, async () => {
+      await atomicWriteFile(filePath, JSON.stringify({ ...data, processedAt: new Date().toISOString() }));
+    });
   }
 
   return { load, save };
@@ -61,9 +66,11 @@ function createKeyedStore(filePath) {
 
   async function save(key, data) {
     try {
-      const content = await _readAll();
-      content[key] = { ...data, processedAt: new Date().toISOString() };
-      await fs.writeFile(filePath, JSON.stringify(content, null, 2));
+      await withFileLock(filePath, async () => {
+        const content = await _readAll();
+        content[key] = { ...data, processedAt: new Date().toISOString() };
+        await atomicWriteFile(filePath, JSON.stringify(content, null, 2));
+      });
     } catch (error) {
       throw new Error(`Failed to save to ${filePath}: ${error.message}`);
     }

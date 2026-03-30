@@ -6,6 +6,9 @@ jest.mock('fs', () => ({
   promises: {
     readFile: jest.fn(),
     writeFile: jest.fn(),
+    rename: jest.fn().mockResolvedValue(undefined),
+    mkdir: jest.fn().mockResolvedValue(undefined),
+    rmdir: jest.fn().mockResolvedValue(undefined),
   },
   existsSync: jest.fn().mockReturnValue(true),
   mkdirSync: jest.fn(),
