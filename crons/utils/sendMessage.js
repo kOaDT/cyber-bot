@@ -56,6 +56,84 @@ const sanitizeTelegramHtml = (html) => {
   return output.join('');
 };
 
+const parseLineTags = (line, currentTags) => {
+  const tags = [...currentTags];
+  const regex = new RegExp(TAG_REGEX.source, 'g');
+  let match;
+  while ((match = regex.exec(line)) !== null) {
+    const fullTag = match[0];
+    const tagName = match[1].toLowerCase();
+    if (!ALLOWED_TAGS.has(tagName)) continue;
+
+    if (fullTag.startsWith('</')) {
+      for (let i = tags.length - 1; i >= 0; i--) {
+        if (tags[i].name === tagName) {
+          tags.splice(i, 1);
+          break;
+        }
+      }
+    } else {
+      tags.push({ name: tagName, opening: fullTag });
+    }
+  }
+  return tags;
+};
+
+const buildClosingTags = (tags) =>
+  tags
+    .slice()
+    .reverse()
+    .map((t) => `</${t.name}>`)
+    .join('');
+
+const buildOpeningTags = (tags) => tags.map((t) => t.opening).join('');
+
+const splitMessage = (message, isHtml = false) => {
+  const lines = message.split('\n');
+  const chunks = [];
+  let currentChunk = '';
+
+  if (!isHtml) {
+    for (const line of lines) {
+      if (currentChunk.length + line.length + 1 <= MAX_MESSAGE_LENGTH) {
+        currentChunk += (currentChunk ? '\n' : '') + line;
+      } else {
+        if (currentChunk) chunks.push(currentChunk);
+        currentChunk = line;
+      }
+    }
+    if (currentChunk) chunks.push(currentChunk);
+    return chunks;
+  }
+
+  let openTags = [];
+
+  for (const line of lines) {
+    const separator = currentChunk ? '\n' : '';
+    const tagsAfterLine = parseLineTags(line, openTags);
+    const closingNeeded = buildClosingTags(tagsAfterLine);
+    const candidateLength = currentChunk.length + separator.length + line.length + closingNeeded.length;
+
+    if (candidateLength <= MAX_MESSAGE_LENGTH) {
+      currentChunk += separator + line;
+      openTags = tagsAfterLine;
+    } else {
+      if (currentChunk) {
+        chunks.push(currentChunk + buildClosingTags(openTags));
+      }
+      const reopening = buildOpeningTags(openTags);
+      currentChunk = reopening + line;
+      openTags = parseLineTags(line, openTags);
+    }
+  }
+
+  if (currentChunk) {
+    chunks.push(currentChunk + buildClosingTags(openTags));
+  }
+
+  return chunks;
+};
+
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 
 /**
@@ -74,19 +152,8 @@ const sendMessage = async (message, topicId = null, categories = null, sendOptio
       ...sendOptions,
     };
 
-    const messageChunks = [];
-    let currentChunk = '';
-    const lines = message.split('\n');
-
-    for (const line of lines) {
-      if (currentChunk.length + line.length + 1 <= MAX_MESSAGE_LENGTH) {
-        currentChunk += (currentChunk ? '\n' : '') + line;
-      } else {
-        if (currentChunk) messageChunks.push(currentChunk);
-        currentChunk = line;
-      }
-    }
-    if (currentChunk) messageChunks.push(currentChunk);
+    const isHtml = options.parse_mode === 'HTML';
+    const messageChunks = splitMessage(message, isHtml);
 
     for (const chunk of messageChunks) {
       await bot.sendMessage(process.env.CHAT_ID, chunk, options);
@@ -125,4 +192,4 @@ const saveMessageInDb = async (message, topicId = null, categories = null) => {
   return result;
 };
 
-module.exports = { sendMessage, sanitizeTelegramHtml };
+module.exports = { sendMessage, sanitizeTelegramHtml, splitMessage };
