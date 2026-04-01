@@ -5,25 +5,25 @@ const { delay } = require('./delay');
 const logger = require('../config/logger');
 
 async function runContentJob(config, { dryMode, lang }) {
-  try {
-    await config.cleanup?.();
+  await config.cleanup?.();
 
-    const items = await config.fetchItems();
-    const unprocessed = await config.filterNew(items);
+  const items = await config.fetchItems();
+  const unprocessed = await config.filterNew(items);
 
-    if (unprocessed.length === 0) {
-      logger.info(`No new ${config.name} to process`);
-      return;
-    }
+  if (unprocessed.length === 0) {
+    logger.info(`No new ${config.name} to process`);
+    return;
+  }
 
-    const maxItems = config.maxItems ?? 1;
-    const candidates = unprocessed.slice(0, config.maxCandidates ?? 5);
-    let itemsSent = 0;
+  const maxItems = config.maxItems ?? 1;
+  const candidates = unprocessed.slice(0, config.maxCandidates ?? 5);
+  let itemsSent = 0;
 
-    for (let i = 0; i < candidates.length; i++) {
-      const item = candidates[i];
-      if (itemsSent >= maxItems) break;
+  for (let i = 0; i < candidates.length; i++) {
+    const item = candidates[i];
+    if (itemsSent >= maxItems) break;
 
+    try {
       const { relevant } = await evaluateRelevance({
         title: item.title,
         content: item.content || item.title,
@@ -52,13 +52,13 @@ async function runContentJob(config, { dryMode, lang }) {
       if (itemsSent < maxItems && hasMoreCandidates && config.delayBetweenItems) {
         await delay(config.delayBetweenItems);
       }
+    } catch (error) {
+      logger.error(`Error processing ${config.name} "${item.title}"`, { error: error.message });
     }
+  }
 
-    if (itemsSent === 0) {
-      logger.info(`No relevant ${config.name} found after relevance checks`);
-    }
-  } catch (error) {
-    logger.error(`Error processing ${config.name}`, { error: error.message });
+  if (itemsSent === 0) {
+    logger.info(`No relevant ${config.name} found after relevance checks`);
   }
 }
 

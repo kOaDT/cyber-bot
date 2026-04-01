@@ -79,13 +79,11 @@ describe('sendNewsResume cron job', () => {
     expect(logger.info).toHaveBeenCalledWith('Dry mode: No message sent', expect.any(Object));
   });
 
-  test('should handle errors appropriately', async () => {
+  test('should throw on critical errors', async () => {
     const { cleanProcessedData } = require('../../../crons/utils/cleanJsonFile');
     const testError = new Error('Clean data error');
     cleanProcessedData.mockRejectedValueOnce(testError);
 
-    await run({ dryMode: false, lang: 'english' });
-
-    expect(logger.error).toHaveBeenCalledWith('Error processing news article', { error: 'Clean data error' });
+    await expect(run({ dryMode: false, lang: 'english' })).rejects.toThrow('Clean data error');
   });
 });

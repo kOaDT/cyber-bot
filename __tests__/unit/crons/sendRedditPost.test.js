@@ -166,12 +166,10 @@ describe('sendRedditPost cron job', () => {
       expect(logger.info).toHaveBeenCalledWith('No new Reddit post to process');
     });
 
-    test('should handle errors', async () => {
+    test('should throw on critical errors', async () => {
       cleanProcessedData.mockRejectedValueOnce(new Error('Clean error'));
 
-      await run({ dryMode: false });
-
-      expect(logger.error).toHaveBeenCalledWith('Error processing Reddit post', { error: 'Clean error' });
+      await expect(run({ dryMode: false })).rejects.toThrow('Clean error');
     });
   });
 });

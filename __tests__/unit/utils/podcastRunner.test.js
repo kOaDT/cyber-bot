@@ -179,12 +179,10 @@ describe('podcastRunner', () => {
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
-  it('should handle errors gracefully', async () => {
+  it('should throw on errors', async () => {
     baseConfig.getLastEpisode.mockRejectedValue(new Error('Network error'));
 
-    await runPodcast(baseConfig, { dryMode: false, lang: 'english' });
-
-    expect(logger.error).toHaveBeenCalledWith('Error sending Test Podcast resume', { error: 'Network error' });
+    await expect(runPodcast(baseConfig, { dryMode: false, lang: 'english' })).rejects.toThrow('Network error');
   });
 
   it('should not pass content to relevance when no transcript in episode', async () => {

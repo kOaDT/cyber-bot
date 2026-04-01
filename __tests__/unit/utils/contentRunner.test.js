@@ -204,14 +204,27 @@ describe('contentRunner', () => {
     expect(generate).toHaveBeenCalled();
   });
 
-  it('should handle errors gracefully', async () => {
+  it('should throw on critical errors', async () => {
     const config = createBaseConfig({
       fetchItems: jest.fn().mockRejectedValue(new Error('Fetch failed')),
     });
 
+    await expect(runContentJob(config, { dryMode: false, lang: 'english' })).rejects.toThrow('Fetch failed');
+  });
+
+  it('should log and continue on per-item errors', async () => {
+    evaluateRelevance.mockRejectedValueOnce(new Error('Relevance check failed'));
+    evaluateRelevance.mockResolvedValueOnce({ relevant: true, score: 8 });
+
+    const config = createBaseConfig();
+
     await runContentJob(config, { dryMode: false, lang: 'english' });
 
-    expect(logger.error).toHaveBeenCalledWith('Error processing test item', { error: 'Fetch failed' });
+    expect(logger.error).toHaveBeenCalledWith('Error processing test item "Item 1"', {
+      error: 'Relevance check failed',
+    });
+    expect(generate).toHaveBeenCalledTimes(1);
+    expect(sendMessage).toHaveBeenCalledTimes(1);
   });
 
   it('should default maxItems to 1', async () => {

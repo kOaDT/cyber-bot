@@ -191,14 +191,10 @@ describe('sendDarknetDiariesResume', () => {
       expect(logger.info).toHaveBeenCalledWith('No new episode to process');
     });
 
-    it('should handle errors gracefully', async () => {
+    it('should throw on errors', async () => {
       global.fetch.mockRejectedValueOnce(new Error('Network error'));
 
-      await run({ dryMode: false, lang: 'en' });
-
-      expect(logger.error).toHaveBeenCalledWith('Error sending Darknet Diaries resume', {
-        error: 'Network error',
-      });
+      await expect(run({ dryMode: false, lang: 'en' })).rejects.toThrow('Network error');
     });
   });
 });

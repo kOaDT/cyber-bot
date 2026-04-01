@@ -18,29 +18,25 @@ const PROCESSED_FILE = './assets/processedArticles.json';
 const store = createArrayStore(PROCESSED_FILE);
 
 const parseOPML = async (filePath) => {
-  try {
-    const data = await fs.readFile(filePath, 'utf8');
-    const parser = new xml2js.Parser();
-    const result = await parser.parseStringPromise(data);
-    const feeds = [];
+  const data = await fs.readFile(filePath, 'utf8');
+  const parser = new xml2js.Parser();
+  const result = await parser.parseStringPromise(data);
+  const feeds = [];
 
-    const outline = result.opml.body[0].outline;
-    const extractFeeds = (items) => {
-      items.forEach((item) => {
-        if (item.$.xmlUrl) {
-          feeds.push(item.$.xmlUrl);
-        }
-        if (item.outline) {
-          extractFeeds(item.outline);
-        }
-      });
-    };
+  const outline = result.opml.body[0].outline;
+  const extractFeeds = (items) => {
+    items.forEach((item) => {
+      if (item.$.xmlUrl) {
+        feeds.push(item.$.xmlUrl);
+      }
+      if (item.outline) {
+        extractFeeds(item.outline);
+      }
+    });
+  };
 
-    extractFeeds(outline);
-    return feeds;
-  } catch (error) {
-    logger.error('Error parsing OPML', { error: error.message });
-  }
+  extractFeeds(outline);
+  return feeds;
 };
 
 const fetchArticles = async (feeds) => {

@@ -82,15 +82,12 @@ describe('sendYoutubeResume', () => {
       // This test is skipped due to dynamic import mocking limitations
     });
 
-    it('should handle errors during execution', async () => {
+    it('should throw on critical errors', async () => {
       youtubeDl.mockRejectedValueOnce(new Error('Something went wrong'));
 
-      await run({ dryMode: false, lang: 'english', youtube: 'https://youtube.com/c/test-channel' });
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Error processing YouTube video',
-        expect.objectContaining({ error: expect.any(String) })
-      );
+      await expect(
+        run({ dryMode: false, lang: 'english', youtube: 'https://youtube.com/c/test-channel' })
+      ).rejects.toThrow('Something went wrong');
     });
   });
 });

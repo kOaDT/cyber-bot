@@ -14,21 +14,16 @@ jest.mock('../../../crons/sendGithubNotes', () => {
         getGithubFile: jest.fn(),
       };
 
-      try {
-        if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_USERNAME || !process.env.GITHUB_REPO) {
-          logger.error('GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_REPO is not set');
-          return;
-        }
+      if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_USERNAME || !process.env.GITHUB_REPO) {
+        throw new Error('GITHUB_TOKEN, GITHUB_USERNAME, or GITHUB_REPO is not set');
+      }
 
-        await global.fetch('https://api.github.com/graphql');
+      await global.fetch('https://api.github.com/graphql');
 
-        if (dryMode) {
-          logger.info('Revision card generated', { revisionCard: 'Test card' });
-        } else {
-          require('../../../crons/utils/sendMessage').sendMessage('Test card');
-        }
-      } catch (err) {
-        logger.error('Error sending Github notes', { error: err.message });
+      if (dryMode) {
+        logger.info('Revision card generated', { revisionCard: 'Test card' });
+      } else {
+        require('../../../crons/utils/sendMessage').sendMessage('Test card');
       }
     }),
 
@@ -83,19 +78,15 @@ const mockPrivateFunctions = () => {
   };
 
   const saveProcessedNote = async (title, content) => {
-    try {
-      const processedNotes = await getProcessedNotes();
+    const processedNotes = await getProcessedNotes();
 
-      processedNotes.push({
-        title,
-        content,
-        processedAt: new Date().toISOString(),
-      });
+    processedNotes.push({
+      title,
+      content,
+      processedAt: new Date().toISOString(),
+    });
 
-      await fs.writeFile('assets/processedNotes.json', JSON.stringify(processedNotes, null, 2), 'utf8');
-    } catch (err) {
-      logger.error('Error saving processed note', { error: err.message });
-    }
+    await fs.writeFile('assets/processedNotes.json', JSON.stringify(processedNotes, null, 2), 'utf8');
   };
 
   return { getProcessedNotes, saveProcessedNote };
@@ -158,31 +149,25 @@ describe('sendGithubNotes', () => {
       );
     });
 
-    it('should handle errors when saving', async () => {
+    it('should throw on write errors', async () => {
       fs.readFile.mockResolvedValue('[]');
       fs.writeFile.mockRejectedValue(new Error('Write error'));
 
-      await saveProcessedNote('test.md', 'test content');
-
-      expect(logger.error).toHaveBeenCalledWith('Error saving processed note', { error: 'Write error' });
+      await expect(saveProcessedNote('test.md', 'test content')).rejects.toThrow('Write error');
     });
   });
 
   describe('run', () => {
-    it('should log error if GitHub credentials are not set', async () => {
+    it('should throw if GitHub credentials are not set', async () => {
       delete process.env.GITHUB_TOKEN;
 
-      await run({});
-
-      expect(logger.error).toHaveBeenCalledWith('GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_REPO is not set');
+      await expect(run({})).rejects.toThrow('GITHUB_TOKEN, GITHUB_USERNAME, or GITHUB_REPO is not set');
     });
 
-    it('should log error if GitHub API fails', async () => {
+    it('should throw if GitHub API fails', async () => {
       global.fetch.mockRejectedValue(new Error('API error'));
 
-      await run({});
-
-      expect(logger.error).toHaveBeenCalledWith('Error sending Github notes', { error: 'API error' });
+      await expect(run({})).rejects.toThrow('API error');
     });
 
     it('should use dry mode correctly', async () => {

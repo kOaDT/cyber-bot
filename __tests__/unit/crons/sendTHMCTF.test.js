@@ -150,23 +150,17 @@ describe('sendTHMCTF', () => {
       expect(logger.info).toHaveBeenCalledWith('Dry mode: No message sent', expect.any(Object));
     });
 
-    it('should handle API errors', async () => {
+    it('should throw on API errors', async () => {
       global.fetch.mockRejectedValueOnce(new Error('API Error'));
 
-      await run({ dryMode: false, lang: 'french' });
-
-      expect(logger.error).toHaveBeenCalledWith('Error sending THM CTF', {
-        error: 'API Error',
-      });
+      await expect(run({ dryMode: false, lang: 'french' })).rejects.toThrow('API Error');
       expect(sendMessage).not.toHaveBeenCalled();
     });
 
-    it('should handle file system errors', async () => {
+    it('should throw on file system errors', async () => {
       fs.readFile.mockRejectedValue(new Error('File system error'));
 
-      await run({ dryMode: false, lang: 'french' });
-
-      expect(logger.error).toHaveBeenCalled();
+      await expect(run({ dryMode: false, lang: 'french' })).rejects.toThrow();
       expect(sendMessage).not.toHaveBeenCalled();
     });
 

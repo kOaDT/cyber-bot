@@ -182,40 +182,36 @@ const createCVEMessage = (processedCVEs, stats = null) => {
 };
 
 const run = async ({ dryMode }) => {
-  try {
-    const cves = await fetchCVEs();
+  const cves = await fetchCVEs();
 
-    if (cves.length === 0) {
-      logger.info(`No new CVEs found in the last ${HOURS_DELAY} hours`);
-      return;
-    }
-
-    const processedCVEs = processCVEs(cves);
-
-    if (processedCVEs.length === 0) {
-      logger.info(`No severe CVEs found in the last ${HOURS_DELAY} hours (CVSS ≥ ${CVSS_SEVERITY_THRESHOLD})`);
-      return;
-    }
-
-    logger.info(`Found ${cves.length} new CVEs in the last ${HOURS_DELAY} hours, ${processedCVEs.length} are severe`);
-
-    let stats = null;
-    if (ENABLE_CVE_STATS) {
-      stats = await getCveStats();
-    }
-
-    const message = createCVEMessage(processedCVEs, stats);
-
-    if (dryMode) {
-      logger.info('Dry mode: No message sent', { message });
-      return;
-    }
-
-    await sendMessage(message, process.env.TELEGRAM_TOPIC_CVE, null, { parse_mode: 'HTML' });
-    logger.info('CVE message sent successfully');
-  } catch (error) {
-    logger.error('Error sending CVE message', { error: error.message });
+  if (cves.length === 0) {
+    logger.info(`No new CVEs found in the last ${HOURS_DELAY} hours`);
+    return;
   }
+
+  const processedCVEs = processCVEs(cves);
+
+  if (processedCVEs.length === 0) {
+    logger.info(`No severe CVEs found in the last ${HOURS_DELAY} hours (CVSS ≥ ${CVSS_SEVERITY_THRESHOLD})`);
+    return;
+  }
+
+  logger.info(`Found ${cves.length} new CVEs in the last ${HOURS_DELAY} hours, ${processedCVEs.length} are severe`);
+
+  let stats = null;
+  if (ENABLE_CVE_STATS) {
+    stats = await getCveStats();
+  }
+
+  const message = createCVEMessage(processedCVEs, stats);
+
+  if (dryMode) {
+    logger.info('Dry mode: No message sent', { message });
+    return;
+  }
+
+  await sendMessage(message, process.env.TELEGRAM_TOPIC_CVE, null, { parse_mode: 'HTML' });
+  logger.info('CVE message sent successfully');
 };
 
 module.exports = { run };

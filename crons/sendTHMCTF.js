@@ -47,44 +47,40 @@ const getLastCTF = async () => {
 };
 
 const run = async ({ dryMode, lang }) => {
-  try {
-    const newChallenge = await getLastCTF();
+  const newChallenge = await getLastCTF();
 
-    if (!newChallenge) {
-      logger.info('No new challenges found');
-      return;
-    }
-
-    logger.info('New challenge found', { title: newChallenge.title });
-
-    const difficultyEmoji = {
-      easy: '🟢',
-      medium: '🟡',
-      hard: '🔴',
-    };
-
-    let message =
-      `🎯 Nouveau challenge TryHackMe !\n\n` +
-      `${newChallenge.title}\n` +
-      `${difficultyEmoji[newChallenge.difficulty]} Difficulté: ${newChallenge.difficulty}\n\n` +
-      `📝 Description\n${newChallenge.description}\n\n` +
-      `🏷️ Tags\n${newChallenge.tags || 'Aucun tag'}\n\n` +
-      `🔗 Commencer le challenge : ${newChallenge.url}`;
-
-    if (lang !== 'french') {
-      const translatedMessage = translatePrompt(message, lang);
-      message = await generate(translatedMessage);
-    }
-
-    if (dryMode) {
-      logger.info('Dry mode: No message sent', { message });
-      return;
-    }
-
-    await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
-  } catch (error) {
-    logger.error('Error sending THM CTF', { error: error.message });
+  if (!newChallenge) {
+    logger.info('No new challenges found');
+    return;
   }
+
+  logger.info('New challenge found', { title: newChallenge.title });
+
+  const difficultyEmoji = {
+    easy: '🟢',
+    medium: '🟡',
+    hard: '🔴',
+  };
+
+  let message =
+    `🎯 Nouveau challenge TryHackMe !\n\n` +
+    `${newChallenge.title}\n` +
+    `${difficultyEmoji[newChallenge.difficulty]} Difficulté: ${newChallenge.difficulty}\n\n` +
+    `📝 Description\n${newChallenge.description}\n\n` +
+    `🏷️ Tags\n${newChallenge.tags || 'Aucun tag'}\n\n` +
+    `🔗 Commencer le challenge : ${newChallenge.url}`;
+
+  if (lang !== 'french') {
+    const translatedMessage = translatePrompt(message, lang);
+    message = await generate(translatedMessage);
+  }
+
+  if (dryMode) {
+    logger.info('Dry mode: No message sent', { message });
+    return;
+  }
+
+  await sendMessage(message, process.env.TELEGRAM_TOPIC_THM);
 };
 
 module.exports = { run };

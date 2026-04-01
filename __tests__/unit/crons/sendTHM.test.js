@@ -55,11 +55,9 @@ describe('sendTHM cron job', () => {
     expect(sendMessage).toHaveBeenCalledWith('Translated message', '123');
   });
 
-  test('should log error when there is an exception', async () => {
+  test('should throw when there is an exception', async () => {
     sendMessage.mockRejectedValueOnce(new Error('Failed to send message'));
 
-    await run({ dryMode: false, lang: 'french' });
-
-    expect(logger.error).toHaveBeenCalledWith('Error sending THM', { error: 'Failed to send message' });
+    await expect(run({ dryMode: false, lang: 'french' })).rejects.toThrow('Failed to send message');
   });
 });

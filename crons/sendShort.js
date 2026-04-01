@@ -59,80 +59,69 @@ const TECHNICAL_TERMS = [
 const store = createArrayStore(PROCESSED_FILE);
 
 const run = async ({ dryMode }) => {
-  try {
-    await cleanProcessedData(DAYS_AGO, PROCESSED_FILE);
+  await cleanProcessedData(DAYS_AGO, PROCESSED_FILE);
 
-    const now = new Date();
-    const publishedAfter = new Date(now.getTime() - DAYS_AGO * 24 * 60 * 60 * 1000).toISOString();
+  const now = new Date();
+  const publishedAfter = new Date(now.getTime() - DAYS_AGO * 24 * 60 * 60 * 1000).toISOString();
 
-    const url = new URL('https://www.googleapis.com/youtube/v3/search');
-    url.searchParams.set('part', 'snippet');
-    url.searchParams.set('type', 'video');
-    url.searchParams.set('videoDuration', 'short');
-    url.searchParams.set('q', QUERY);
-    url.searchParams.set('relevanceLanguage', 'en');
-    url.searchParams.set('order', 'rating');
-    url.searchParams.set('maxResults', '50');
-    url.searchParams.set('publishedAfter', publishedAfter);
-    url.searchParams.set('key', YOUTUBE_API_KEY);
+  const url = new URL('https://www.googleapis.com/youtube/v3/search');
+  url.searchParams.set('part', 'snippet');
+  url.searchParams.set('type', 'video');
+  url.searchParams.set('videoDuration', 'short');
+  url.searchParams.set('q', QUERY);
+  url.searchParams.set('relevanceLanguage', 'en');
+  url.searchParams.set('order', 'rating');
+  url.searchParams.set('maxResults', '50');
+  url.searchParams.set('publishedAfter', publishedAfter);
+  url.searchParams.set('key', YOUTUBE_API_KEY);
 
-    let response;
-    try {
-      response = await fetch(url);
-    } catch (fetchError) {
-      logger.error('Failed to fetch YouTube API', { error: fetchError.message });
-      return;
-    }
+  const response = await fetch(url);
+  const data = await response.json();
 
-    let data = await response.json();
-
-    if (!data || !data.items) {
-      logger.info('Error fetching YouTube data');
-      return;
-    }
-
-    const processedShorts = await store.load();
-    const processedIds = new Set(processedShorts.map((short) => short.id));
-
-    const filteredShorts = data.items.filter((video) => {
-      const title = video.snippet.title.toLowerCase();
-      const description = video.snippet.description.toLowerCase();
-
-      if (!DO_YOU_WANT_EMOJI) {
-        const emojiCount = (title + description).match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27FF]/g)?.length || 0;
-        if (emojiCount > 2) return false;
-      }
-
-      const hasBlacklistedTerm = BLACKLISTED_TERMS.some((term) => title.includes(term) || description.includes(term));
-      if (hasBlacklistedTerm) return false;
-
-      if (processedIds.has(video.id)) return false;
-
-      return TECHNICAL_TERMS.some((term) => title.includes(term) || description.includes(term));
-    });
-
-    if (!filteredShorts.length) {
-      logger.info('No relevant shorts found');
-      return;
-    }
-
-    const randomShort = filteredShorts[randomInt(filteredShorts.length)];
-    const videoId = randomShort.id.videoId;
-    const title = randomShort.snippet.title;
-    const description = randomShort.snippet.description;
-    const message = `https://www.youtube.com/watch?v=${videoId}\n\n${title}\n\n${description}`;
-
-    if (dryMode) {
-      logger.info('Dry mode: No message sent', { message });
-      return;
-    }
-
-    await sendMessage(message, process.env.TELEGRAM_TOPIC_YOUTUBE);
-    await store.save({ id: videoId });
-    logger.info('Message sent successfully');
-  } catch (error) {
-    logger.error('Error sending short', { error: error.message });
+  if (!data || !data.items) {
+    logger.info('No YouTube data available');
+    return;
   }
+
+  const processedShorts = await store.load();
+  const processedIds = new Set(processedShorts.map((short) => short.id));
+
+  const filteredShorts = data.items.filter((video) => {
+    const title = video.snippet.title.toLowerCase();
+    const description = video.snippet.description.toLowerCase();
+
+    if (!DO_YOU_WANT_EMOJI) {
+      const emojiCount = (title + description).match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27FF]/g)?.length || 0;
+      if (emojiCount > 2) return false;
+    }
+
+    const hasBlacklistedTerm = BLACKLISTED_TERMS.some((term) => title.includes(term) || description.includes(term));
+    if (hasBlacklistedTerm) return false;
+
+    if (processedIds.has(video.id)) return false;
+
+    return TECHNICAL_TERMS.some((term) => title.includes(term) || description.includes(term));
+  });
+
+  if (!filteredShorts.length) {
+    logger.info('No relevant shorts found');
+    return;
+  }
+
+  const randomShort = filteredShorts[randomInt(filteredShorts.length)];
+  const videoId = randomShort.id.videoId;
+  const title = randomShort.snippet.title;
+  const description = randomShort.snippet.description;
+  const message = `https://www.youtube.com/watch?v=${videoId}\n\n${title}\n\n${description}`;
+
+  if (dryMode) {
+    logger.info('Dry mode: No message sent', { message });
+    return;
+  }
+
+  await sendMessage(message, process.env.TELEGRAM_TOPIC_YOUTUBE);
+  await store.save({ id: videoId });
+  logger.info('Message sent successfully');
 };
 
 module.exports = { run };
