@@ -1,6 +1,5 @@
 const logger = require('../config/logger');
 const TelegramBot = require('node-telegram-bot-api');
-const { getPool } = require('../utils/database');
 
 const MAX_MESSAGE_LENGTH = 4096;
 const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
@@ -180,6 +179,7 @@ const sendMessage = async (message, topicId = null, categories = null, sendOptio
  * @returns {Promise<void>} - A promise that resolves when the message is saved
  */
 const saveMessageInDb = async (message, topicId = null, categories = null) => {
+  const { getPool } = require('../utils/database');
   const pool = getPool();
   if (!pool) return null;
 
