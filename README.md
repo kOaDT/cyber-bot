@@ -29,12 +29,6 @@ Cyber Bot is a Node.js project that helps users enhance their cybersecurity skil
 
 ## Features
 
-### Daily TryHackMe Reminders
-
-```
-npm run cron -- -c sendTHM
-```
-
 ### TryHackMe Challenges
 
 ```

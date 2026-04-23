@@ -10,7 +10,6 @@ const ALLOWED_CRONS = [
   'sendNewsResume',
   'sendCve',
   'sendShort',
-  'sendTHM',
   'sendTHMCTF',
   'sendRedditPost',
   'sendYoutubeResume',
