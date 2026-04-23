@@ -12,3 +12,4 @@ log-seed.txt
 logs/
 assets/processed*
 coverage/
+update-deps.sh
