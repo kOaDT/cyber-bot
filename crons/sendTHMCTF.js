@@ -63,14 +63,14 @@ const run = async ({ dryMode, lang }) => {
   };
 
   let message =
-    `🎯 Nouveau challenge TryHackMe !\n\n` +
+    `🎯 New TryHackMe Challenge!\n\n` +
     `${newChallenge.title}\n` +
-    `${difficultyEmoji[newChallenge.difficulty]} Difficulté: ${newChallenge.difficulty}\n\n` +
+    `${difficultyEmoji[newChallenge.difficulty]} Difficulty: ${newChallenge.difficulty}\n\n` +
     `📝 Description\n${newChallenge.description}\n\n` +
-    `🏷️ Tags\n${newChallenge.tags || 'Aucun tag'}\n\n` +
-    `🔗 Commencer le challenge : ${newChallenge.url}`;
+    `🏷️ Tags\n${newChallenge.tags || 'No tags'}\n\n` +
+    `🔗 Start the challenge: ${newChallenge.url}`;
 
-  if (lang !== 'french') {
+  if (lang !== 'english') {
     const translatedMessage = translatePrompt(message, lang);
     message = await generate(translatedMessage);
   }

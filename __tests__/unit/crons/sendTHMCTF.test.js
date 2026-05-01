@@ -97,29 +97,13 @@ describe('sendTHMCTF', () => {
         })
       );
 
-      await run({ dryMode: false, lang: 'french' });
+      await run({ dryMode: false, lang: 'english' });
 
       expect(logger.info).toHaveBeenCalledWith('No new challenges found');
       expect(sendMessage).not.toHaveBeenCalled();
     });
 
-    it('should send message for new challenge in French', async () => {
-      fs.readFile.mockResolvedValue(JSON.stringify([]));
-
-      global.fetch.mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () => Promise.resolve(mockApiResponse),
-        })
-      );
-
-      await run({ dryMode: false, lang: 'french' });
-
-      expect(sendMessage).toHaveBeenCalledTimes(1);
-      expect(sendMessage.mock.calls[0][0]).toContain('Nouveau challenge TryHackMe');
-      expect(sendMessage.mock.calls[0][0]).toContain(mockChallenge.title);
-    });
-
-    it('should translate and generate message for non-French language', async () => {
+    it('should send message for new challenge in English without translation', async () => {
       fs.readFile.mockResolvedValue(JSON.stringify([]));
 
       global.fetch.mockImplementationOnce(() =>
@@ -129,6 +113,24 @@ describe('sendTHMCTF', () => {
       );
 
       await run({ dryMode: false, lang: 'english' });
+
+      expect(translatePrompt).not.toHaveBeenCalled();
+      expect(generate).not.toHaveBeenCalled();
+      expect(sendMessage).toHaveBeenCalledTimes(1);
+      expect(sendMessage.mock.calls[0][0]).toContain('New TryHackMe Challenge');
+      expect(sendMessage.mock.calls[0][0]).toContain(mockChallenge.title);
+    });
+
+    it('should translate and generate message for non-English language', async () => {
+      fs.readFile.mockResolvedValue(JSON.stringify([]));
+
+      global.fetch.mockImplementationOnce(() =>
+        Promise.resolve({
+          json: () => Promise.resolve(mockApiResponse),
+        })
+      );
+
+      await run({ dryMode: false, lang: 'french' });
 
       expect(translatePrompt).toHaveBeenCalled();
       expect(generate).toHaveBeenCalled();
