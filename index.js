@@ -9,7 +9,6 @@ const { AUTHORIZED_LANGUAGES } = require('./crons/utils/langs');
 const ALLOWED_CRONS = [
   'sendNewsResume',
   'sendCve',
-  'sendShort',
   'sendTHMCTF',
   'sendRedditPost',
   'sendYoutubeResume',

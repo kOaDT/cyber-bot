@@ -7,7 +7,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/kOaDT/cyber-bot?style=social)](https://github.com/kOaDT/cyber-bot/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/kOaDT/cyber-bot?style=social)](https://github.com/kOaDT/cyber-bot/network/members)
 
-[![Version](https://img.shields.io/badge/version-1.19.0-blue.svg)](https://github.com/kOaDT/cyber-bot/releases)
+[![Version](https://img.shields.io/badge/version-2.3.2-blue.svg)](https://github.com/kOaDT/cyber-bot/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Telegram](https://img.shields.io/badge/Telegram-@bot__cyber__fr-2CA5E0?logo=telegram&logoColor=white)](https://t.me/bot_cyber_fr)
@@ -109,14 +109,6 @@ Summarizes the latest videos from specified channels.
 npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
 ```
 
-#### Curated Shorts
-
-Shares relevant short-form videos based on customizable parameters (search period, queries, and blacklisted terms). Configure settings in the `sendShort.js` script.
-
-```
-npm run cron -- -c sendShort
-```
-
 ## Getting Started
 
 ### Prerequisites
@@ -138,7 +130,6 @@ cd cyber-bot
 mkdir -p assets
 touch assets/processedNotes.json       # GithubNotes tracking
 touch assets/processedArticles.json    # News tracking
-touch assets/processedShorts.json      # Shorts tracking
 touch assets/processedDD.json          # Darknet Diaries Podcast tracking
 touch assets/processedSnyk.json        # Snyk Podcast tracking
 touch assets/processedYt.json          # YouTube tracking
