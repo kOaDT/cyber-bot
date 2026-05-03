@@ -45,5 +45,6 @@
 <outline title="Google Project Zero" xmlUrl="http://googleprojectzero.blogspot.com/feeds/posts/default" htmlUrl="https://projectzero.google/" text="Google Project Zero" type="rss" />
 <outline title="IT-Connect" xmlUrl="https://www.it-connect.fr/feed/" htmlUrl="https://www.it-connect.fr/" text="IT-Connect" type="rss" />
 <outline title="Le Monde Informatique" xmlUrl="https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml" htmlUrl="https://www.lemondeinformatique.fr/" text="Le Monde Informatique" type="rss" />
+<outline title="OopsSec Store - Dev.to" xmlUrl="https://dev.to/feed/oopssec-store" htmlUrl="https://dev.to/oopssec-store" text="Oopssec Store" type="rss" />
 </body>
 </opml>
