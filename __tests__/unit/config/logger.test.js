@@ -265,11 +265,14 @@ describe('logger configuration', () => {
 
       if (slackTransport) {
         const callback = jest.fn();
-        slackTransport.log({ level: 'info', message: 'test message' }, callback);
+        slackTransport.log({ level: 'info', message: 'test message', timestamp: '2026-05-15 12:00:00' }, callback);
         setTimeout(() => {
           expect(mockWrite).toHaveBeenCalled();
           const writtenData = JSON.parse(mockWrite.mock.calls[0][0]);
-          expect(writtenData.text).toBe('test message');
+          expect(writtenData.text).toContain('test message');
+          expect(writtenData.text).toContain('INFO');
+          expect(writtenData.blocks).toEqual(expect.any(Array));
+          expect(writtenData.blocks[0].type).toBe('header');
           expect(mockEnd).toHaveBeenCalled();
           expect(callback).toHaveBeenCalled();
           done();

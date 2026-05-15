@@ -1,8 +1,29 @@
+const path = require('path');
+const fs = require('fs');
 const { createLogger, format, transports } = require('winston');
 const Transport = require('winston-transport');
 const https = require('https');
 const { URL } = require('url');
 const { combine, timestamp, colorize, printf, errors } = format;
+
+const resolveProjectName = () => {
+  let dir = __dirname;
+  while (dir !== path.dirname(dir)) {
+    const candidate = path.join(dir, 'package.json');
+    if (fs.existsSync(candidate)) {
+      try {
+        return require(candidate).name || 'unknown';
+      } catch {
+        return 'unknown';
+      }
+    }
+    dir = path.dirname(dir);
+  }
+  return 'unknown';
+};
+
+const PROJECT_NAME = resolveProjectName();
+const getCronName = () => process.env.CRON_NAME || 'unknown';
 
 const SECRET_PATTERNS = [
   /key=[A-Za-z0-9_-]{20,}/gi,
@@ -12,58 +33,114 @@ const SECRET_PATTERNS = [
 
 const redactSecrets = (str) => {
   if (typeof str !== 'string') return str;
-  let result = str;
-  for (const pattern of SECRET_PATTERNS) {
-    result = result.replace(pattern, (match) => {
-      const eqIndex = match.indexOf('=');
-      const spaceIndex = match.indexOf(' ');
-      if (eqIndex !== -1) return match.slice(0, eqIndex + 1) + '[REDACTED]';
-      if (spaceIndex !== -1) return match.slice(0, spaceIndex + 1) + '[REDACTED]';
-      return '[REDACTED]';
-    });
+  return SECRET_PATTERNS.reduce(
+    (acc, pattern) =>
+      acc.replace(pattern, (match) => {
+        const eqIndex = match.indexOf('=');
+        const spaceIndex = match.indexOf(' ');
+        if (eqIndex !== -1) return match.slice(0, eqIndex + 1) + '[REDACTED]';
+        if (spaceIndex !== -1) return match.slice(0, spaceIndex + 1) + '[REDACTED]';
+        return '[REDACTED]';
+      }),
+    str
+  );
+};
+
+const sanitizeSecrets = format((info) => {
+  if (typeof info.message === 'string') info.message = redactSecrets(info.message);
+  if (typeof info.stack === 'string') info.stack = redactSecrets(info.stack);
+  return info;
+});
+
+const stringifyMessage = (message) => {
+  if (message === null || message === undefined) return '';
+  if (typeof message === 'string') return message;
+  if (message instanceof Error) {
+    return `${message.message}${message.stack ? ` - ${message.stack}` : ''}`;
+  }
+  if (typeof message === 'object') {
+    try {
+      return JSON.stringify(message);
+    } catch {
+      return '[Non-serializable object]';
+    }
+  }
+  return String(message);
+};
+
+const RESERVED_INFO_KEYS = new Set(['level', 'message', 'timestamp']);
+
+const extractMeta = (info) => {
+  const result = {};
+  for (const key of Object.keys(info)) {
+    if (RESERVED_INFO_KEYS.has(key)) continue;
+    result[key] = info[key];
   }
   return result;
 };
 
-const sanitizeSecrets = format((info) => {
-  if (typeof info.message === 'string') {
-    info.message = redactSecrets(info.message);
+const stringifyMeta = (meta) => {
+  if (Object.keys(meta).length === 0) return '';
+  try {
+    return ` ${JSON.stringify(meta)}`;
+  } catch {
+    return ' [Non-serializable metadata]';
   }
-  if (info.stack && typeof info.stack === 'string') {
-    info.stack = redactSecrets(info.stack);
-  }
-  return info;
+};
+
+const unifiedFormat = printf((info) => {
+  const prefix = `[project=${PROJECT_NAME} cron=${getCronName()}]`;
+  const message = stringifyMessage(info.message);
+  const meta = extractMeta(info);
+  return `${info.timestamp} ${prefix} ${info.level}: ${message}${stringifyMeta(meta)}`;
 });
 
-// Custom format for log messages
-const myFormat = printf(({ level, message, timestamp, ...metadata }) => {
-  let formattedMessage = message;
+const LEVEL_DECORATION = {
+  info: { emoji: ':information_source:', label: 'INFO' },
+  warn: { emoji: ':warning:', label: 'WARN' },
+  error: { emoji: ':rotating_light:', label: 'ERROR' },
+};
 
-  // Handle different message types
-  if (typeof message === 'object' && message !== null) {
-    if (message instanceof Error) {
-      formattedMessage = `${message.message} - ${message.stack || ''}`;
-    } else {
-      try {
-        formattedMessage = JSON.stringify(message, null, 2);
-      } catch {
-        formattedMessage = '[Non-serializable object]';
-      }
-    }
-  }
+const buildSlackPayload = (info) => {
+  const decoration = LEVEL_DECORATION[info.level] || { emoji: '', label: String(info.level).toUpperCase() };
+  const cron = getCronName();
+  const message = stringifyMessage(info.message);
+  const meta = extractMeta(info);
+  const headerText = `${decoration.label} — ${PROJECT_NAME} / ${cron}`;
 
-  // Format metadata
-  let metadataStr = '';
-  if (Object.keys(metadata).length > 0 && metadata.stack === undefined) {
+  const blocks = [
+    {
+      type: 'header',
+      text: { type: 'plain_text', text: headerText, emoji: false },
+    },
+    {
+      type: 'context',
+      elements: [{ type: 'mrkdwn', text: `${decoration.emoji} ${info.timestamp || ''}`.trim() }],
+    },
+    {
+      type: 'section',
+      text: { type: 'mrkdwn', text: '```' + message + '```' },
+    },
+  ];
+
+  if (Object.keys(meta).length > 0) {
+    let metaText;
     try {
-      metadataStr = ` | ${JSON.stringify(metadata, null, 2)}`;
+      metaText = JSON.stringify(meta, null, 2);
     } catch {
-      metadataStr = ' | [Non-serializable metadata]';
+      metaText = '[Non-serializable metadata]';
     }
+    blocks.push({
+      type: 'section',
+      text: { type: 'mrkdwn', text: '```' + metaText + '```' },
+    });
   }
 
-  return `${timestamp} ${level}: ${formattedMessage}${metadataStr}`;
-});
+  return {
+    text: `${headerText}: ${message}`,
+    blocks,
+  };
+};
 
 class SlackTransport extends Transport {
   constructor(options) {
@@ -73,45 +150,14 @@ class SlackTransport extends Transport {
   }
 
   log(info, callback) {
-    setImmediate(() => {
-      this.emit('logged', info);
-    });
-
+    setImmediate(() => this.emit('logged', info));
     if (!this.webhookUrl || info.level !== this.targetLevel) {
       callback();
       return;
     }
-
-    this.sendToSlack(info)
-      .then(() => {
-        callback();
-      })
-      .catch(() => {
-        callback();
-      });
-  }
-
-  async sendToSlack(info) {
-    const { message } = info;
-
-    let formattedMessage = message;
-    if (typeof message === 'object' && message !== null) {
-      if (message instanceof Error) {
-        formattedMessage = `${message.message}${message.stack ? `\n\`\`\`${message.stack}\`\`\`` : ''}`;
-      } else {
-        try {
-          formattedMessage = JSON.stringify(message, null, 2);
-        } catch {
-          formattedMessage = '[Non-serializable object]';
-        }
-      }
-    }
-
-    const slackMessage = {
-      text: formattedMessage,
-    };
-
-    return this.postToWebhook(slackMessage);
+    this.postToWebhook(buildSlackPayload(info))
+      .catch(() => {})
+      .finally(() => callback());
   }
 
   postToWebhook(payload) {
@@ -119,7 +165,6 @@ class SlackTransport extends Transport {
       try {
         const url = new URL(this.webhookUrl);
         const postData = JSON.stringify(payload);
-
         const options = {
           hostname: url.hostname,
           port: url.port || 443,
@@ -154,79 +199,52 @@ class SlackTransport extends Transport {
   }
 }
 
-const loggerOptions = {
-  level: process.env.LOG_LEVEL || 'info',
-  format: combine(
-    timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss',
-    }),
+const buildFormat = (extraFormats = []) =>
+  combine(
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     errors({ stack: true }),
     sanitizeSecrets(),
-    myFormat
-  ),
+    ...extraFormats,
+    unifiedFormat
+  );
+
+const logger = createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: buildFormat(),
   transports: [
     new transports.File({
       filename: 'logs/error.log',
       level: 'error',
-      maxsize: 5242880, // 5MB
+      maxsize: 5242880,
       maxFiles: 5,
     }),
     new transports.File({
       filename: 'logs/combined.log',
-      maxsize: 5242880, // 5MB
+      maxsize: 5242880,
       maxFiles: 5,
     }),
   ],
   exitOnError: false,
-};
-
-const logger = createLogger(loggerOptions);
+});
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(
-    new transports.Console({
-      format: combine(
-        timestamp({
-          format: 'YYYY-MM-DD HH:mm:ss',
-        }),
-        colorize(),
-        sanitizeSecrets(),
-        myFormat
-      ),
-    })
-  );
+  logger.add(new transports.Console({ format: buildFormat([colorize()]) }));
 }
 
 if (process.env.SLACK_LOGGING_ENABLED === 'true') {
-  const slackTransports = [
+  const slackChannels = [
     { level: 'info', envVar: 'SLACK_WEBHOOK_URL_INFO' },
     { level: 'warn', envVar: 'SLACK_WEBHOOK_URL_WARN' },
     { level: 'error', envVar: 'SLACK_WEBHOOK_URL_ERROR' },
   ];
-
-  slackTransports.forEach(({ level, envVar }) => {
+  for (const { level, envVar } of slackChannels) {
     const webhookUrl = process.env[envVar];
     if (webhookUrl) {
-      logger.add(
-        new SlackTransport({
-          level: 'silly',
-          targetLevel: level,
-          webhookUrl,
-          format: combine(
-            timestamp({
-              format: 'YYYY-MM-DD HH:mm:ss',
-            }),
-            errors({ stack: true }),
-            sanitizeSecrets(),
-            myFormat
-          ),
-        })
-      );
+      logger.add(new SlackTransport({ level: 'silly', targetLevel: level, webhookUrl }));
     }
-  });
+  }
 }
 
-// Enhanced logging methods
 logger.object = (obj, level = 'info', message = '', metadata = {}) => {
   logger.log(level, message, { ...metadata, object: obj });
 };
@@ -242,10 +260,10 @@ logger.error = (message, metadata = null) => {
   }
 };
 
-// General purpose logging with metadata
 logger.logWithMeta = (level, message, metadata = {}) => {
   logger.log(level, message, metadata);
 };
 
 module.exports = logger;
 module.exports.redactSecrets = redactSecrets;
+module.exports.PROJECT_NAME = PROJECT_NAME;
