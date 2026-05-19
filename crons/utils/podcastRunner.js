@@ -14,12 +14,18 @@ async function runPodcast(config, { dryMode, lang }) {
   const lastEpisode = await config.getLastEpisode();
   const lastProcessed = await store.load();
 
-  if (lastEpisode.episodeNumber <= lastProcessed.episodeNumber) {
+  const usingId = lastEpisode.id != null;
+  const alreadyProcessed = usingId
+    ? lastEpisode.id === lastProcessed.id
+    : lastEpisode.episodeNumber <= (lastProcessed.episodeNumber || 0);
+  const identifier = usingId ? { id: lastEpisode.id } : { episodeNumber: lastEpisode.episodeNumber };
+
+  if (alreadyProcessed) {
     logger.info('No new episode to process');
     return;
   }
 
-  logger.info('New episode found', { episodeNumber: lastEpisode.episodeNumber });
+  logger.info('New episode found', identifier);
 
   const relevancePayload = { title: lastEpisode.title, source: 'podcast episode' };
   if (lastEpisode.transcript) {
@@ -29,7 +35,7 @@ async function runPodcast(config, { dryMode, lang }) {
   const { relevant } = await evaluateRelevance(relevancePayload);
 
   if (!relevant) {
-    await store.save({ episodeNumber: lastEpisode.episodeNumber });
+    await store.save(identifier);
     return;
   }
 
@@ -43,7 +49,7 @@ async function runPodcast(config, { dryMode, lang }) {
     return;
   }
 
-  await store.save({ episodeNumber: lastEpisode.episodeNumber });
+  await store.save(identifier);
   await sendMessage(summary, process.env.TELEGRAM_TOPIC_PODCAST);
 }
 

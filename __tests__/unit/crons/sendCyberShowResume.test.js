@@ -18,7 +18,6 @@ jest.mock('../../../crons/utils/relevance', () => ({
 }));
 jest.mock('assemblyai', () => ({}));
 jest.mock('fs', () => ({}));
-jest.mock('cheerio', () => ({}));
 
 const { run } = require('../../../crons/sendCyberShowResume');
 
