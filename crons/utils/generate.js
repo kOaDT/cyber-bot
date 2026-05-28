@@ -43,6 +43,12 @@ const generate = async (prompt, overrideParams = {}) => {
         throw new AllProvidersRateLimitedError();
       }
 
+      const status = err.status ?? err.statusCode;
+      if (status === 400 && /credit balance is too low/i.test(err.message || '')) {
+        logger.warn(`${provider.name} credit exhausted - skipping`);
+        return null;
+      }
+
       logger.error(`${provider.name} API error: ${err.message}`);
       return null;
     }
