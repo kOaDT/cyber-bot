@@ -39,6 +39,10 @@ async function runContentJob(config, { dryMode, lang }) {
       const prompt = config.createPrompt(enriched, lang);
       const summary = await generate(prompt);
 
+      if (!summary) {
+        continue;
+      }
+
       if (dryMode) {
         logger.info('Dry mode: No message sent', { summary });
       } else {
