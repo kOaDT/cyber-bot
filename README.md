@@ -7,7 +7,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/kOaDT/cyber-bot?style=social)](https://github.com/kOaDT/cyber-bot/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/kOaDT/cyber-bot?style=social)](https://github.com/kOaDT/cyber-bot/network/members)
 
-[![Version](https://img.shields.io/badge/version-2.3.2-blue.svg)](https://github.com/kOaDT/cyber-bot/releases)
+[![Version](https://img.shields.io/github/package-json/v/kOaDT/cyber-bot?label=version&color=blue)](https://github.com/kOaDT/cyber-bot/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Telegram](https://img.shields.io/badge/Telegram-@bot__cyber__fr-2CA5E0?logo=telegram&logoColor=white)](https://t.me/bot_cyber_fr)

@@ -3,6 +3,7 @@ dotenv.config();
 
 const { Command } = require('commander');
 const program = new Command();
+const { version } = require('./package.json');
 const { AUTHORIZED_LANGUAGES } = require('./crons/utils/langs');
 
 const ALLOWED_CRONS = [
@@ -19,7 +20,7 @@ const ALLOWED_CRONS = [
 ];
 
 program
-  .version('1.1.0', '-v, --version')
+  .version(version, '-v, --version')
   .description('A script help you to launch CRON Job')
   .usage('[OPTIONS]...')
   .requiredOption('-c, --cron <script.js>', 'Use a cron script name from crons directory')
