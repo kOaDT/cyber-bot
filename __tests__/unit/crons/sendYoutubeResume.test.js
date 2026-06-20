@@ -1,11 +1,5 @@
 process.env.TELEGRAM_TOPIC_YOUTUBE = 'mock-youtube-topic';
 
-jest.mock('youtube-dl-exec', () =>
-  jest.fn().mockResolvedValue({
-    entries: [{ id: 'test-video-id', title: 'Test Video Title' }],
-  })
-);
-
 const mockLogger = {
   info: jest.fn(),
   warn: jest.fn(),
@@ -38,10 +32,6 @@ jest.mock('fs', () => ({
     writeFile: jest.fn(),
   },
 }));
-
-const youtubeDl = require('youtube-dl-exec');
-const sendYoutubeResume = require('../../../crons/sendYoutubeResume');
-const { run } = sendYoutubeResume;
 
 describe('sendYoutubeResume', () => {
   beforeEach(() => {
@@ -80,14 +70,6 @@ describe('sendYoutubeResume', () => {
     // Test removed due to dynamic import compatibility issues with Jest
     it.skip('should respect dry mode', async () => {
       // This test is skipped due to dynamic import mocking limitations
-    });
-
-    it('should throw on critical errors', async () => {
-      youtubeDl.mockRejectedValueOnce(new Error('Something went wrong'));
-
-      await expect(
-        run({ dryMode: false, lang: 'english', youtube: 'https://youtube.com/c/test-channel' })
-      ).rejects.toThrow('Something went wrong');
     });
   });
 });

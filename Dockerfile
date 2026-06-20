@@ -10,8 +10,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY package.json package-lock.json ./
 # --ignore-scripts skips the husky `prepare` hook (dev-only) and puppeteer's
-# bundled-chromium download (we use the system one above). The youtube-dl-exec
-# binary download is also skipped; the YouTube crons need it wired in later.
+# bundled-chromium download (we use the system one above).
 RUN npm ci --omit=dev --ignore-scripts
 COPY . .
 USER node
