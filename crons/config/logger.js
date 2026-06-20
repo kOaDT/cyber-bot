@@ -208,27 +208,36 @@ const buildFormat = (extraFormats = []) =>
     unifiedFormat
   );
 
+const stdoutOnly = process.env.LOG_STDOUT_ONLY === 'true';
+const isProd = process.env.NODE_ENV === 'production';
+
+const consoleTransport = new transports.Console({
+  format: buildFormat(isProd ? [] : [colorize()]),
+});
+
 const logger = createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: buildFormat(),
-  transports: [
-    new transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
-      maxsize: 5242880,
-      maxFiles: 5,
-    }),
-    new transports.File({
-      filename: 'logs/combined.log',
-      maxsize: 5242880,
-      maxFiles: 5,
-    }),
-  ],
+  transports: stdoutOnly
+    ? [consoleTransport]
+    : [
+        new transports.File({
+          filename: 'logs/error.log',
+          level: 'error',
+          maxsize: 5242880,
+          maxFiles: 5,
+        }),
+        new transports.File({
+          filename: 'logs/combined.log',
+          maxsize: 5242880,
+          maxFiles: 5,
+        }),
+      ],
   exitOnError: false,
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new transports.Console({ format: buildFormat([colorize()]) }));
+if (!stdoutOnly && !isProd) {
+  logger.add(consoleTransport);
 }
 
 if (process.env.SLACK_LOGGING_ENABLED === 'true') {
