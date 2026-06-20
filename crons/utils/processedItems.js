@@ -1,8 +1,14 @@
 const fs = require('fs').promises;
+const path = require('path');
 const logger = require('../config/logger');
 const { withFileLock, atomicWriteFile } = require('./fileUtils');
 
+const STATE_DIR = process.env.CRON_STATE_DIR;
+const resolveStatePath = (filePath) =>
+  STATE_DIR ? path.join(STATE_DIR, filePath.replace(/^\.?\/?assets\//, '')) : filePath;
+
 function createArrayStore(filePath) {
+  filePath = resolveStatePath(filePath);
   async function load() {
     try {
       const data = await fs.readFile(filePath, 'utf8');
@@ -29,6 +35,7 @@ function createArrayStore(filePath) {
 }
 
 function createObjectStore(filePath, defaults = { episodeNumber: 0 }) {
+  filePath = resolveStatePath(filePath);
   async function load() {
     try {
       const data = await fs.readFile(filePath, 'utf8');
@@ -49,6 +56,7 @@ function createObjectStore(filePath, defaults = { episodeNumber: 0 }) {
 }
 
 function createKeyedStore(filePath) {
+  filePath = resolveStatePath(filePath);
   async function _readAll() {
     try {
       const data = await fs.readFile(filePath, 'utf8');
