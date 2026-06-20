@@ -1,5 +1,4 @@
 const logger = require('./config/logger');
-const youtubedl = require('youtube-dl-exec');
 const { Supadata } = require('@supadata/js');
 const { createYoutubeResumePrompt } = require('./utils/prompts');
 const { createKeyedStore } = require('./utils/processedItems');
@@ -83,22 +82,48 @@ function extractVideoId(url) {
   return match[1];
 }
 
+// Browser-like UA so YouTube serves the full channel page / feed.
+const YT_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+const decodeEntities = (str) =>
+  str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
+// Resolve the UC… channel id from a handle URL (e.g. youtube.com/@NoLimitSecu).
+async function resolveChannelId(channelUrl) {
+  const direct = channelUrl.match(/channel\/(UC[\w-]+)/);
+  if (direct) return direct[1];
+
+  const res = await fetch(channelUrl, { headers: { 'User-Agent': YT_UA, 'Accept-Language': 'en' } });
+  if (!res.ok) throw new Error(`channel page HTTP ${res.status}`);
+  const html = await res.text();
+  const m = html.match(/"channelId":"(UC[\w-]+)"/) || html.match(/channel\/(UC[\w-]+)/);
+  if (!m) throw new Error('could not resolve channelId from channel page');
+  return m[1];
+}
+
 async function getLatestVideo(channelUrl) {
   try {
-    const output = await youtubedl(channelUrl + '/videos', {
-      dumpSingleJson: true,
-      flatPlaylist: true,
-      playlistEnd: 1,
+    const channelId = await resolveChannelId(channelUrl);
+    const res = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, {
+      headers: { 'User-Agent': YT_UA, 'Accept-Language': 'en' },
     });
+    if (!res.ok) throw new Error(`RSS HTTP ${res.status}`);
 
-    if (!output.entries || output.entries.length === 0) {
-      throw new Error('No videos found in channel');
-    }
+    const xml = await res.text();
+    const entry = xml.split('<entry>')[1] || '';
+    const id = (entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/) || [])[1];
+    if (!id) throw new Error('No videos found in channel feed');
+    const title = (entry.match(/<title>([^<]+)<\/title>/) || [])[1] || '';
 
-    const entry = output.entries[0];
     return {
-      url: `https://www.youtube.com/watch?v=${entry.id}`,
-      title: entry.title || '',
+      url: `https://www.youtube.com/watch?v=${id}`,
+      title: decodeEntities(title),
     };
   } catch (error) {
     throw new Error(`Failed to fetch latest video from channel: ${error.message}`);

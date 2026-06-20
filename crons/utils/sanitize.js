@@ -141,7 +141,6 @@ const SENSITIVE_OUTPUT_PATTERNS = [
   /MYSQL_PASSWORD\s*[=:]/i,
   /TELEGRAM_BOT_TOKEN\s*[=:]/i,
   /GITHUB_SECRET\s*[=:]/i,
-  /REDDIT_CLIENT_SECRET\s*[=:]/i,
   /ASSEMBLYAI_API_KEY\s*[=:]/i,
   /SUPADATA_KEY\s*[=:]/i,
   /SLACK_WEBHOOK_URL\s*[=:]/i,
