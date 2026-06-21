@@ -1,8 +1,10 @@
 const fs = require('fs').promises;
 const logger = require('../config/logger');
 const { withFileLock, atomicWriteFile } = require('./fileUtils');
+const { resolveStatePath } = require('./processedItems');
 
 const cleanProcessedData = async (daysToKeep, filePath) => {
+  filePath = resolveStatePath(filePath);
   try {
     await withFileLock(filePath, async () => {
       const fileContent = await fs.readFile(filePath, 'utf8');
