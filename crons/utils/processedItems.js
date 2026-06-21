@@ -87,4 +87,4 @@ function createKeyedStore(filePath) {
   return { load, save };
 }
 
-module.exports = { createArrayStore, createObjectStore, createKeyedStore };
+module.exports = { createArrayStore, createObjectStore, createKeyedStore, resolveStatePath };
