@@ -10,6 +10,11 @@ const HARDENED_ARGS = [
   '--disable-gpu',
   '--disable-extensions',
   '--no-first-run',
+  // Chromium can't mount its namespace sandbox in the cron container (non-root,
+  // and Debian 13 restricts unprivileged user namespaces via AppArmor). The
+  // container itself is the isolation boundary (one-shot --rm, no inbound, no
+  // secrets beyond the job env), so we disable the in-browser sandbox.
+  '--no-sandbox',
   '--disable-setuid-sandbox',
   '--disable-background-networking',
   '--disable-sync',

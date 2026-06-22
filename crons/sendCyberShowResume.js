@@ -2,6 +2,7 @@ const { runPodcast } = require('./utils/podcastRunner');
 const RSSParser = require('rss-parser');
 const { AssemblyAI } = require('assemblyai');
 const fs = require('fs').promises;
+const os = require('os');
 const logger = require('./config/logger');
 
 const FEED_URL = process.env.CYBERSHOW_FEED_URL || 'https://cybershow.uk/rss/feed.xml';
@@ -55,7 +56,8 @@ const getLastEpisode = async () => {
 };
 
 const getTranscription = async (episode) => {
-  const tempFilePath = `./temp-audio-${Date.now()}.mp3`;
+  // /app is not writable by USER node in the cron container; use the system temp dir.
+  const tempFilePath = `${os.tmpdir()}/temp-audio-${Date.now()}.mp3`;
 
   try {
     const audioResponse = await fetch(episode.audioUrl);
