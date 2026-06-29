@@ -9,7 +9,7 @@
 
 [![Version](https://img.shields.io/github/package-json/v/kOaDT/cyber-bot?label=version&color=blue)](https://github.com/kOaDT/cyber-bot/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Telegram](https://img.shields.io/badge/Telegram-@bot__cyber__fr-2CA5E0?logo=telegram&logoColor=white)](https://t.me/bot_cyber_fr)
 [![Mistral AI](https://img.shields.io/badge/Mistral%20AI-Powered-5A67D8?logo=ai&logoColor=white)](https://mistral.ai/)
 [![Claude AI](https://img.shields.io/badge/Claude%20AI-Powered-D97706?logo=anthropic&logoColor=white)](https://anthropic.com/)
@@ -279,11 +279,11 @@ We welcome contributions! Feel free to:
 
 ## License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+This project is licensed under the MIT License.
 
-This means you are free to share and adapt this work for non-commercial purposes, as long as you provide appropriate attribution. More information: [LICENSE](./LICENSE)
+This means you are free to use, copy, modify, and distribute this software, including for commercial purposes, as long as the original copyright notice and permission notice are included. More information: [LICENSE](./LICENSE)
 
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ---
 

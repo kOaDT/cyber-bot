@@ -169,7 +169,7 @@ If you want to add a new cron job to Cyber Bot, follow these steps:
 
 By contributing to Cyber Bot, you agree that your contributions will be licensed under the project's license.
 
-Cyber Bot is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC-BY-NC-4.0)](./LICENSE).
+Cyber Bot is licensed under the [MIT License](./LICENSE).
 
 ## Need Help?
 
