@@ -19,7 +19,7 @@
   "keywords": [],
   "author": "kOaDT",
   "repository": "https://github.com/kOaDT/cyber-bot",
-  "license": "CC-BY-NC-4.0",
+  "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "0.91.1",
     "@mistralai/mistralai": "2.2.5",
