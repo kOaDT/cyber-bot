@@ -45,7 +45,7 @@ npm run cron -- -c sendGithubNotes
 
 ### Cybersecurity News Digest
 
-Aggregates and summarizes news from our [curated RSS feed](https://raw.githubusercontent.com/kOaDT/cyber-bot/refs/heads/develop/assets/CyberSecurityRSS.opml).
+Aggregates and summarizes news from our [curated RSS feed](https://raw.githubusercontent.com/kOaDT/cyber-bot/refs/heads/main/assets/CyberSecurityRSS.opml).
 
 ```
 npm run cron -- -c sendNewsResume

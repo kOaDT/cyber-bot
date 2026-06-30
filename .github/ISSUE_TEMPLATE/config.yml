@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Telegram Community
+    url: https://t.me/bot_cyber_fr
+    about: Ask questions and chat with the community.
+  - name: Documentation
+    url: https://koadt.github.io/cyber-bot/
+    about: Check the documentation before opening an issue.

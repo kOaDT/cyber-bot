@@ -1,0 +1,107 @@
+name: Bug Report
+description: Report a bug to help us improve Cyber Bot
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below to help us reproduce and fix the issue.
+        Before submitting, please [search existing issues](https://github.com/kOaDT/cyber-bot/issues) to avoid duplicates.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: When I run the CVE cron, the message is never sent...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: Which part of the project is impacted?
+      options:
+        - Cron job (sendCve, sendNewsResume, sendTHMCTF, etc.)
+        - AI provider (Mistral / Claude)
+        - Telegram delivery
+        - Prompts / content generation
+        - Database / logging
+        - Deployment / CI
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: cron
+    attributes:
+      label: Cron name
+      description: If the bug is related to a specific cron, paste the command you ran.
+      placeholder: npm run cron -- -c sendCve
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      value: |
+        1. Run '...'
+        2. With config '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste any relevant log output. This will be automatically formatted, no backticks needed.
+      render: shell
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: AI provider
+      description: Which AI provider were you using?
+      options:
+        - Mistral
+        - Claude
+        - Not applicable
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      placeholder: "18.x"
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Where are you running the bot?
+      placeholder: VPS (Ubuntu 22.04) / Docker / local macOS
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: I have removed any secrets (API keys, tokens) from the logs above
+          required: true
