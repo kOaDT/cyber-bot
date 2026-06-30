@@ -38,4 +38,16 @@ const getPool = () => {
   return pool;
 };
 
-module.exports = { getPool };
+const closePool = async () => {
+  if (!pool) return;
+
+  try {
+    await pool.promise().end();
+  } catch (err) {
+    logger.error('Error closing database pool', { error: err.message });
+  } finally {
+    pool = null;
+  }
+};
+
+module.exports = { getPool, closePool };
