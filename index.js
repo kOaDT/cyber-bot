@@ -55,6 +55,8 @@ if (youtube && !youtube.includes('https://www.youtube.com/')) {
   process.exit(1);
 }
 
+const { closePool } = require('./crons/utils/database');
+
 const waitForLoggerFlush = () =>
   new Promise((resolve) => {
     logger.on('finish', resolve);
@@ -64,18 +66,21 @@ const waitForLoggerFlush = () =>
 (async () => {
   logger.info('Cron starting', { mode: dryMode ? 'dry-run' : 'production' });
 
+  let exitCode = 0;
+
   try {
     const cronJob = require(`./crons/${cron}.js`);
     await cronJob.run({ dryMode, param, lang, youtube });
     logger.info('Cron completed', { status: 'success' });
-    await waitForLoggerFlush();
-    process.exit(0);
   } catch (err) {
+    exitCode = 1;
     if (process.env.NODE_ENV === 'development') {
       console.error(err);
     }
     logger.error('Cron failed', { status: 'error', error: err.message, stack: err.stack });
+  } finally {
+    await closePool();
     await waitForLoggerFlush();
-    process.exit(1);
+    process.exit(exitCode);
   }
 })();
