@@ -120,23 +120,11 @@ npm run cron -- -c sendYoutubeResume -y https://www.youtube.com/[channel-name]
 
 ### Installation
 
-1. **Clone and Initialize**
+1. **Clone the Repository**
 
 ```sh
 git clone git@github.com:kOaDT/cyber-bot.git
 cd cyber-bot
-
-# Create tracking files
-mkdir -p assets
-touch assets/processedNotes.json       # GithubNotes tracking
-touch assets/processedArticles.json    # News tracking
-touch assets/processedDD.json          # Darknet Diaries Podcast tracking
-touch assets/processedSnyk.json        # Snyk Podcast tracking
-touch assets/processedYt.json          # YouTube tracking
-touch assets/processedReddit.json      # Reddit post tracking
-touch assets/processedCTF.json         # CTF tracking
-touch assets/processedSecurityNow.json # Security Now Podcast tracking
-touch assets/processedCyberShow.json   # The Cyber Show Podcast tracking
 ```
 
 2. **Install Dependencies**
@@ -145,7 +133,15 @@ touch assets/processedCyberShow.json   # The Cyber Show Podcast tracking
 npm install
 ```
 
-3. **Configure Environment**
+3. **Initialize Directories and Tracking Files**
+
+```sh
+npm run setup
+```
+
+This idempotent script creates the `assets/` and `logs/` directories along with the JSON tracking files used by the cron jobs (`processedArticles.json`, `processedReddit.json`, etc.). Existing files are left untouched, so it is safe to run again at any time.
+
+4. **Configure Environment**
 
 Create a `.env` file with the following variables:
 
@@ -224,14 +220,14 @@ SLACK_WEBHOOK_URL_ERROR=    # Webhook URL for error level logs
 
 > **Note:** Slack logging is optional and disabled by default. To enable it, set `SLACK_LOGGING_ENABLED=true` and provide the appropriate webhook URLs for each log level (info, warn, error). If a webhook URL is missing for a specific level, logs of that level will still be logged locally but won't be sent to Slack. Slack webhook failures are handled gracefully and won't affect the application's operation.
 
-4. **Optional: Customize AI provider parameters**
+5. **Optional: Customize AI provider parameters**
 
 ```
 /crons/config/providers/mistral.js  # Mistral configuration
 /crons/config/providers/claude.js   # Claude configuration
 ```
 
-5. **Optional: Modify bot prompts**
+6. **Optional: Modify bot prompts**
 
 ```
 /crons/utils/prompts

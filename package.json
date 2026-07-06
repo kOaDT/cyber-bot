@@ -4,6 +4,7 @@
   "description": "Cyber Bot is an Node.js project designed to help users improve their cybersecurity skills through scheduled Telegram messages",
   "main": "index.js",
   "scripts": {
+    "setup": "node scripts/setup.js",
     "cron": "./cron.sh",
     "lint": "./node_modules/.bin/eslint .",
     "lint-fix": "./node_modules/.bin/eslint --fix .",
