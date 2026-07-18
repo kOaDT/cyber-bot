@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE: ghcr.io/koadt/cron-cyberbot   # GHCR requires a lowercase namespace
+  IMAGE: ghcr.io/koadt/cron-cyberbot # GHCR requires a lowercase namespace
 
 jobs:
   build-push:

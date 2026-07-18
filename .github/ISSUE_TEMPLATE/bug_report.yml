@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug to help us improve Cyber Bot
-title: "[Bug]: "
-labels: ["bug"]
+title: '[Bug]: '
+labels: ['bug']
 body:
   - type: markdown
     attributes:
@@ -85,7 +85,7 @@ body:
     id: node-version
     attributes:
       label: Node.js version
-      placeholder: "18.x"
+      placeholder: '18.x'
     validations:
       required: true
 
