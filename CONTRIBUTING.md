@@ -129,12 +129,13 @@ When submitting a pull request:
 The project follows this general file organization:
 
 - `/crons` - Individual cron job scripts
+- `/crons/config` - Configuration modules (logger, database, AI providers)
+- `/crons/config/providers` - AI provider implementations (Mistral, Claude)
 - `/crons/utils` - Shared utility functions
-- `/crons/utils/prompts` - AI prompt templates
-- `/services` - External API service integrations
-- `/config` - Configuration files
-- `/documentation` - Project documentation
+- `/crons/utils/prompts.js` - AI prompt templates
+- `/scripts` - Maintenance and helper scripts
 - `/assets` - Tracking files and other assets
+- `/__tests__` - Jest test suites
 
 ## Adding New Cron Jobs
 
