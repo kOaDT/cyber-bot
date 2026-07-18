@@ -4,13 +4,9 @@ Thank you for your interest in contributing to Cyber Bot! This document provides
 
 ## Code of Conduct
 
-By participating in this project, you are expected to uphold our Code of Conduct:
-
-- Be respectful and inclusive toward other contributors
-- Use welcoming and inclusive language
-- Be accepting of constructive criticism
-- Focus on what is best for the community
-- Show empathy towards other community members
+This project is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By
+participating, you are expected to uphold it. Please report unacceptable
+behavior to koadt@proton.me.
 
 ## Types of Contributions
 
