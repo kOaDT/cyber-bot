@@ -29,10 +29,12 @@ Cyber Bot is a Node.js project that helps users enhance their cybersecurity skil
 
 ## Features
 
-### TryHackMe Challenges
+### CTF Challenges
+
+Posts one challenge per run from the [OopsSec Store](https://github.com/kOaDT/oss-oopssec-store) curriculum, in learning order, then loops back to the first one.
 
 ```
-npm run cron -- -c sendTHMCTF
+npm run cron -- -c sendCTFChallenge
 ```
 
 ### AI-Enhanced Study Notes
@@ -157,7 +159,7 @@ EXCLUDED_GITHUB_FILES=
 TELEGRAM_BOT_TOKEN=
 CHAT_ID=
 # Optional Topic IDs for message organization
-TELEGRAM_TOPIC_THM=
+TELEGRAM_TOPIC_CTF=
 TELEGRAM_TOPIC_NEWS=
 TELEGRAM_TOPIC_YOUTUBE=
 TELEGRAM_TOPIC_PODCAST=

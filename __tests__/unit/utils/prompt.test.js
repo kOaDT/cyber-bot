@@ -79,6 +79,19 @@ describe('Prompt utils', () => {
       expect(result).toContain(`Translate the following text to ${lang}`);
       expect(result).toContain(prompt);
     });
+
+    test('should not mention markup rules by default', () => {
+      const result = translatePrompt('A plain text prompt', 'french');
+
+      expect(result).not.toContain('Telegram HTML');
+    });
+
+    test('should ask to preserve the markup when requested', () => {
+      const result = translatePrompt('<b>Title</b>', 'french', { preserveTelegramHtml: true });
+
+      expect(result).toContain('Telegram HTML');
+      expect(result).toContain('Translate the link labels, never the URLs');
+    });
   });
 
   describe('createNewsResumePrompt', () => {

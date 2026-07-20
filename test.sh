@@ -1,7 +1,6 @@
 #!/bin/bash
 
-npm run cron -- -c sendTHMCTF --dry-mode && \
-npm run cron -- -c sendTHM --dry-mode && \
+npm run cron -- -c sendCTFChallenge --dry-mode && \
 npm run cron -- -c sendCve --dry-mode && \
 npm run cron -- -c sendGithubNotes --dry-mode && \
 npm run cron -- -c sendNewsResume --dry-mode && \

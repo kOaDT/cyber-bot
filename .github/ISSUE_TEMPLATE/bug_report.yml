@@ -24,7 +24,7 @@ body:
       label: Affected area
       description: Which part of the project is impacted?
       options:
-        - Cron job (sendCve, sendNewsResume, sendTHMCTF, etc.)
+        - Cron job (sendCve, sendNewsResume, sendCTFChallenge, etc.)
         - AI provider (Mistral / Claude)
         - Telegram delivery
         - Prompts / content generation
