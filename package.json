@@ -30,7 +30,7 @@
     "commander": "14.0.3",
     "dotenv": "17.4.2",
     "mysql2": "3.22.5",
-    "node-telegram-bot-api": "0.67.0",
+    "node-telegram-bot-api": "1.2.0",
     "puppeteer": "24.43.1",
     "rss-parser": "3.13.0",
     "winston": "3.19.0"
