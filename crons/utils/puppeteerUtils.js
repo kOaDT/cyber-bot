@@ -25,7 +25,7 @@ class BrowserManager {
     const { timeout, args = [], ...launchOptions } = options;
     this.timeout = timeout ?? 30000;
     this.launchOptions = {
-      headless: 'new',
+      headless: true,
       args: [...HARDENED_ARGS, ...args],
       ...launchOptions,
     };

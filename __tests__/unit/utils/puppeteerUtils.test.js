@@ -49,7 +49,7 @@ describe('BrowserManager', () => {
 
   test('should initialize with default options', () => {
     expect(browserManager.timeout).toBe(30000);
-    expect(browserManager.launchOptions.headless).toBe('new');
+    expect(browserManager.launchOptions.headless).toBe(true);
     expect(browserManager.launchOptions.args).toEqual(
       expect.arrayContaining([
         '--disable-dev-shm-usage',
@@ -89,7 +89,7 @@ describe('BrowserManager', () => {
 
     expect(puppeteer.launch).toHaveBeenCalledWith(
       expect.objectContaining({
-        headless: 'new',
+        headless: true,
         args: expect.arrayContaining(['--disable-dev-shm-usage']),
       })
     );
