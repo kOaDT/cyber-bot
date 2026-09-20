@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "0.116.0",
-    "@mistralai/mistralai": "2.6.1",
+    "@mistralai/mistralai": "2.6.4",
     "@supadata/js": "1.4.0",
     "assemblyai": "4.36.5",
     "cheerio": "1.2.0",
@@ -36,7 +36,7 @@
     "winston": "3.19.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "3.3.6",
+    "@eslint/eslintrc": "3.3.7",
     "@eslint/js": "10.0.1",
     "@types/jest": "30.0.0",
     "eslint": "10.8.1",
@@ -46,7 +46,7 @@
     "husky": "9.1.7",
     "jest": "30.4.2",
     "lint-staged": "17.3.0",
-    "prettier": "3.9.6",
+    "prettier": "3.9.8",
     "supertest": "7.2.2"
   },
   "lint-staged": {
