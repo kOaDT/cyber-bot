@@ -173,7 +173,7 @@ AI_PROVIDER=mistral            # Choose: 'mistral' (default) or 'claude'
 # Mistral AI Settings (required if AI_PROVIDER=mistral)
 MISTRAL_API_KEY=
 # Optional Mistral parameters
-MISTRAL_MODEL=mistral-large-2411
+MISTRAL_MODEL=mistral-medium-latest
 MISTRAL_TEMPERATURE=0.1
 MISTRAL_MAX_TOKENS=2000
 

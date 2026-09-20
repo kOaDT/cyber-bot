@@ -3,7 +3,7 @@ const { getMistral } = require('./mistralClient');
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
 
 const DEFAULT_PARAMS = {
-  model: process.env.MISTRAL_MODEL || 'mistral-large-2411',
+  model: process.env.MISTRAL_MODEL || 'mistral-medium-latest',
   temperature: parseFloat(process.env.MISTRAL_TEMPERATURE) || 0.1,
   max_tokens: parseInt(process.env.MISTRAL_MAX_TOKENS, 10) || 2000,
   top_p: parseFloat(process.env.MISTRAL_TOP_P) || 0.85,

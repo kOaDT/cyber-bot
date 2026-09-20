@@ -51,7 +51,7 @@ AI_PROVIDER=mistral|claude       # Default: mistral
 
 # Mistral configuration
 MISTRAL_API_KEY=                 # Required if AI_PROVIDER=mistral
-MISTRAL_MODEL=mistral-large-2411 # Default model
+MISTRAL_MODEL=mistral-medium-latest # Default model
 
 # Claude configuration
 CLAUDE_API_KEY=                  # Required if AI_PROVIDER=claude
