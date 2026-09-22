@@ -11,7 +11,7 @@ jest.mock('../../../crons/utils/database', () => ({
 }));
 
 const logger = require('../../../crons/config/logger');
-const TelegramBot = require('node-telegram-bot-api');
+const { TelegramBot } = require('node-telegram-bot-api');
 
 const mockSendMessage = jest.fn().mockResolvedValue({});
 TelegramBot.mockImplementation(() => ({

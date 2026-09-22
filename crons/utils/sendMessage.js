@@ -1,5 +1,5 @@
 const logger = require('../config/logger');
-const TelegramBot = require('node-telegram-bot-api');
+const { TelegramBot } = require('node-telegram-bot-api');
 
 const MAX_MESSAGE_LENGTH = 4096;
 const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
