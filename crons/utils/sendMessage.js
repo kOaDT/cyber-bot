@@ -1,5 +1,5 @@
 const logger = require('../config/logger');
-const { TelegramBot } = require('node-telegram-bot-api');
+const { Api } = require('node-telegram-bot-api');
 
 const MAX_MESSAGE_LENGTH = 4096;
 const isDb = process.env.I_WANT_TO_SAVE_MESSAGES_IN_DB === 'true';
@@ -133,7 +133,7 @@ const splitMessage = (message, isHtml = false) => {
   return chunks;
 };
 
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
+const api = new Api(process.env.TELEGRAM_BOT_TOKEN);
 
 /**
  * Sends a message to Telegram and logs it to the database
@@ -155,7 +155,7 @@ const sendMessage = async (message, topicId = null, categories = null, sendOptio
     const messageChunks = splitMessage(message, isHtml);
 
     for (const chunk of messageChunks) {
-      await bot.sendMessage(process.env.CHAT_ID, chunk, options);
+      await api.sendMessage({ chat_id: process.env.CHAT_ID, text: chunk, ...options });
     }
     logger.info('Message sent successfully');
   } catch (err) {

@@ -31,7 +31,9 @@ const fs = require('fs');
 const cheerio = require('cheerio');
 
 // Mock remaining dependencies
-jest.mock('../../../crons/utils/sendMessage');
+jest.mock('../../../crons/utils/sendMessage', () => ({
+  sendMessage: jest.fn(),
+}));
 jest.mock('../../../crons/utils/generate');
 jest.mock('../../../crons/utils/prompts');
 jest.mock('../../../crons/utils/relevance', () => ({
