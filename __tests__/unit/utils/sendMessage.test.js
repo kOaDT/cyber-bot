@@ -11,10 +11,10 @@ jest.mock('../../../crons/utils/database', () => ({
 }));
 
 const logger = require('../../../crons/config/logger');
-const { TelegramBot } = require('node-telegram-bot-api');
+const { Api } = require('node-telegram-bot-api');
 
 const mockSendMessage = jest.fn().mockResolvedValue({});
-TelegramBot.mockImplementation(() => ({
+Api.mockImplementation(() => ({
   sendMessage: mockSendMessage,
 }));
 
@@ -40,14 +40,14 @@ describe('sendMessage', () => {
   it('should send a message to Telegram', async () => {
     await sendMessage('Test message');
 
-    expect(mockSendMessage).toHaveBeenCalledWith('123456789', 'Test message', {});
+    expect(mockSendMessage).toHaveBeenCalledWith({ chat_id: '123456789', text: 'Test message' });
     expect(logger.info).toHaveBeenCalledWith('Message sent successfully');
   });
 
   it('should send a message with topic ID', async () => {
     await sendMessage('Test message', 42);
 
-    expect(mockSendMessage).toHaveBeenCalledWith('123456789', 'Test message', { message_thread_id: 42 });
+    expect(mockSendMessage).toHaveBeenCalledWith({ chat_id: '123456789', text: 'Test message', message_thread_id: 42 });
   });
 
   it('should handle errors when sending messages', async () => {
@@ -72,8 +72,8 @@ describe('sendMessage', () => {
     await sendMessage(message, null, null, { parse_mode: 'HTML' });
 
     expect(mockSendMessage).toHaveBeenCalledTimes(2);
-    const chunk1 = mockSendMessage.mock.calls[0][1];
-    const chunk2 = mockSendMessage.mock.calls[1][1];
+    const chunk1 = mockSendMessage.mock.calls[0][0].text;
+    const chunk2 = mockSendMessage.mock.calls[1][0].text;
     expect(chunk1).toMatch(/<\/pre>$/);
     expect(chunk2).toMatch(/^<pre>/);
   });
