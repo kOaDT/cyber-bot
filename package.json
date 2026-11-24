@@ -45,9 +45,9 @@
     "globals": "17.13.0",
     "husky": "9.1.7",
     "jest": "30.5.2",
-    "lint-staged": "17.6.0",
+    "lint-staged": "17.6.2",
     "prettier": "3.9.10",
-    "supertest": "7.3.1"
+    "supertest": "7.3.2"
   },
   "lint-staged": {
     "*.{ts,js}": "eslint --cache --fix",
